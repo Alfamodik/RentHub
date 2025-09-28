@@ -1,0 +1,12 @@
+D:\RentHub\RentHub\RentHub.Core\bin\Debug\net8.0\RentHub.Core.deps.json
+D:\RentHub\RentHub\RentHub.Core\bin\Debug\net8.0\RentHub.Core.dll
+D:\RentHub\RentHub\RentHub.Core\bin\Debug\net8.0\RentHub.Core.pdb
+D:\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.AssemblyInfoInputs.cache
+D:\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.AssemblyInfo.cs
+D:\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.csproj.CoreCompileInputs.cache
+D:\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.sourcelink.json
+D:\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.dll
+D:\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\refint\RentHub.Core.dll
+D:\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.pdb
+D:\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\ref\RentHub.Core.dll
