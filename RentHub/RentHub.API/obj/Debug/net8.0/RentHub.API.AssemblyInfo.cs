@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RentHub.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+21ef7f2aea4e86924b28c4e10ead538c0887b04f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+da72e11d5ff97729e67b74970f2ce1cc166b73a2")]
 [assembly: System.Reflection.AssemblyProductAttribute("RentHub.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RentHub.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
