@@ -8,6 +8,19 @@ namespace RentHub.Core.Model;
 
 public partial class RenthubContext : DbContext
 {
+    public static RenthubContext _context;
+    public static RenthubContext Context
+    {
+        get
+        {
+            if (_context == null)
+            {
+                _context = new RenthubContext();
+            }
+            return _context;
+        }
+    }
+
     public RenthubContext()
     {
     }
