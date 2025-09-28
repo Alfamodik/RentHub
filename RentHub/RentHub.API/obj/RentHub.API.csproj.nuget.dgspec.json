@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "D:\\RentHub\\RentHub\\RentHub.API\\RentHub.API.csproj": {}
+    "F:\\Alfamod\\Projects\\RentHub\\RentHub\\RentHub.API\\RentHub.API.csproj": {}
   },
   "projects": {
-    "D:\\RentHub\\RentHub\\RentHub.API\\RentHub.API.csproj": {
+    "F:\\Alfamod\\Projects\\RentHub\\RentHub\\RentHub.API\\RentHub.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\RentHub\\RentHub\\RentHub.API\\RentHub.API.csproj",
+        "projectUniqueName": "F:\\Alfamod\\Projects\\RentHub\\RentHub\\RentHub.API\\RentHub.API.csproj",
         "projectName": "RentHub.API",
-        "projectPath": "D:\\RentHub\\RentHub\\RentHub.API\\RentHub.API.csproj",
-        "packagesPath": "C:\\Users\\Админ\\.nuget\\packages\\",
-        "outputPath": "D:\\RentHub\\RentHub\\RentHub.API\\obj\\",
+        "projectPath": "F:\\Alfamod\\Projects\\RentHub\\RentHub\\RentHub.API\\RentHub.API.csproj",
+        "packagesPath": "C:\\Users\\Alfamod\\.nuget\\packages\\",
+        "outputPath": "F:\\Alfamod\\Projects\\RentHub\\RentHub\\RentHub.API\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Админ\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Alfamod\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,15 +26,14 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\RentHub\\RentHub\\RentHub.Core\\RentHub.Core.csproj": {
-                "projectPath": "D:\\RentHub\\RentHub\\RentHub.Core\\RentHub.Core.csproj"
+              "F:\\Alfamod\\Projects\\RentHub\\RentHub\\RentHub.Core\\RentHub.Core.csproj": {
+                "projectPath": "F:\\Alfamod\\Projects\\RentHub\\RentHub\\RentHub.Core\\RentHub.Core.csproj"
               }
             }
           }
@@ -44,7 +47,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net8.0": {
@@ -74,21 +78,25 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\RentHub\\RentHub\\RentHub.Core\\RentHub.Core.csproj": {
+    "F:\\Alfamod\\Projects\\RentHub\\RentHub\\RentHub.Core\\RentHub.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\RentHub\\RentHub\\RentHub.Core\\RentHub.Core.csproj",
+        "projectUniqueName": "F:\\Alfamod\\Projects\\RentHub\\RentHub\\RentHub.Core\\RentHub.Core.csproj",
         "projectName": "RentHub.Core",
-        "projectPath": "D:\\RentHub\\RentHub\\RentHub.Core\\RentHub.Core.csproj",
-        "packagesPath": "C:\\Users\\Админ\\.nuget\\packages\\",
-        "outputPath": "D:\\RentHub\\RentHub\\RentHub.Core\\obj\\",
+        "projectPath": "F:\\Alfamod\\Projects\\RentHub\\RentHub\\RentHub.Core\\RentHub.Core.csproj",
+        "packagesPath": "C:\\Users\\Alfamod\\.nuget\\packages\\",
+        "outputPath": "F:\\Alfamod\\Projects\\RentHub\\RentHub\\RentHub.Core\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Админ\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Alfamod\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -96,7 +104,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -114,7 +121,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net8.0": {
@@ -155,7 +163,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
