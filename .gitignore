@@ -1,6 +1,7 @@
 **/.vs/
 
 **/bin/
+**/obj/
 
 RentHub/RentHub.API/AppSettings/appsettings.Development.json
 RentHub/RentHub.App/AppSettings/appsettings.Development.json
