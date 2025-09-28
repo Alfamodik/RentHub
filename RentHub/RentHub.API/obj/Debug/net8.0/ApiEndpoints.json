@@ -1,0 +1,12 @@
+[
+  {
+    "ContainingType": "RentHub.API.Controllers.ReservationsController",
+    "Method": "Get",
+    "RelativePath": "api/Reservations/GetReservations",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]

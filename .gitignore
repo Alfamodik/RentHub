@@ -5,3 +5,5 @@
 AssetStore/AssetStore.API/AppSettings/appsettings.Development.json
 AssetStore/AssetStore.App/AppSettings/appsettings.Development.json
 AssetStore/AssetStore.Core/AppSettings/appsettings.Development.json
+
+RentHub/RentHub.Core/Appsettings/appsettings.Development.json
