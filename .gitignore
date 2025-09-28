@@ -1,6 +1,7 @@
 **/.vs/
 
 **/bin/
+**/obj/
 
 AssetStore/AssetStore.API/AppSettings/appsettings.Development.json
 AssetStore/AssetStore.App/AppSettings/appsettings.Development.json
