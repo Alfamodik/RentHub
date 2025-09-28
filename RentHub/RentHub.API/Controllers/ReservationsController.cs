@@ -13,7 +13,7 @@ namespace RentHub.API.Controllers
         [HttpGet("GetReservations")]
         public ActionResult Get()
         {
-            return Ok(RenthubContext.Context.Reservations.ToList());
+            return Ok(RenthubContext._instance?.Reservations.ToList());
         }
 
         // GET api/<ReservationsController>/5
