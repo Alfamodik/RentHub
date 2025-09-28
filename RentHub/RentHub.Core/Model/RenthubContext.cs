@@ -30,7 +30,7 @@ public partial class RenthubContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var filePath = Path.GetFullPath(
-            Path.Combine("..", "AssetStore.Core", "AppSettings", "appsettings.Development.json"));
+            Path.Combine("..", "RentHub.Core", "AppSettings", "appsettings.Development.json"));
 
         var config = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory).AddJsonFile(filePath, optional: true).Build();
