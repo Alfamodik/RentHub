@@ -2,7 +2,7 @@
 
 public partial class Flat
 {
-    public int IdFlat { get; set; }
+    public int FlatId { get; set; }
 
     public string Country { get; set; } = null!;
 
@@ -22,7 +22,7 @@ public partial class Flat
 
     public string Description { get; set; } = null!;
 
-    public string? Photo { get; set; }
+    public byte[]? Photo { get; set; }
 
-    public virtual ICollection<Ad> Ads { get; set; } = new List<Ad>();
+    public virtual ICollection<Advertisement> Advertisements { get; set; } = new List<Advertisement>();
 }

@@ -2,11 +2,11 @@
 
 public partial class Reservation
 {
-    public int IdReservation { get; set; }
+    public int ReservationId { get; set; }
 
-    public int IdAd { get; set; }
+    public int AdvertisementId { get; set; }
 
-    public int IdRenter { get; set; }
+    public int RenterId { get; set; }
 
     public DateOnly DateOfStartReservation { get; set; }
 
@@ -16,7 +16,7 @@ public partial class Reservation
 
     public decimal Income { get; set; }
 
-    public virtual Ad IdAdNavigation { get; set; } = null!;
+    public virtual Advertisement Advertisement { get; set; } = null!;
 
-    public virtual Renter IdRenterNavigation { get; set; } = null!;
+    public virtual Renter Renter { get; set; } = null!;
 }

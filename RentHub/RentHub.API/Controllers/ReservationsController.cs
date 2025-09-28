@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RentHub.Core.Model;
 
 namespace RentHub.API.Controllers
@@ -7,10 +8,11 @@ namespace RentHub.API.Controllers
     [ApiController]
     public class ReservationsController : ControllerBase
     {
+        [Authorize]
         [HttpGet("GetReservations")]
         public ActionResult Get()
         {
-            return Ok(RenthubContext.Instance.Reservations.ToList());
+            return Ok(RentHubContext.Instance.Reservations.ToList());
         }
     }
 }

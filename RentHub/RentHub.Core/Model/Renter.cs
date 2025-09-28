@@ -2,7 +2,7 @@
 
 public partial class Renter
 {
-    public int IdRenter { get; set; }
+    public int RenterId { get; set; }
 
     public string Name { get; set; } = null!;
 
