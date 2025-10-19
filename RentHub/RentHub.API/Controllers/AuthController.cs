@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.Data;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using RentHub.Core.Model;
@@ -7,7 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using LoginRequest = RentHub.API.RequestModels.LoginRequest;
 
-namespace AssetStore.API.Controllers
+namespace RentHub.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
