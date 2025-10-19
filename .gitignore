@@ -6,3 +6,9 @@
 RentHub/RentHub.API/AppSettings/appsettings.Development.json
 RentHub/RentHub.App/AppSettings/appsettings.Development.json
 RentHub/RentHub.Core/AppSettings/appsettings.Development.json
+
+*.csproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
