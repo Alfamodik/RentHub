@@ -6,7 +6,7 @@ namespace RentHub.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ReservationsController : ControllerBase
+    public class FlatsController : ControllerBase
     {
         [HttpGet]
         public IEnumerable<string> Get()
