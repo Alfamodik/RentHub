@@ -48,7 +48,7 @@ internal class Program
 
         builder.Services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new() { Title = "AssetStore API", Version = "v1" });
+            c.SwaggerDoc("v1", new() { Title = "RentHub API", Version = "v1" });
 
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
