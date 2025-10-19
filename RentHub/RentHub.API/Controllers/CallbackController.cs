@@ -25,7 +25,7 @@ namespace RentHub.API.Controllers
                 { "client_id", "hqQSMZCzT_szv7cre5vG" },
                 { "client_secret", "e8oWwQ9S7nsbmuBsr_MuALR8nqcRxtHtyDBrt-YN" },
                 { "code", code },
-                { "redirect_uri", "https://unshareable-flavia-swimmable.ngrok-free.dev/Callback" }
+                { "redirect_uri", "http://94.183.186.221:5000/Callback" }
             };
 
             var response = await _httpClient.PostAsync("token/", new FormUrlEncodedContent(data));
