@@ -28,3 +28,18 @@ F:\Alfamod\Projects\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\refint\RentHub
 F:\Alfamod\Projects\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.pdb
 F:\Alfamod\Projects\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.genruntimeconfig.cache
 F:\Alfamod\Projects\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\ref\RentHub.Core.dll
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\bin\Debug\net8.0\RentHub.Core.deps.json
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\bin\Debug\net8.0\RentHub.Core.runtimeconfig.json
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\bin\Debug\net8.0\RentHub.Core.dll
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\bin\Debug\net8.0\RentHub.Core.pdb
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.csproj.AssemblyReference.cache
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.AssemblyInfoInputs.cache
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.AssemblyInfo.cs
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.csproj.CoreCompileInputs.cache
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.sourcelink.json
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.dll
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\refint\RentHub.Core.dll
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.pdb
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\RentHub.Core.genruntimeconfig.cache
+C:\Users\Артём Баранов\Desktop\рабочий стол\4 курс\Каримова\RentHub\RentHub\RentHub.Core\obj\Debug\net8.0\ref\RentHub.Core.dll

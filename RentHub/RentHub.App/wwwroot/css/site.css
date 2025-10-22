@@ -1,4 +1,4 @@
-html {
+/*html {
   font-size: 14px;
 }
 
@@ -19,4 +19,35 @@ html {
 
 body {
   margin-bottom: 60px;
+}*/
+
+.emailPage {
+    background-image: url(/img/mainBack.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
+#main-content-container {
+    background: linear-gradient( to bottom right, rgba(24, 26, 33, 1) 70%, rgba(25, 43, 32, 0.7) 100%);
+    width: 650px;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 40px;
+    border: 1px solid #01013F;
+}
+
+#main-text{
+    font-size: 40px;
+    color: white;
+    text-align:center;
+}
+
