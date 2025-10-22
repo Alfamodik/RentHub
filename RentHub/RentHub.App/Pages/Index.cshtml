@@ -1,10 +1,30 @@
 ﻿@page
-@model IndexModel
+
 @{
-    ViewData["Title"] = "Home page";
+    Layout = null;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body class ="emailPage">
+    
+    <div id="main-content-container">
+        <p id="main-text">
+            Войти или<br>Зарегестрироваться
+        </p>
+        
+        <input type="email"
+                id="emailInput"
+                placeholder="example@gmail.com"
+                autocomplete="email">
+
+        <button type="button" id="continueBtn">Продолжить</button>
+    </div>        
+    
+</body>
+</html>
