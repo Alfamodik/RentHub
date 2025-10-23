@@ -8,9 +8,9 @@ namespace RentHub.API.Controllers
     public class SutochnoController : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetReservations(string url)
         {
-            return Ok(await SutochnoParser.Get());
+            return Ok(await SutochnoParser.GetReservations(url));
         }
     }
 }
