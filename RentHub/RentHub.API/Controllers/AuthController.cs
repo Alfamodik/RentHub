@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Playwright;
 using RentHub.Core.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,10 +15,23 @@ namespace RentHub.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        [HttpPost("email_exists")]
+        public IActionResult EmailExists([FromForm] string email)
+        {
+            RentHubContext context = new();
+
+            bool emailExists = context.Users
+                .Any(u => u.Email == email);
+
+            return Ok(new { exists = emailExists });
+        }
+
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            User? user = RentHubContext.Instance.Users
+            RentHubContext context = new();
+
+            User? user = context.Users
                 .FirstOrDefault(u => u.Email == request.Email && u.Password == request.Password);
 
             if (user == null)
@@ -30,7 +44,9 @@ namespace RentHub.API.Controllers
         [HttpPost("Register")]
         public IActionResult Register([FromBody] RegisterRequest request)
         {
-            User? user = RentHubContext.Instance.Users.FirstOrDefault(u => u.Email == request.Email);
+            RentHubContext context = new();
+
+            User? user = context.Users.FirstOrDefault(u => u.Email == request.Email);
 
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
                 return BadRequest();
@@ -38,13 +54,13 @@ namespace RentHub.API.Controllers
             if (user != null)
                 return Conflict("Данный email уже зарегестрирован");
 
-            RentHubContext.Instance.Users.Add(new()
+            context.Users.Add(new()
             {
                 Email = request.Email,
                 Password = request.Password
             });
 
-            RentHubContext.Instance.SaveChanges();
+            context.SaveChanges();
 
             string token = GenerateJwtToken(request.Email);
             return Ok(new { token });
