@@ -10,10 +10,7 @@ namespace RentHub.API.Services
         {
             using IPlaywright playwright = await Playwright.CreateAsync();
 
-            await using IBrowser browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-            {
-                Headless = false
-            });
+            await using IBrowser browser = await playwright.Chromium.LaunchAsync();
 
             IBrowserContext context = await browser.NewContextAsync(new BrowserNewContextOptions
             {
