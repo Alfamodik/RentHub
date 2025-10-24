@@ -1,4 +1,7 @@
-﻿namespace RentHub.Core.Model;
+﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http;
+
+namespace RentHub.Core.Model;
 
 public partial class Flat
 {
