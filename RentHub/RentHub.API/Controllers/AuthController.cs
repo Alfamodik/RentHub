@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -17,43 +17,52 @@ namespace RentHub.API.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            User? user = RentHubContext.Instance.Users
-                .FirstOrDefault(u => u.Email == request.Email && u.Password == request.Password);
+            using RentHubContext context = new();
+
+            User? user = context.Users
+                .FirstOrDefault(u => u.Email == request.Email);
 
             if (user == null)
                 return Unauthorized();
 
-            string token = GenerateJwtToken(request.Email);
+            if (!(new PasswordHasher<User>().VerifyHashedPassword(null, user.Password, request.Password) == PasswordVerificationResult.Success))
+                return Unauthorized();
+
+            string token = GenerateJwtToken(user.UserId, user.Email);
             return Ok(new { token });
         }
 
         [HttpPost("Register")]
         public IActionResult Register([FromBody] RegisterRequest request)
         {
-            User? user = RentHubContext.Instance.Users.FirstOrDefault(u => u.Email == request.Email);
-
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
                 return BadRequest();
+
+            using RentHubContext context = new();
+
+            User? user = context.Users.FirstOrDefault(u => u.Email == request.Email);
 
             if (user != null)
                 return Conflict("Данный email уже зарегестрирован");
 
-            RentHubContext.Instance.Users.Add(new()
+            user = new()
             {
                 Email = request.Email,
-                Password = request.Password
-            });
+                Password = new PasswordHasher<User>().HashPassword(null, request.Password)
+            };
 
-            RentHubContext.Instance.SaveChanges();
+            context.Users.Add(user);
+            context.SaveChanges();
 
-            string token = GenerateJwtToken(request.Email);
+            string token = GenerateJwtToken(user.UserId, request.Email);
             return Ok(new { token });
         }
 
-        private static string GenerateJwtToken(string email)
+        private static string GenerateJwtToken(int userId, string email)
         {
             var claims = new[]
             {
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                 new Claim(ClaimTypes.Email, email)
             };
 
@@ -69,8 +78,8 @@ namespace RentHub.API.Controllers
             SigningCredentials signingCredentials = new(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
             return new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(
-                issuer: "",
-                audience: "",
+                issuer: "RentHub",
+                audience: "RentHubUsers",
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(8),
                 signingCredentials: signingCredentials));
