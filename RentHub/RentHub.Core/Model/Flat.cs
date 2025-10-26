@@ -1,11 +1,10 @@
-﻿using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Http;
-
-namespace RentHub.Core.Model;
+﻿namespace RentHub.Core.Model;
 
 public partial class Flat
 {
     public int FlatId { get; set; }
+
+    public int UserId { get; set; }
 
     public string Country { get; set; } = null!;
 
@@ -14,6 +13,8 @@ public partial class Flat
     public string District { get; set; } = null!;
 
     public string HouseNumber { get; set; } = null!;
+
+    public string ApartmentNumber { get; set; } = null!;
 
     public int RoomCount { get; set; }
 
@@ -28,4 +29,6 @@ public partial class Flat
     public byte[]? Photo { get; set; }
 
     public virtual ICollection<Advertisement> Advertisements { get; set; } = new List<Advertisement>();
+
+    public virtual User User { get; set; } = null!;
 }
