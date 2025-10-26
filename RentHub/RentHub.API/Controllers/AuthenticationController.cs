@@ -12,7 +12,7 @@ namespace RentHub.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthenticationController : ControllerBase
     {
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
@@ -32,7 +32,7 @@ namespace RentHub.API.Controllers
             return Ok(new { token });
         }
 
-        [HttpPost("Register")]
+        [HttpPost("register")]
         public IActionResult Register([FromBody] RegisterRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
