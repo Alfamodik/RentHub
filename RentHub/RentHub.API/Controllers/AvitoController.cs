@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace RentHub.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AvitoController : ControllerBase
     {
@@ -37,7 +37,7 @@ namespace RentHub.API.Controllers
             return Ok(accessTokenResponse);
         }
 
-        [HttpGet("get_user_id")]
+        [HttpGet("get-user-id")]
         public async Task<IActionResult> GetUserId(string accessToken)
         {
             HttpClient _httpClient = new()
@@ -57,7 +57,7 @@ namespace RentHub.API.Controllers
             return Ok(avitoUserResponse);
         }
 
-        [HttpGet("get_bookings")]
+        [HttpGet("get-bookings")]
         public async Task<IActionResult> GetBookings([FromQuery] AvitoBookingRequest avitoBookingRequest)
         {
             HttpClient _httpClient = new()

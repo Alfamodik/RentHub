@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using RentHub.API.ModelsDTO;
@@ -8,82 +9,89 @@ using RentHub.Core.Model;
 
 namespace RentHub.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AdvertisementsController : ControllerBase
     {
-        [HttpGet("GetAdvertisements")]
+        [Authorize]
+        [HttpGet("advertisements")]
         public ActionResult<List<Advertisement>> GetAdvertisements()
         {
-            List<Advertisement> AdvertisementsList = RentHubContext.Instance.Advertisements.ToList();
-            if (AdvertisementsList.IsNullOrEmpty())
-            {
-                return NotFound("Список объявлений пуст");
-            }
-            return AdvertisementsList;
+            using RentHubContext context = new();
+                List<Advertisement> AdvertisementsList = context.Advertisements.ToList();
+                if (AdvertisementsList.IsNullOrEmpty())
+                {
+                    return NotFound("Список объявлений пуст");
+                }
+                return AdvertisementsList;
         }
 
-        [HttpGet("GetAdvertisementById{id}")]
+        [Authorize]
+        [HttpGet("advertisement-by-id/{id}")]
         public ActionResult<Advertisement> GetAdvertisement(int id)
         {
-            List<Advertisement> AdvertisementsList = RentHubContext.Instance.Advertisements.ToList();
-            Advertisement? advertisement = AdvertisementsList.FirstOrDefault(r => r.AdvertisementId == id);
+            using RentHubContext context = new();
+                Advertisement? advertisement = context.Advertisements.FirstOrDefault(r => r.AdvertisementId == id);
 
-            if (advertisement == null)
-            {
-                return NotFound($"Объявление с ID {id} не найдено");
-            }
+                if (advertisement == null)
+                {
+                    return NotFound($"Объявление с ID {id} не найдено");
+                }
 
             return Ok(advertisement);
         }
 
-        [HttpPost("AddAdvertisement")]
+        [Authorize]
+        [HttpPost("advertisement")]
         public ActionResult AddAdvertisement(AdvertisementDTO advertisementdto)
         {
-            Advertisement advertisement = new Advertisement
-            {
-                FlatId = advertisementdto.FlatId,
-                PlatformId = advertisementdto.PlatformId,
-                RentType = advertisementdto.RentType,
-                PriceForPeriod = advertisementdto.PriceForPeriod,
-                IncomeForPeriod = advertisementdto.IncomeForPeriod,
-                LinkToAdvertisement = advertisementdto.LinkToAdvertisement
-            };
-            RentHubContext.Instance.Advertisements.Add(advertisement).Context.SaveChanges();
-            return Ok("Объявление успешно добавлено");
+            using RentHubContext context = new();
+                Advertisement advertisement = new Advertisement
+                {
+                    FlatId = advertisementdto.FlatId,
+                    PlatformId = advertisementdto.PlatformId,
+                    RentType = advertisementdto.RentType,
+                    PriceForPeriod = advertisementdto.PriceForPeriod,
+                    IncomeForPeriod = advertisementdto.IncomeForPeriod,
+                    LinkToAdvertisement = advertisementdto.LinkToAdvertisement
+                };
+                context.Advertisements.Add(advertisement).Context.SaveChanges();
+                return Ok("Объявление успешно добавлено");
         }
 
-        [HttpPut("ChangeAdvertisementData{id}")]
+        [Authorize]
+        [HttpPut("advertisement-data/{id}")]
         public ActionResult ChangeAdvertisementData(int id, AdvertisementDTO advertisementdto)
         {
-            List<Advertisement> AdvertisementsList = RentHubContext.Instance.Advertisements.ToList();
-            Advertisement? advertisement = AdvertisementsList.FirstOrDefault(r => r.AdvertisementId == id);
-            if (advertisement == null)
-            {
-                return NotFound($"Объявление с ID {id} не найдено");
-            }
-            advertisement.FlatId = advertisementdto.FlatId;
-            advertisement.PlatformId = advertisementdto.PlatformId;
-            advertisement.RentType = advertisementdto.RentType;
-            advertisement.PriceForPeriod = advertisementdto.PriceForPeriod;
-            advertisement.IncomeForPeriod = advertisementdto.IncomeForPeriod;
-            advertisement.LinkToAdvertisement = advertisementdto.LinkToAdvertisement;
-            RentHubContext.Instance.SaveChanges();
+            using RentHubContext context = new();
+                Advertisement? advertisement = context.Advertisements.FirstOrDefault(r => r.AdvertisementId == id);
+                if (advertisement == null)
+                {
+                    return NotFound($"Объявление с ID {id} не найдено");
+                }
+                advertisement.FlatId = advertisementdto.FlatId;
+                advertisement.PlatformId = advertisementdto.PlatformId;
+                advertisement.RentType = advertisementdto.RentType;
+                advertisement.PriceForPeriod = advertisementdto.PriceForPeriod;
+                advertisement.IncomeForPeriod = advertisementdto.IncomeForPeriod;
+                advertisement.LinkToAdvertisement = advertisementdto.LinkToAdvertisement;
+                context.SaveChanges();
 
-            return Ok("Данные объявления успешно изменены");
+                return Ok("Данные объявления успешно изменены");
         }
 
-        [HttpDelete("DeleteAdvertisement{id}")]
+        [Authorize]
+        [HttpDelete("advertisement/{id}")]
         public ActionResult DeleteAdvertisement(int id)
         {
-            List<Advertisement> AdvertisementsList = RentHubContext.Instance.Advertisements.ToList();
-            Advertisement? advertisement = AdvertisementsList.FirstOrDefault(r => r.AdvertisementId == id);
-            if (advertisement == null)
-            {
-                return NotFound($"Объявление с ID {id} не найдено");
-            }
-            RentHubContext.Instance.Advertisements.Remove(advertisement).Context.SaveChanges();
-            return Ok("Объявление успешно удалено");
+            using RentHubContext context = new();
+                Advertisement? advertisement = context.Advertisements.FirstOrDefault(r => r.AdvertisementId == id);
+                if (advertisement == null)
+                {
+                    return NotFound($"Объявление с ID {id} не найдено");
+                }
+                context.Advertisements.Remove(advertisement).Context.SaveChanges();
+                return Ok("Объявление успешно удалено");
         }
     }
 }

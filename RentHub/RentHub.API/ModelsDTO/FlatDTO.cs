@@ -7,6 +7,8 @@ namespace RentHub.API.ModelsDTO
     {
         public int FlatId { get; set; }
 
+        public int UserId { get; set; }
+
         public string Country { get; set; } = null!;
 
         public string City { get; set; } = null!;
@@ -14,6 +16,8 @@ namespace RentHub.API.ModelsDTO
         public string District { get; set; } = null!;
 
         public string HouseNumber { get; set; } = null!;
+
+        public string ApartmentNumber { get; set; } = null!;
 
         public int RoomCount { get; set; }
 

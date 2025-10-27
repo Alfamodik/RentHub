@@ -25,10 +25,14 @@ namespace RentHub.API.Controllers
             if (user == null)
                 return Unauthorized();
 
+<<<<<<< Updated upstream:RentHub/RentHub.API/Controllers/AuthenticationController.cs
             if (!(new PasswordHasher<User>().VerifyHashedPassword(null, user.Password, request.Password) == PasswordVerificationResult.Success))
                 return Unauthorized();
 
             string token = GenerateJwtToken(user.UserId, user.Email);
+=======
+            string token = GenerateJwtToken(user.Email, user.UserId);
+>>>>>>> Stashed changes:RentHub/RentHub.API/Controllers/AuthController.cs
             return Ok(new { token });
         }
 
@@ -54,6 +58,7 @@ namespace RentHub.API.Controllers
             context.Users.Add(user);
             context.SaveChanges();
 
+<<<<<<< Updated upstream:RentHub/RentHub.API/Controllers/AuthenticationController.cs
             string token = GenerateJwtToken(user.UserId, request.Email);
             return Ok(new { token });
         }
@@ -64,6 +69,18 @@ namespace RentHub.API.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                 new Claim(ClaimTypes.Email, email)
+=======
+            string token = GenerateJwtToken(request.Email, user.UserId);
+            return Ok(new { token });
+        }
+
+        private static string GenerateJwtToken(string email, int userId)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Email, email),
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString())
+>>>>>>> Stashed changes:RentHub/RentHub.API/Controllers/AuthController.cs
             };
 
             var filePath = Path.GetFullPath(

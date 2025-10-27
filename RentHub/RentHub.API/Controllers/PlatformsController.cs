@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using RentHub.API.ModelsDTO;
 using RentHub.Core.Model;
@@ -7,73 +8,82 @@ using RentHub.Core.Model;
 
 namespace RentHub.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class PlatformsController : ControllerBase
     {
-        [HttpGet("GetPlatforms")]
+        [Authorize]
+        [HttpGet("platforms")]
         public ActionResult<List<PlacementPlatform>> GetPlatforms()
         {
-            List<PlacementPlatform> platformsList = RentHubContext.Instance.PlacementPlatforms.ToList();
-            if (platformsList.IsNullOrEmpty())
-            {
-                return NotFound("Список платформ пуст");
-            }
-            return platformsList;
+            using RentHubContext context = new();
+                List<PlacementPlatform> platformsList = context.PlacementPlatforms.ToList();
+                if (platformsList.IsNullOrEmpty())
+                {
+                    return NotFound("Список платформ пуст");
+                }
+                return platformsList;
         }
 
-        [HttpGet("GetPlatformById{id}")]
+        [Authorize]
+        [HttpGet("platform-by-id/{id}")]
         public ActionResult<PlacementPlatform> GetPlatform(int id)
         {
-            List<PlacementPlatform> platformsList = RentHubContext.Instance.PlacementPlatforms.ToList();
-            PlacementPlatform? platform = platformsList.FirstOrDefault(p => p.PlatformId == id);
+            using RentHubContext context = new();
+                PlacementPlatform? platform = context.PlacementPlatforms.FirstOrDefault(p => p.PlatformId == id);
 
-            if (platform == null)
-            {
-                return NotFound($"Платформа с ID {id} не найдена");
-            }
+                if (platform == null)
+                {
+                    return NotFound($"Платформа с ID {id} не найдена");
+                }
 
-            return Ok(platform);
+                return Ok(platform);
         }
 
-        [HttpPost("AddPlatform")]
+        [Authorize]
+        [HttpPost("platform")]
         public ActionResult AddPlatform(PlatformDTO platformDTO)
         {
-            PlacementPlatform placement = new PlacementPlatform
-            {
-                PlatformName = platformDTO.PlatformName
-            };
-            RentHubContext.Instance.PlacementPlatforms.Add(placement).Context.SaveChanges();
-            return Ok("Платформа успешно добавлена");
+            using RentHubContext context = new();
+                PlacementPlatform placement = new PlacementPlatform
+                {
+                    PlatformName = platformDTO.PlatformName
+                };
+                context.PlacementPlatforms.Add(placement).Context.SaveChanges();
+                return Ok("Платформа успешно добавлена");
         }
 
-        [HttpPut("ChangePlatformData{id}")]
+        [Authorize]
+        [HttpPut("platform-data/{id}")]
         public ActionResult ChangePlatformData(int id, PlatformDTO platformDTO)
         {
-            List<PlacementPlatform> platformsList = RentHubContext.Instance.PlacementPlatforms.ToList();
-            PlacementPlatform? platform = platformsList.FirstOrDefault(p => p.PlatformId == id);
-            if (platform == null)
-            {
-                return NotFound($"Платформа с ID {id} не найдена");
-            }
-            platform.PlatformName = platformDTO.PlatformName;
-            RentHubContext.Instance.SaveChanges();
+            using RentHubContext context = new();
+                PlacementPlatform? platform = context.PlacementPlatforms.FirstOrDefault(p => p.PlatformId == id);
 
-            return Ok("Данные платформы успешно изменены");
+                if (platform == null)
+                {
+                    return NotFound($"Платформа с ID {id} не найдена");
+                }
+                platform.PlatformName = platformDTO.PlatformName;
+                context.SaveChanges();
+
+                return Ok("Данные платформы успешно изменены");
         }
 
-        [HttpDelete("DeletePlatform{id}")]
+        [Authorize]
+        [HttpDelete("platform/{id}")]
         public ActionResult DeletePlatform(int id)
         {
-            List<PlacementPlatform> platformsList = RentHubContext.Instance.PlacementPlatforms.ToList();
-            PlacementPlatform? platform = platformsList.FirstOrDefault(p => p.PlatformId == id);
-            if (platform == null)
-            {
-                return NotFound($"Платформа с ID {id} не найдена");
-            }
-            RentHubContext.Instance.PlacementPlatforms.Remove(platform);
-            RentHubContext.Instance.SaveChanges();
-            return Ok("Платформа успешно удалена");
+            using RentHubContext context = new();
+                PlacementPlatform? platform = context.PlacementPlatforms.FirstOrDefault(p => p.PlatformId == id);
+
+                if (platform == null)
+                {
+                    return NotFound($"Платформа с ID {id} не найдена");
+                }
+                context.PlacementPlatforms.Remove(platform);
+                context.SaveChanges();
+                return Ok("Платформа успешно удалена");
         }
     }
 }

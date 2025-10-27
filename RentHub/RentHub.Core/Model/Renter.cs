@@ -1,4 +1,7 @@
-﻿namespace RentHub.Core.Model;
+﻿using System;
+using System.Collections.Generic;
+
+namespace RentHub.Core.Model;
 
 public partial class Renter
 {
@@ -10,6 +13,9 @@ public partial class Renter
 
     public string? Patronymic { get; set; }
 
+    /// <summary>
+    /// +7 900 304 93 12
+    /// </summary>
     public string PhoneNumber { get; set; } = null!;
 
     public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
