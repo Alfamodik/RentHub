@@ -1,11 +1,7 @@
-<<<<<<< Updated upstream
 ﻿namespace RentHub.Core.Model;
-=======
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RentHub.Core.Model;
->>>>>>> Stashed changes
 
 public partial class Flat
 {
