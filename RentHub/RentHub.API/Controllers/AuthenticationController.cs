@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Playwright;
 using RentHub.Core.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,6 +15,17 @@ namespace RentHub.API.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
+        [HttpPost("email_exists")]
+        public IActionResult EmailExists([FromForm] string email)
+        {
+            RentHubContext context = new();
+
+            bool emailExists = context.Users
+                .Any(u => u.Email == email);
+
+            return Ok(new { exists = emailExists });
+        }
+
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
