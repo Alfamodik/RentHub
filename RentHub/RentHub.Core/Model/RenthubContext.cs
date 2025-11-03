@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
 namespace RentHub.Core.Model;
 
@@ -90,7 +93,12 @@ public partial class RentHubContext : DbContext
 
             entity.ToTable("flats");
 
+            entity.HasIndex(e => e.UserId, "user_id_fk_idx");
+
             entity.Property(e => e.FlatId).HasColumnName("flat_id");
+            entity.Property(e => e.ApartmentNumber)
+                .HasMaxLength(5)
+                .HasColumnName("apartment_number");
             entity.Property(e => e.City)
                 .HasMaxLength(100)
                 .HasColumnName("city");
@@ -108,13 +116,17 @@ public partial class RentHubContext : DbContext
             entity.Property(e => e.HouseNumber)
                 .HasMaxLength(10)
                 .HasColumnName("house_number");
-            entity.Property(e => e.Photo)
-                .HasColumnType("blob")
-                .HasColumnName("photo");
+            entity.Property(e => e.Photo).HasColumnName("photo");
             entity.Property(e => e.RoomCount).HasColumnName("room_count");
             entity.Property(e => e.Size)
                 .HasPrecision(6, 2)
                 .HasColumnName("size");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Flats)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("user_id_fk");
         });
 
         modelBuilder.Entity<PlacementPlatform>(entity =>
