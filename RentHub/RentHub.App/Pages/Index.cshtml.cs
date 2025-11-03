@@ -5,15 +5,17 @@ namespace RentHub.App.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly ILogger<IndexModel> _logger;
+    [BindProperty]
+    public string Email { get; set; } = string.Empty;
 
-    public IndexModel(ILogger<IndexModel> logger)
+    public IActionResult OnPost()
     {
-        _logger = logger;
-    }
-
-    public void OnGet()
-    {
-
+        if (!ModelState.IsValid)
+        {
+            return Page(); // Показать ошибки
+        }
+        bool isExist = false;
+        TempData["Email"] = Email; 
+        return RedirectToPage("/Pages/RegisLogIn");
     }
 }

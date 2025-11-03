@@ -1,0 +1,48 @@
+﻿@page
+@model RentHub.App.Pages.MainFlatsModel
+@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Главная страница</title>
+    <link href="~/css/MainPage.css" rel="stylesheet" />
+</head>
+<body >
+
+    <div id="side-bar">
+        <p id="main-text">Недвижимость</p>
+
+        <form class="menu-item" method="get">
+            <img src="~/img/side-bar/House 1.svg" alt="404" />
+            <button type="submit" name="FlatsBtn">Квартиры</button>
+        </form>
+        
+        <form class="menu-item" method="get">
+            <img src="~/img/side-bar/Calendar 1.svg" alt="404" />
+            <button type="submit" name="ReservationsBtn">Бронирования</button>
+        </form>
+
+        <form class="menu-item" method="get">
+            <img src="~/img/side-bar/users 1.svg" alt="404" />
+            <button type="submit" name="CustomersBtn">Жильцы</button>
+        </form> 
+
+        <form class="menu-item" method="get">
+            <img src="~/img/side-bar/chart-no-axes-column 1.svg" alt="404" />
+            <button type="submit" name="recordsBtn">Отчетность</button>
+        </form>
+    </div>
+    
+    <div id="main-content-main-page">
+        <div class="top-bar">
+            
+        </div>
+    </div>
+     
+</body>
+</html>
