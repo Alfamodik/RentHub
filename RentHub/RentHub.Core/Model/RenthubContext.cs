@@ -116,7 +116,9 @@ public partial class RentHubContext : DbContext
             entity.Property(e => e.HouseNumber)
                 .HasMaxLength(10)
                 .HasColumnName("house_number");
-            entity.Property(e => e.Photo).HasColumnName("photo");
+            entity.Property(e => e.Photo)
+                .HasColumnType("blob")
+                .HasColumnName("photo");
             entity.Property(e => e.RoomCount).HasColumnName("room_count");
             entity.Property(e => e.Size)
                 .HasPrecision(6, 2)

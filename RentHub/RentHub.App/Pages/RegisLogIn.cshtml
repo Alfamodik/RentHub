@@ -1,0 +1,49 @@
+﻿@page
+@model RentHub.App.Pages.RegisLogInModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Войти или зарегистрироваться</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body class="emailPage">
+
+    <div id="main-content-container">
+        <p id="main-text">Войти или<br>зарегистрироваться</p>
+
+        <form method="post" id="formPost">
+            <input type="email"
+                   id="emailInput"
+                   name="Email"
+                   value="@Model.Email"
+                   placeholder="example@gmail.com"
+                   autocomplete="email" required />
+
+            <input type="password"
+                   id="emailInput"
+                   name="Password"
+                   placeholder="example1Yy!"
+                   autocomplete="off" required />
+
+            <input type="hidden" name="emailExists" value="@(Model.emailExists ? "true" : "false")" />
+
+            <button type="submit" id="continueBtn">
+                <span>@(Model.emailExists ? "Войти" : "Зарегистрироваться")</span>
+            </button>
+        </form>
+    </div>
+
+    
+    @if (TempData["Message"] != null)
+    {
+        <script>
+            alert('@TempData["Message"]');
+        </script>
+    }
+
+</body>
+</html>

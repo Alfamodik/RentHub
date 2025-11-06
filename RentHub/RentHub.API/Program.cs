@@ -57,7 +57,7 @@ internal class Program
                 Scheme = "Bearer",
                 BearerFormat = "JWT",
                 In = ParameterLocation.Header,
-                Description = "Введите JWT токен"
+                Description = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ JWT пїЅпїЅпїЅпїЅпїЅ"
             });
 
             c.AddSecurityRequirement(securityRequirement: new OpenApiSecurityRequirement
