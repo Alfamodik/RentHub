@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Text;
 using System.Text.Json;
 
 namespace RentHub.App.Pages
 {
-    
+
     public class EmailExistsResponse
     {
         public bool exists { get; set; }
@@ -16,23 +15,23 @@ namespace RentHub.App.Pages
         {
             BaseAddress = new Uri("http://94.183.186.221:5000/")
         };
-    public void OnGet()
+        public void OnGet()
         {
         }
-        
+
         [BindProperty]
         public string Email { get; set; } = string.Empty;
 
         public async Task<IActionResult> OnPost()
         {
-            
+
 
             try
             {
                 var loginData = new
                 {
                     email = Email,
-                   
+
                 };
 
                 // Сериализуем в JSON
@@ -41,9 +40,9 @@ namespace RentHub.App.Pages
 
 
                 var response = await client.PostAsync($"Auth/email_exists", formData);
-                
+
                 response.EnsureSuccessStatusCode();
-                
+
                 var json2 = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<EmailExistsResponse>(json2);
 
@@ -60,9 +59,9 @@ namespace RentHub.App.Pages
                 return Page();
             }
 
-            
-            
+
+
         }
-        
+
     }
 }

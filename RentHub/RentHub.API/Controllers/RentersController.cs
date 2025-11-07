@@ -1,5 +1,4 @@
-﻿using System.Xml.Linq;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using RentHub.API.ModelsDTO;
@@ -18,12 +17,12 @@ namespace RentHub.API.Controllers
         public ActionResult<List<Renter>> GetRenters()
         {
             using RentHubContext context = new();
-                List<Renter> RentersList = context.Renters.ToList();
-                if (RentersList.IsNullOrEmpty())
-                {
-                    return NotFound("Список клиентов пуст");
-                }
-                return RentersList;
+            List<Renter> RentersList = context.Renters.ToList();
+            if (RentersList.IsNullOrEmpty())
+            {
+                return NotFound("Список клиентов пуст");
+            }
+            return RentersList;
         }
 
         [Authorize]
@@ -31,14 +30,14 @@ namespace RentHub.API.Controllers
         public ActionResult<Renter> GetRenter(int id)
         {
             using RentHubContext context = new();
-                Renter? renter = context.Renters.FirstOrDefault(r => r.RenterId == id);
+            Renter? renter = context.Renters.FirstOrDefault(r => r.RenterId == id);
 
-                if (renter == null)
-                {
-                    return NotFound($"Клиент с ID {id} не найден");
-                }
+            if (renter == null)
+            {
+                return NotFound($"Клиент с ID {id} не найден");
+            }
 
-                return Ok(renter);
+            return Ok(renter);
         }
 
         [Authorize]
@@ -46,15 +45,15 @@ namespace RentHub.API.Controllers
         public ActionResult AddRenter(RenterDTO renterdto)
         {
             using RentHubContext context = new();
-                Renter renter = new Renter
-                {
-                    Lastname = renterdto.Lastname,
-                    Name = renterdto.Name,
-                    Patronymic = renterdto.Patronymic,
-                    PhoneNumber = renterdto.PhoneNumber
-                };
-                context.Renters.Add(renter).Context.SaveChanges();
-                return Ok($"Клиент {renter.Name} {renter.Lastname} успешно добавлен");
+            Renter renter = new Renter
+            {
+                Lastname = renterdto.Lastname,
+                Name = renterdto.Name,
+                Patronymic = renterdto.Patronymic,
+                PhoneNumber = renterdto.PhoneNumber
+            };
+            context.Renters.Add(renter).Context.SaveChanges();
+            return Ok($"Клиент {renter.Name} {renter.Lastname} успешно добавлен");
         }
 
         [Authorize]
@@ -62,18 +61,18 @@ namespace RentHub.API.Controllers
         public ActionResult ChangeRenterData(int id, RenterDTO renterDTO)
         {
             using RentHubContext context = new();
-                Renter? renter = context.Renters.FirstOrDefault(r => r.RenterId == id);
-                if (renter == null)
-                {
-                    return NotFound($"Клиент с ID {id} не найден");
-                }
-                renter.Lastname = renterDTO.Lastname;
-                renter.Name = renterDTO.Name;
-                renter.Patronymic = renterDTO.Patronymic;
-                renter.PhoneNumber = renterDTO.PhoneNumber;
-                context.SaveChanges();
+            Renter? renter = context.Renters.FirstOrDefault(r => r.RenterId == id);
+            if (renter == null)
+            {
+                return NotFound($"Клиент с ID {id} не найден");
+            }
+            renter.Lastname = renterDTO.Lastname;
+            renter.Name = renterDTO.Name;
+            renter.Patronymic = renterDTO.Patronymic;
+            renter.PhoneNumber = renterDTO.PhoneNumber;
+            context.SaveChanges();
 
-                return Ok("Данные клиента успешно изменены");
+            return Ok("Данные клиента успешно изменены");
         }
 
         [Authorize]
@@ -81,14 +80,14 @@ namespace RentHub.API.Controllers
         public ActionResult DeleteRenter(int id)
         {
             using RentHubContext context = new();
-                Renter? renter = context.Renters.FirstOrDefault(r => r.RenterId == id);
-                if (renter == null)
-                {
-                    return NotFound($"Клиент с ID {id} не найден");
-                }
-                context.Renters.Remove(renter);
-                context.SaveChanges();
-                return Ok("Клиент успешно удален");
+            Renter? renter = context.Renters.FirstOrDefault(r => r.RenterId == id);
+            if (renter == null)
+            {
+                return NotFound($"Клиент с ID {id} не найден");
+            }
+            context.Renters.Remove(renter);
+            context.SaveChanges();
+            return Ok("Клиент успешно удален");
         }
     }
 }

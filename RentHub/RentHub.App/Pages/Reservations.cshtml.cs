@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using RentHub.App.ViewModels;
@@ -50,8 +49,8 @@ namespace RentHub.App.Pages
                     foreach (Reservation reservation in advertisement.Reservations)
                     {
                         ReservationViewModel? reservationViewModel = CreateReservationDisplay(reservation);
-                        
-                        if (reservationViewModel != null) 
+
+                        if (reservationViewModel != null)
                             reservations.Add(reservationViewModel);
                     }
                 }
@@ -77,7 +76,7 @@ namespace RentHub.App.Pages
             int clippedEnd = Math.Min(DaysCount - 1, endOffset);
             int length = clippedEnd - clippedStart + 1;
 
-            if (length <= 0) 
+            if (length <= 0)
                 return null;
 
             string colorHexCode;

@@ -72,7 +72,7 @@ namespace RentHub.API.Services
                     await nextButton.ClickAsync();
             }
             while (!nextButtonEmpty);
-            
+
             return CreateReservations(dateStates);
         }
 
