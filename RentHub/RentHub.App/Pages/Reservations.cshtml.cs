@@ -95,7 +95,7 @@ namespace RentHub.App.Pages
             {
                 DateOfStartReservation = reservation.DateOfStartReservation,
                 DateOfEndReservation = reservation.DateOfEndReservation,
-                RenterName = $"{reservation.Renter.Name} {reservation.Renter.Lastname}",
+                RenterName = $"{reservation.Renter.Name} {reservation.Renter.Patronymic}",
                 PhoneNumber = reservation.Renter.PhoneNumber,
                 ColorHexCode = colorHexCode
             };

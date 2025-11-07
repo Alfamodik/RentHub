@@ -48,65 +48,77 @@
         <div class="calendar-container">
             <div class="calendar"
                  style="
-                grid-template-columns: repeat(@(Model.DaysCount + 1), 75px);
-                grid-template-rows: 30px repeat(@(Model.FlatBookingsViewModels.Count), 75px;
-                height: @(Model.FlatBookingsViewModels.Count * 75 + 30 + 30)px;">
+                    grid-template: repeat(1, 75px)/repeat(1,2fr);
+                    height: @(Model.FlatBookingsViewModels.Count * 75 + 30 + 30)px;">
                 @{
-                    <div class="grid-row1">
-                        <span>Квартиры</span>
+                    <div class="grid-row1" style="grid-template-columns: repeat(@(Model.DaysCount + 1), 75px);">
+                        <span style="display: flex; justify-content: stretch;"></span>
                         @{
                             foreach (var item in Model.Days)
                             {
-                                <p>@item.ToString("dd.MM")</p>
+                                <span style="display: flex; justify-content: center;">@item.ToString("dd.MM")</span>
                             }
                         }
                     </div>
-                    <div class="grid-column1">
+
+                    <div class="grid-column1" style="grid-template-rows: repeat(@(Model.FlatBookingsViewModels.Count), 75px);">
                         @{
                             for (int i = 0; i < Model.FlatBookingsViewModels.Count; i++)
                             {
                                 FlatBookingsViewModel flat = Model.FlatBookingsViewModels[i];
-                                <p>@flat.Title</p>
+                                <img src="~/img/AnyFlat.svg" style="height: 75px; width: 75px; z-index: 10;" />
                             }
                         }
                     </div>
-                    for (int i = 0; i < Model.FlatBookingsViewModels.Count; i++)
-                    {
-                        FlatBookingsViewModel flat = Model.FlatBookingsViewModels[i];
-
-                        for (int j = 0; j < Model.Days.Count;)
-                        {
-                            ReservationViewModel? reservation = flat.Reservations.FirstOrDefault(reservation => reservation.DateOfStartReservation == Model.Days[j]);
-
-                            if (reservation != null)
+                    <div class="calendar-content" style="
+                            grid-template-columns: repeat(@(Model.DaysCount), 75px);
+                            grid-template-rows: 30px repeat(@(Model.FlatBookingsViewModels.Count), 75px;
+                            height: @(Model.FlatBookingsViewModels.Count * 750)px;">
+                        @{
+                            for (int i = 0; i < Model.FlatBookingsViewModels.Count; i++)
                             {
-                                DateTime startDate = reservation.DateOfStartReservation.ToDateTime(TimeOnly.MinValue);
-                                DateTime endDate = reservation.DateOfEndReservation.ToDateTime(TimeOnly.MinValue);
-                                int startOffset = (startDate.Date - Model.CalendarStart.ToDateTime(TimeOnly.MinValue).Date).Days;
-                                int endOffset = (endDate.Date - Model.CalendarStart.ToDateTime(TimeOnly.MinValue).Date).Days;
+                                FlatBookingsViewModel flat = Model.FlatBookingsViewModels[i];
 
-                                int clippedStart = Math.Max(0, startOffset);
-                                int clippedEnd = Math.Min(Model.DaysCount - 1, endOffset);
-                                int length = clippedEnd - clippedStart + 1;
+                                for (int j = 0; j < Model.Days.Count;)
+                                {
+                                    ReservationViewModel? reservation = flat.Reservations.FirstOrDefault(reservation => reservation.DateOfStartReservation == Model.Days[j]);
 
-                                <div class="calendar-flat-reservation"
-                                     style="
+                                    if (reservation != null)
+                                    {
+                                        DateTime startDate = reservation.DateOfStartReservation.ToDateTime(TimeOnly.MinValue);
+                                        DateTime endDate = reservation.DateOfEndReservation.ToDateTime(TimeOnly.MinValue);
+                                        int startOffset = (startDate.Date - Model.CalendarStart.ToDateTime(TimeOnly.MinValue).Date).Days;
+                                        int endOffset = (endDate.Date - Model.CalendarStart.ToDateTime(TimeOnly.MinValue).Date).Days;
+
+                                        int clippedStart = Math.Max(0, startOffset);
+                                        int clippedEnd = Math.Min(Model.DaysCount - 1, endOffset);
+                                        int length = clippedEnd - clippedStart + 1;
+
+                                        <div class="calendar-flat-reservation"
+                                             style="
                                                 grid-column: span @length;
-                                                background-color: @reservation.ColorHexCode;">
-                                </div>
+                                                background-color: @reservation.ColorHexCode;
+                                                display: flex;
+                                                align-content: center;
+                                                justify-content: center;
+                                                flex-direction: column">
+                                             <p style="color: #fffe">@reservation.RenterName</p>
+                                            <p style="color: #fffe">@reservation.PhoneNumber</p>
+                                        </div>
 
-                                j += length;
-                            }
-                            else
-                            {
-                                <div class="calendar-flat-item">
-                                </div>
+                                        j += length;
+                                    }
+                                    else
+                                    {
+                                        <div class="calendar-flat-item">
+                                        </div>
 
-                                j++;
+                                        j++;
+                                    }
+                                }
                             }
                         }
-                    }
-                }
+                    </div>
                 }
             </div>
         </div>
