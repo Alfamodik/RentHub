@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RentHub.API.RequestModels.Avito;
-using System.Net.Http;
 
 namespace RentHub.API.Controllers
 {

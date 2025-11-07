@@ -1,7 +1,4 @@
-﻿using RentHub.Core.Model;
-using System.Text.Json.Serialization;
-
-namespace RentHub.API.ModelsDTO
+﻿namespace RentHub.API.ModelsDTO
 {
     public class FlatDTO
     {

@@ -15,7 +15,7 @@
     <div id="side-bar">
         <p id="main-text">Недвижимость</p>
 
-        <form class="menu-item" method="get">
+        <form class="menu-item" method="get" action="/MainFlats">
             <img src="~/img/side-bar/House 1.svg" alt="404" />
             <button type="submit" name="FlatsBtn">Квартиры</button>
         </form>
@@ -25,7 +25,7 @@
             <button type="submit">Бронирования</button>
         </form>
 
-        <form class="menu-item" method="get">
+        <form class="menu-item" method="get" action="/RentersList">
             <img src="~/img/side-bar/users 1.svg" alt="404" />
             <button type="submit" name="CustomersBtn">Жильцы</button>
         </form>
@@ -43,15 +43,45 @@
         </div>
         <div class="search-container">
             <div class="search-bar-container">
-                <input type="text"/>
+                <input type="text" placeholder="Поиск по адресу..."/>
             </div>
             <div class="filters-container">
                 <select>
-                    <option value="value">text</option>
+                    <option value="" disabled selected hidden>Город</option>
                 </select>
-                <select>
-                    <option value="value">text</option>
+                <select placeholder>
+                    <option value="" disabled selected hidden>Кол-во комнат</option>
                 </select>
+            </div>
+        </div>
+        <div class="flats-card-container">
+            <div class="flat-card">
+                <img src="~/img/flat1.png" alt="Фотка квартиры" />
+                <div class="flat-info-container">
+                    <p> <span>Адрес:</span> ул.Ленина 56 1к.</p>
+                    <p> <span>Арендная плата:</span> 3500 руб/сутки</p>
+                </div>
+            </div>
+            <div class="flat-card">
+                <img src="~/img/flat1.png" alt="Фотка квартиры" />
+                <div class="flat-info-container">
+                    <p> <span>Адрес:</span> ул.Ленина 56 1к.</p>
+                    <p> <span>Арендная плата:</span> 3500 руб/сутки</p>
+                </div>
+            </div>
+            <div class="flat-card">
+                <img src="~/img/flat1.png" alt="Фотка квартиры" />
+                <div class="flat-info-container">
+                    <p> <span>Адрес:</span> ул.Ленина 56 1к.</p>
+                    <p> <span>Арендная плата:</span> 3500 руб/сутки</p>
+                </div>
+            </div>
+            <div class="flat-card">
+                <img src="~/img/flat1.png" alt="Фотка квартиры" />
+                <div class="flat-info-container">
+                    <p> <span>Адрес:</span> ул.Ленина 56 1к.</p>
+                    <p> <span>Арендная плата:</span> 3500 руб/сутки</p>
+                </div>
             </div>
         </div>
     </div>

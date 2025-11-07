@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35818.85
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentHub.Core", "RentHub.Core\RentHub.Core.csproj", "{A166686E-222A-4859-9E26-9B01E5BBC376}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentHub.Core", "RentHub.Core\RentHub.Core.csproj", "{A166686E-222A-4859-9E26-9B01E5BBC376}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentHub.API", "RentHub.API\RentHub.API.csproj", "{9F9378DF-A52A-4D49-908C-51B4FAAE150B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentHub.API", "RentHub.API\RentHub.API.csproj", "{9F9378DF-A52A-4D49-908C-51B4FAAE150B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentHub.App", "RentHub.App\RentHub.App.csproj", "{78E66BDE-0006-4662-8C8C-18FE2DDF2BDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentHub.App", "RentHub.App\RentHub.App.csproj", "{78E66BDE-0006-4662-8C8C-18FE2DDF2BDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
