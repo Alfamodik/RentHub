@@ -1,0 +1,115 @@
+﻿@page
+@using RentHub.App.ViewModels
+@using RentHub.Core.Model
+@model RentHub.App.Pages.ReservationsModel
+@{
+    Layout = null;
+    var cols = "150px " + string.Join(" ", Enumerable.Repeat("60px", Model.DaysCount));
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Главная страница</title>
+    <link href="~/css/MainPage.css" rel="stylesheet" />
+    <link href="~/css/Reservations.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div id="side-bar">
+        <p id="main-text">Недвижимость</p>
+
+        <form class="menu-item" method="get">
+            <img src="~/img/side-bar/House 1.svg" alt="404" />
+            <button type="submit" name="FlatsBtn">Квартиры</button>
+        </form>
+
+        <form class="menu-item" method="get" action="/Reservations">
+            <img src="~/img/side-bar/Calendar 1.svg" alt="404" />
+            <button type="submit" name="ReservationsBtn">Бронирования</button>
+        </form>
+
+        <form class="menu-item" method="get">
+            <img src="~/img/side-bar/users 1.svg" alt="404" />
+            <button type="submit" name="CustomersBtn">Жильцы</button>
+        </form>
+
+        <form class="menu-item" method="get">
+            <img src="~/img/side-bar/chart-no-axes-column 1.svg" alt="404" />
+            <button type="submit" name="recordsBtn">Отчетность</button>
+        </form>
+    </div>
+
+    <div id="main-content-main-page">
+        <div class="top-bar">
+        </div>
+
+        <div class="calendar-container">
+            <div class="calendar"
+                 style="
+                grid-template-columns: repeat(@(Model.DaysCount + 1), 75px);
+                grid-template-rows: 30px repeat(@(Model.FlatBookingsViewModels.Count), 75px;
+                height: @(Model.FlatBookingsViewModels.Count * 75 + 30 + 30)px;">
+                @{
+                    <div class="grid-row1">
+                        <span>Квартиры</span>
+                        @{
+                            foreach (var item in Model.Days)
+                            {
+                                <p>@item.ToString("dd.MM")</p>
+                            }
+                        }
+                    </div>
+                    <div class="grid-column1">
+                        @{
+                            for (int i = 0; i < Model.FlatBookingsViewModels.Count; i++)
+                            {
+                                FlatBookingsViewModel flat = Model.FlatBookingsViewModels[i];
+                                <p>@flat.Title</p>
+                            }
+                        }
+                    </div>
+                    for (int i = 0; i < Model.FlatBookingsViewModels.Count; i++)
+                    {
+                        FlatBookingsViewModel flat = Model.FlatBookingsViewModels[i];
+
+                        for (int j = 0; j < Model.Days.Count;)
+                        {
+                            ReservationViewModel? reservation = flat.Reservations.FirstOrDefault(reservation => reservation.DateOfStartReservation == Model.Days[j]);
+
+                            if (reservation != null)
+                            {
+                                DateTime startDate = reservation.DateOfStartReservation.ToDateTime(TimeOnly.MinValue);
+                                DateTime endDate = reservation.DateOfEndReservation.ToDateTime(TimeOnly.MinValue);
+                                int startOffset = (startDate.Date - Model.CalendarStart.ToDateTime(TimeOnly.MinValue).Date).Days;
+                                int endOffset = (endDate.Date - Model.CalendarStart.ToDateTime(TimeOnly.MinValue).Date).Days;
+
+                                int clippedStart = Math.Max(0, startOffset);
+                                int clippedEnd = Math.Min(Model.DaysCount - 1, endOffset);
+                                int length = clippedEnd - clippedStart + 1;
+
+                                <div class="calendar-flat-reservation"
+                                     style="
+                                                grid-column: span @length;
+                                                background-color: @reservation.ColorHexCode;">
+                                </div>
+
+                                j += length;
+                            }
+                            else
+                            {
+                                <div class="calendar-flat-item">
+                                </div>
+
+                                j++;
+                            }
+                        }
+                    }
+                }
+                }
+            </div>
+        </div>
+    </div>
+</body>
+</html>
