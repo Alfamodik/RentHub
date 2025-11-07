@@ -49,7 +49,7 @@
             <div class="calendar"
                  style="
                     grid-template: repeat(1, 75px)/repeat(1,2fr);
-                    height: @(Model.FlatBookingsViewModels.Count * 75 + 30 + 30)px;">
+                    height: @(Model.FlatBookingsViewModels.Count * 100 + 30 + 30)px;">
                 @{
                     <div class="grid-row1" style="grid-template-columns: repeat(@(Model.DaysCount + 1), 75px);">
                         <span style="display: flex; justify-content: stretch;"></span>
@@ -73,7 +73,7 @@
                     <div class="calendar-content" style="
                             grid-template-columns: repeat(@(Model.DaysCount), 75px);
                             grid-template-rows: 30px repeat(@(Model.FlatBookingsViewModels.Count), 75px;
-                            height: @(Model.FlatBookingsViewModels.Count * 750)px;">
+                            height: @(Model.FlatBookingsViewModels.Count * 75)px;">
                         @{
                             for (int i = 0; i < Model.FlatBookingsViewModels.Count; i++)
                             {
