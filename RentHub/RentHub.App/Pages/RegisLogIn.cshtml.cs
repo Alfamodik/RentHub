@@ -92,6 +92,12 @@ namespace RentHub.App.Pages
                     return Page();
                 }
 
+                string? jwt = JsonSerializer.Deserialize<JsonElement>(body).GetProperty("token").GetString();
+                Response.Cookies.Append("jwt", jwt, new CookieOptions
+                {
+                    Secure = true,
+                    Expires = DateTime.Now.AddMinutes(60)
+                });
                 TempData["Message"] = emailExists ? "Успешный вход!" : "Регистрация успешна!";
                 return RedirectToPage("/MainFlats");
             }

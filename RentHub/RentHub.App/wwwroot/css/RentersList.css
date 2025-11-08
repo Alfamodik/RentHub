@@ -1,0 +1,41 @@
+﻿
+:root {
+    --text_color: #CBD5E1;
+} 
+
+.renters-card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+}
+
+.renter-card {
+    background: #334155;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.renter-info-container h3 {
+    margin: 0 0 10px 0;
+    color: var(--text_color);
+    font-size: 18px;
+}
+
+.renter-info-container p {
+    margin: 5px 0;
+    color: var(--text_color);
+}
+
+.renter-info-container span {
+    font-weight: bold;
+    color: var(--text_color);
+}
+
+.no-renters {
+    text-align: center;
+    padding: 40px;
+    color: var(--text_color);
+    font-size: 16px;
+}

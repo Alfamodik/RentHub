@@ -1,15 +1,16 @@
 ﻿@page
 @model RentHub.App.Pages.RentersListModel
 @{
-	Layout = null;
+    Layout = null;
 }
 
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8">
-    <title>Главная страница</title>
+    <title>Список жильцов</title>
     <link href="~/css/MainPage.css" rel="stylesheet" />
+    <link href="~/css/RentersList.css" rel="stylesheet">
 </head>
 <body>
 
@@ -42,19 +43,55 @@
             <a href="#"><img src="~/img/userIcon.svg" alt="Фотка иконки юзера" /></a>
             <a href="#"><img src="~/img/bell.svg" alt="Фотка иконки уведомлений" /></a>
         </div>
+
         <div class="search-container">
             <div class="search-bar-container">
-                <input type="text" placeholder="Поиск по ФИО..." />
+                <input id="searchInput" type="text" placeholder="Поиск по ФИО..." />
             </div>
         </div>
-        <div class="renters-card-container">
-            <div class="renter-card">
-                <div class="flat-info-container">
-                    <p> <span>Адрес:</span> ул.Ленина 56 1к.</p>
-                    <p> <span>Арендная плата:</span> 3500 руб/сутки</p>
-                </div>
-            </div>
+
+        <div class="renters-card-container" id="rentersContainer">
+            @if (Model.Renters != null && Model.Renters.Any())
+            {
+                @foreach (var renter in Model.Renters)
+                {
+                    <div class="renter-card" data-search="@($"{renter.Patronymic} {renter.Name} {renter.Lastname} {renter.PhoneNumber}")">
+                        <div class="renter-info-container">
+                            <h3>@renter.Patronymic @renter.Name @renter.Lastname</h3>
+                            <p><span>Телефон:</span> @renter.PhoneNumber</p>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <div id="noResults" class="no-renters" style="display: none;">
+            <p>Жильцы не найдены</p>
         </div>
     </div>
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function (e) {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.renter-card');
+            const noResults = document.getElementById('noResults');
+            let hasVisible = false;
+
+            cards.forEach(card => {
+                const searchText = card.getAttribute('data-search').toLowerCase();
+                if (searchText.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    hasVisible = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (!hasVisible && searchTerm !== '') {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
