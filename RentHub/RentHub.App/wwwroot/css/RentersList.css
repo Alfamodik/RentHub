@@ -11,6 +11,8 @@
 }
 
 .renter-card {
+    display: flex;
+    justify-content: space-between;
     background: #334155;
     border-radius: 8px;
     padding: 20px;
@@ -39,6 +41,32 @@
     color: var(--text_color);
     font-size: 16px;
 }
+
+.delete-renter-container{
+    display:flex;
+    justify-content:end;
+}
+
+#deleteButton{
+    height:40px;
+    width:40px;
+    background-color: unset;
+    border-radius: 10px;
+    border: none;
+    color:white;
+    font-size: 30px;
+}
+
+#deleteButton:hover
+{
+   cursor:pointer;
+   border: solid 1px var(--text_color);
+}
+
+    #deleteButton:active {
+        transform: scale(1.05);
+        font-size: 32px;
+    }
 
 .add-button {
     position: fixed;

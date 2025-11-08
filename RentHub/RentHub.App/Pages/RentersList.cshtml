@@ -60,6 +60,12 @@
                             <h3>@renter.Patronymic @renter.Name @renter.Lastname</h3>
                             <p><span>Телефон:</span> @renter.PhoneNumber</p>
                         </div>
+                        <div class="delete-renter-container">
+                            <form method="post" asp-page-handler="DeleteRenter" onsubmit="return confirm('Вы уверены, что хотите удалить этого жильца?');">
+                                <input type="hidden" name="RenterIdToDelete" value="@renter.RenterId" />
+                                <button type="submit" id="deleteButton">🗑</button>
+                            </form>
+                        </div>
                     </div>
                 }
             }
