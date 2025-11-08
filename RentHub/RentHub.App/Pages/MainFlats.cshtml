@@ -66,7 +66,7 @@
                          data-rooms="@flat.RoomCount">
                         <img src="~/img/flat1.png" alt="Фотка квартиры" />
                         <div class="flat-info-container">
-                            <p><span>Адрес:</span> @flat.City, @flat.District, ул.@flat.HouseNumber, кв.@flat.ApartmentNumber</p>
+                            <p><span>Адрес:</span> @flat.City, ул.@flat.District, д.@flat.HouseNumber, кв.@flat.ApartmentNumber</p>
                             <p><span>Комнат:</span> @flat.RoomCount</p>
                             <p><span>Этаж:</span> @flat.FloorNumber/@flat.FloorsNumber</p>
                             <p><span>Площадь:</span> @flat.Size м²</p>
@@ -204,7 +204,7 @@
                     flatsContainer.style.display = 'none';
                 } else {
                     noResults.style.display = 'none';
-                    flatsContainer.style.display = 'flex';
+                    flatsContainer.style.display = 'grid';
                 }
             }
         });

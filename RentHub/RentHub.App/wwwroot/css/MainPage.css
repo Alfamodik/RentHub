@@ -129,7 +129,7 @@ body {
 
 .flats-card-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, 345px);
+    grid-template-columns: repeat(auto-fill, 340px);
     justify-content: center;
     gap: 30px;
     padding: 25px;
@@ -157,4 +157,11 @@ body {
     color: var(--text_color);
     font-size: 18px;
     font-weight: bold;
+}
+
+.no-flats {
+    text-align: center;
+    padding: 40px;
+    color: var(--text_color);
+    font-size: 16px;
 }
