@@ -32,7 +32,7 @@ namespace RentHub.API.Controllers
 
             string responseBody = await response.Content.ReadAsStringAsync();
 
-            AvitoAccessTokenResponse? accessTokenResponse = JsonSerializer.Deserialize<AvitoAccessTokenResponse>(responseBody);
+            AvitoAccessTokenResponseExperement? accessTokenResponse = JsonSerializer.Deserialize<AvitoAccessTokenResponseExperement>(responseBody);
 
             return Ok(accessTokenResponse);
         }

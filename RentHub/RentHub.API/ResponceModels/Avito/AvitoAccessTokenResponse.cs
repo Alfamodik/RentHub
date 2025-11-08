@@ -1,16 +1,15 @@
-﻿using System.Text.Json.Serialization;
-
-namespace RentHub.API.ResponceModels.Avito
+﻿namespace RentHub.API.ResponceModels.Avito
 {
     public class AvitoAccessTokenResponse
     {
-        [JsonPropertyName("access_token")]
-        public string AccessToken { get; set; }
+        public string AccessToken { get; set; } = null!;
 
-        [JsonPropertyName("token_type")]
-        public string TokenType { get; set; }
-
-        [JsonPropertyName("expires_in")]
         public int ExpiresIn { get; set; }
+
+        public string RefreshToken { get; set; } = null!;
+
+        public string Scope { get; set; } = null!;
+
+        public string TokenType { get; set; } = null!;
     }
 }

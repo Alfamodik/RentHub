@@ -197,6 +197,14 @@ public partial class RentHubContext : DbContext
             entity.Property(e => e.Password)
                 .HasMaxLength(100)
                 .HasColumnName("password");
+
+            entity.Property(e => e.AvitoAccessToken)
+                .HasMaxLength(1000)
+                .HasColumnName("avito_access_token");
+
+            entity.Property(e => e.AvitoRefreshToken)
+                .HasMaxLength(1000)
+                .HasColumnName("avito_refresh_token");
         });
 
         OnModelCreatingPartial(modelBuilder);
