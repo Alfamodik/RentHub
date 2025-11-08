@@ -43,6 +43,8 @@
 
     <div id="main-content-main-page">
         <div class="top-bar">
+            <a href="#"><img src="~/img/userIcon.svg" alt="Фотка иконки юзера" /></a>
+            <a href="#"><img src="~/img/bell.svg" alt="Фотка иконки уведомлений" /></a>
         </div>
 
         <div class="calendar-container">
@@ -102,8 +104,8 @@
                                                 align-content: center;
                                                 justify-content: center;
                                                 flex-direction: column">
-                                             <p style="color: #fffe">@reservation.RenterName</p>
-                                            <p style="color: #fffe">@reservation.PhoneNumber</p>
+                                             <p style="color: var(--text-color); padding-left: 5px">@reservation.RenterName</p>
+                                            <p style="color: var(--text-color); padding-left: 5px">@reservation.PhoneNumber</p>
                                         </div>
 
                                         j += length;

@@ -5,6 +5,7 @@ using System.Text.Json;
 using RentHub.App.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.ObjectModel;
+using System.Text;
 
 namespace RentHub.App.Pages
 {
@@ -16,6 +17,9 @@ namespace RentHub.App.Pages
         };
 
         public ObservableCollection<RenterViewModel>? Renters { get; set; }
+
+        [BindProperty]
+        public RenterViewModel NewRenter { get; set; } = new RenterViewModel();
 
         public async Task OnGet()
         {
@@ -45,6 +49,35 @@ namespace RentHub.App.Pages
             catch
             {
                 Renters = new ObservableCollection<RenterViewModel>();
+            }
+        }
+        public async Task<ActionResult> OnPostAddRenter()
+        {
+            if (NewRenter == null)
+            {
+                NewRenter = new RenterViewModel();
+            }
+            var token = Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            try
+            {
+                var jsonData = JsonSerializer.Serialize(NewRenter);
+                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync("Renters/renter", content);
+                if (response.IsSuccessStatusCode)
+                {
+                    await OnGet();
+                    return RedirectToPage();
+                }
+                else
+                {
+                    return Page();
+                }
+            }
+            catch (Exception ex)
+            {
+                return Page();
             }
         }
     }

@@ -46,7 +46,7 @@
 
         <div class="search-container">
             <div class="search-bar-container">
-                <input id="searchInput" type="text" placeholder="Поиск по ФИО..." />
+                <input id="searchInput" type="text" placeholder="Поиск..." />
             </div>
         </div>
 
@@ -68,8 +68,63 @@
         <div id="noResults" class="no-renters" style="display: none;">
             <p>Жильцы не найдены</p>
         </div>
+
+        <button id="addRenterBtn" class="add-button">+</button>
     </div>
+
+    <div id="addRenterModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Добавить нового арендатора</h2>
+            <form id="addRenterForm" method="post" asp-page-handler="AddRenter">
+                <div class="form-group">
+                    <input type="text" placeholder="Фамилия" asp-for="NewRenter.Lastname" id="lastname" name="lastname" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Имя" asp-for="NewRenter.Name" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Отчество" asp-for="NewRenter.Patronymic" id="patronymic" name="patronymic">
+                </div>
+                <div class="form-group">
+                    <input type="tel" placeholder="Номер телефона" asp-for="NewRenter.PhoneNumber" id="phoneNumber" name="phoneNumber" required>
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="submit-btn">Добавить</button>
+                    <button type="button" class="cancel-btn">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
+        const modal = document.getElementById('addRenterModal');
+        const addBtn = document.getElementById('addRenterBtn');
+        const closeBtn = document.querySelector('.close');
+        const cancelBtn = document.querySelector('.cancel-btn');
+        const form = document.querySelector('#addRenterForm')
+
+         addBtn.onclick = function () {
+            modal.style.display = 'block';
+         }
+
+         closeBtn.onclick = function () {
+            modal.style.display = 'none';
+            form.reset();
+         }
+
+         cancelBtn.onclick = function () {
+            modal.style.display = 'none';
+            form.reset();
+         }
+
+         window.onclick = function (event) {
+         if (event.target == modal) {
+                modal.style.display = 'none';
+                form.reset();
+         }
+        }
+
         document.getElementById('searchInput').addEventListener('input', function (e) {
             const searchTerm = e.target.value.toLowerCase().trim();
             const cards = document.querySelectorAll('.renter-card');
