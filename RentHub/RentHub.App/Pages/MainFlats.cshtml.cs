@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.IdentityModel.Tokens;
+using RentHub.App.ViewModels;
 using RentHub.Core.Model;
+using System.Collections.ObjectModel;
 using System.Text.Json;
 
 namespace RentHub.App.Pages
@@ -14,55 +16,36 @@ namespace RentHub.App.Pages
             BaseAddress = new Uri("http://94.183.186.221:5000/")
         };
 
-        [BindProperty]
-        public string Email { get; set; } = string.Empty;
+        public ObservableCollection<FlatViewModel>? Flats { get; set; }
 
-        [BindProperty]
-        public string Password { get; set; } = string.Empty;
-
-        [BindProperty]
-        public bool emailExists { get; set; }
-
-        public List<Flat>? Flats { get; set; } = new();
-        public void OnGet()
+        public async Task OnGet()
         {
-            if (TempData.TryGetValue("Email", out var e))
-                Email = e?.ToString() ?? string.Empty;
+            var token = Request.Cookies["jwt"];
 
-            if (TempData.TryGetValue("exists", out var ex))
-                emailExists = string.Equals(ex?.ToString(), "true", StringComparison.OrdinalIgnoreCase);
-        }
+            client.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-        public async Task<ActionResult> GetFlatsAsync()
-        {
             try
             {
                 HttpResponseMessage response;
                 response = await client.GetAsync("Flats/flats");
-                string body = await response.Content.ReadAsStringAsync();
 
-                if (!response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
-                    TempData["Message"] = $"Ошибка API: {response.StatusCode}. {body}";
-                    return BadRequest();
-                }
-                var json = response.Content.ReadAsStringAsync().Result;
-                List<Flat>? flats = JsonSerializer.Deserialize<List<Flat>>(json);
-                if (flats.IsNullOrEmpty())
-                {
-                    TempData["Message"] = "Список квартир пустой";
-                    return NotFound();
+                    var json = await response.Content.ReadAsStringAsync();
+                    Flats = JsonSerializer.Deserialize<ObservableCollection<FlatViewModel>>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
                 }
                 else
                 {
-                    Flats = flats;
-                    return NotFound();
+                    Flats = new ObservableCollection<FlatViewModel>();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                TempData["Message"] = "Ошибка: " + ex.Message;
-                return NotFound();
+                Flats = new ObservableCollection<FlatViewModel>();
             }
         }
     }

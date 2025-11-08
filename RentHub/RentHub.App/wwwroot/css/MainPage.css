@@ -62,7 +62,6 @@ body {
     /*background-color: transparent;*/
     width: 79vw;
     background: linear-gradient(140deg, #0d1323, #162446, #162446);
-    height: 100vh;
 }
 .top-bar {
     background-image: url('../img/top bar.svg');

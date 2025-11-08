@@ -43,47 +43,171 @@
         </div>
         <div class="search-container">
             <div class="search-bar-container">
-                <input type="text" placeholder="Поиск по адресу..."/>
+                <input id="searchFlatsInput" type="text" placeholder="Поиск по адресу..." />
             </div>
             <div class="filters-container">
-                <select>
-                    <option value="" disabled selected hidden>Город</option>
+                <select id="cityFilter">
+                    <option value="">Все города</option>
                 </select>
-                <select placeholder>
-                    <option value="" disabled selected hidden>Кол-во комнат</option>
+                <select id="roomsFilter">
+                    <option value="">Кол-во комнат</option>
                 </select>
             </div>
         </div>
-        <div class="flats-card-container">
-            <div class="flat-card">
-                <img src="~/img/flat1.png" alt="Фотка квартиры" />
-                <div class="flat-info-container">
-                    <p> <span>Адрес:</span> ул.Ленина 56 1к.</p>
-                    <p> <span>Арендная плата:</span> 3500 руб/сутки</p>
+
+        <div class="flats-card-container" id="flatsContainer">
+            @if (Model.Flats != null && Model.Flats.Any())
+            {
+                @foreach (var flat in Model.Flats)
+                {
+                    <div class="flat-card"
+                         data-address="@($"{flat.Country} {flat.City} {flat.District} {flat.HouseNumber} {flat.ApartmentNumber}")"
+                         data-city="@flat.City"
+                         data-rooms="@flat.RoomCount">
+                        <img src="~/img/flat1.png" alt="Фотка квартиры" />
+                        <div class="flat-info-container">
+                            <p><span>Адрес:</span> @flat.City, @flat.District, ул.@flat.HouseNumber, кв.@flat.ApartmentNumber</p>
+                            <p><span>Комнат:</span> @flat.RoomCount</p>
+                            <p><span>Этаж:</span> @flat.FloorNumber/@flat.FloorsNumber</p>
+                            <p><span>Площадь:</span> @flat.Size м²</p>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="no-flats">
+                    <p>Квартиры не найдены</p>
                 </div>
-            </div>
-            <div class="flat-card">
-                <img src="~/img/flat1.png" alt="Фотка квартиры" />
-                <div class="flat-info-container">
-                    <p> <span>Адрес:</span> ул.Ленина 56 1к.</p>
-                    <p> <span>Арендная плата:</span> 3500 руб/сутки</p>
-                </div>
-            </div>
-            <div class="flat-card">
-                <img src="~/img/flat1.png" alt="Фотка квартиры" />
-                <div class="flat-info-container">
-                    <p> <span>Адрес:</span> ул.Ленина 56 1к.</p>
-                    <p> <span>Арендная плата:</span> 3500 руб/сутки</p>
-                </div>
-            </div>
-            <div class="flat-card">
-                <img src="~/img/flat1.png" alt="Фотка квартиры" />
-                <div class="flat-info-container">
-                    <p> <span>Адрес:</span> ул.Ленина 56 1к.</p>
-                    <p> <span>Арендная плата:</span> 3500 руб/сутки</p>
-                </div>
-            </div>
+            }
+        </div>
+
+        <div id="noFlatsResults" class="no-flats" style="display: none;">
+            <p>Квартиры не найдены</p>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchFlatsInput');
+            const cityFilter = document.getElementById('cityFilter');
+            const roomsFilter = document.getElementById('roomsFilter');
+            const flatsContainer = document.getElementById('flatsContainer');
+
+            // Заполнение фильтров
+            fillCityFilter();
+            fillCountRoomsFilter();
+
+            // События для поиска и фильтрации
+            searchInput.addEventListener('input', applyFilters);
+            cityFilter.addEventListener('change', applyFilters);
+            roomsFilter.addEventListener('change', applyFilters);
+
+            function fillCityFilter() {
+                const cards = document.querySelectorAll('.flat-card');
+                const cities = new Set();
+
+                cards.forEach(card => {
+                    const city = card.getAttribute('data-city');
+                    if (city) cities.add(city);
+                });
+
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    cityFilter.appendChild(option);
+                });
+            }
+
+            function fillCountRoomsFilter() {
+                const cards = document.querySelectorAll('.flat-card');
+                const roomGroups = new Map();
+
+                cards.forEach(card => {
+                    const room = parseInt(card.getAttribute('data-rooms'));
+                    if (!isNaN(room)) {
+                        let group = room.toString();
+                        if (room >= 4) group = '4+';
+
+                        roomGroups.set(group);
+                    }
+                });
+
+                roomsFilter.innerHTML = '<option value="">Все комнаты</option>';
+
+                [1, 2, 3].forEach(room => {
+                    if (roomGroups.has(room.toString())) {
+                        const option = document.createElement('option');
+                        option.value = room.toString();
+                        option.textContent = `${room} ${room == 1 ? 'комната' : 'комнаты'}`;
+                        roomsFilter.appendChild(option);
+                    }
+                });
+
+                if (roomGroups.has('4+')) {
+                    const option = document.createElement('option');
+                    option.value = '4+';
+                    option.textContent = `4+ комнаты`;
+                    roomsFilter.appendChild(option);
+                }
+            }
+
+            function applyFilters() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                const selectedCity = cityFilter.value;
+                const selectedRooms = roomsFilter.value;
+                const cards = document.querySelectorAll('.flat-card');
+                const noResults = document.getElementById('noFlatsResults');
+                let visibleCount = 0;
+
+                cards.forEach(card => {
+                    const address = card.getAttribute('data-address').toLowerCase();
+                    const city = card.getAttribute('data-city');
+                    const rooms = card.getAttribute('data-rooms');
+
+                    let matchesSearch = true;
+                    let matchesCity = true;
+                    let matchesRooms = true;
+
+                    // Проверка поиска по адресу
+                    if (searchTerm != '' && !address.includes(searchTerm)) {
+                        matchesSearch = false;
+                    }
+
+                    // Проверка фильтра города
+                    if (selectedCity != '' && city != selectedCity) {
+                        matchesCity = false;
+                    }
+
+                    // Проверка фильтра комнат
+                    if (selectedRooms != '') {
+                        const room = parseInt(rooms);
+
+                        if (selectedRooms == '4+') {
+                            if (room < 4) matchesRooms = false;
+                        } else {
+                            if (rooms != selectedRooms) matchesRooms = false;
+                        }
+                    }
+
+                    if (matchesSearch && matchesCity && matchesRooms) {
+                        card.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // не найдено
+                if (visibleCount == 0) {
+                    noResults.style.display = 'block';
+                    flatsContainer.style.display = 'none';
+                } else {
+                    noResults.style.display = 'none';
+                    flatsContainer.style.display = 'flex';
+                }
+            }
+        });
+    </script>
 </body>
 </html>

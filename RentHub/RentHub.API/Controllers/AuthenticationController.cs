@@ -36,7 +36,7 @@ namespace RentHub.API.Controllers
             if (user == null)
                 return Unauthorized();
 
-            if (!(new PasswordHasher<User>().VerifyHashedPassword(null, user.Password, request.Password) == PasswordVerificationResult.Success))
+            if (new PasswordHasher<User>().VerifyHashedPassword(null, user.Password, request.Password) != PasswordVerificationResult.Success)
                 return Unauthorized();
 
             string token = GenerateJwtToken(user.UserId, user.Email);
