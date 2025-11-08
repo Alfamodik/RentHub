@@ -1,4 +1,5 @@
-html {
+
+/*html {
   font-size: 14px;
 }
 
@@ -19,4 +20,88 @@ html {
 
 body {
   margin-bottom: 60px;
+}*/
+
+/* Глобальный сброс */
+*, *::before, *::after {
+    box-sizing: border-box;
 }
+
+.emailPage {
+    background-image: url(/img/mainBack.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+#main-content-container {
+    background: linear-gradient(to bottom right, rgba(24, 26, 33, 1) 70%, rgba(25, 43, 32, 0.7) 100%);
+    width: 650px;
+    height: 550px;
+    border-radius: 40px;
+    border: 1px solid #01013F;
+    /* Центрирование содержимого */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    padding: 40px;
+}
+
+#main-text {
+    font-size: 40px;
+    color: white;
+    text-align: center;
+}
+
+#emailInput {
+    width: 550px;
+    height: 70px;
+    padding: 0 20px;
+    font-size: 18px;
+    color: white;
+    background-color: #181a21;
+    border: 1px solid #3a3d47;
+    border-radius: 24px;
+    outline: none;
+}
+
+    /* Правильный placeholder без & */
+    #emailInput::placeholder {
+        color: #aaa;
+        opacity: 1;
+    }
+
+#continueBtn {
+    width: 550px;
+    height: 70px;
+    padding: 0 20px;
+    font-size: 18px;
+    color: white;
+    background-color: #181a21;
+    border: 1px solid #3a3d47;
+    border-radius: 24px;
+    outline: none;
+    cursor: pointer; /* важно для UX */
+    transition: all 0.15s ease;
+}
+
+    #continueBtn:active {
+        background-color: #0f1117;
+        border-color: #2a2c35;
+        transform: scale(0.98);
+    }
+
+#formPost {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+

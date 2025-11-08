@@ -1,38 +1,94 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using RentHub.API.ModelsDTO;
+using RentHub.Core.Model;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace RentHub.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ReservationsController : ControllerBase
     {
-        [HttpGet]
-        public IEnumerable<string> Get()
+        [Authorize]
+        [HttpGet("reservations")]
+        public ActionResult<List<Reservation>> GetReservations()
         {
-            return new string[] { "value1", "value2" };
+            using RentHubContext context = new();
+            List<Reservation> ReservationsList = context.Reservations.ToList();
+            if (ReservationsList.IsNullOrEmpty())
+            {
+                return NotFound("Список бронирований пуст");
+            }
+            return ReservationsList;
         }
 
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [Authorize]
+        [HttpGet("reservation-by-id/{id}")]
+        public ActionResult<Reservation> GetReservation(int id)
         {
-            return "value";
+            using RentHubContext context = new();
+            Reservation? reservation = context.Reservations.FirstOrDefault(r => r.ReservationId == id);
+            if (reservation == null)
+            {
+                return NotFound($"Бронирование с ID {id} не найден");
+            }
+            return Ok(reservation);
         }
 
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [Authorize]
+        [HttpPost("reservation")]
+        public ActionResult AddReservation(ReservationDTO reservationdto)
         {
+            using RentHubContext context = new();
+            Reservation reservation = new Reservation
+            {
+                AdvertisementId = reservationdto.AdvertisementId,
+                RenterId = reservationdto.RenterId,
+                DateOfStartReservation = reservationdto.DateOfStartReservation,
+                DateOfEndReservation = reservationdto.DateOfEndReservation,
+                Summ = reservationdto.Summ,
+                Income = reservationdto.Income
+            };
+            context.Reservations.Add(reservation).Context.SaveChanges();
+            return Ok("Бронирование успешно добавлено");
         }
 
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [Authorize]
+        [HttpPut("reservation-data/{id}")]
+        public ActionResult ChangeReservationData(int id, ReservationDTO reservationDTO)
         {
+            using RentHubContext context = new();
+            Reservation? reservation = context.Reservations.FirstOrDefault(r => r.ReservationId == id);
+            if (reservation == null)
+            {
+                return NotFound($"Бронирование с ID {id} не найдено");
+            }
+            reservation.AdvertisementId = reservationDTO.AdvertisementId;
+            reservation.RenterId = reservationDTO.RenterId;
+            reservation.DateOfEndReservation = reservationDTO.DateOfEndReservation;
+            reservation.DateOfStartReservation = reservationDTO.DateOfStartReservation;
+            reservation.Summ = reservationDTO.Summ;
+            reservation.Income = reservationDTO.Income;
+            context.SaveChanges();
+
+            return Ok("Данные бронирования успешно изменены");
         }
 
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [Authorize]
+        [HttpDelete("reservation/{id}")]
+        public ActionResult DeleteReservation(int id)
         {
+            using RentHubContext context = new();
+            Reservation? reservation = context.Reservations.FirstOrDefault(r => r.ReservationId == id);
+            if (reservation == null)
+            {
+                return NotFound($"Бронирование с ID {id} не найдено");
+            }
+            context.Reservations.Remove(reservation).Context.SaveChanges();
+            return Ok("Бронирование успешно удалено");
         }
     }
 }

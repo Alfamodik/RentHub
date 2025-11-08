@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace RentHub.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AvitoController : ControllerBase
     {
@@ -37,7 +37,7 @@ namespace RentHub.API.Controllers
             return Ok(accessTokenResponse);
         }
 
-        [HttpGet("get_user_id")]
+        [HttpGet("get-user-id")]
         public async Task<IActionResult> GetUserId(string accessToken)
         {
             HttpClient _httpClient = new()
@@ -57,7 +57,7 @@ namespace RentHub.API.Controllers
             return Ok(avitoUserResponse);
         }
 
-        [HttpGet("get_bookings")]
+        [HttpGet("get-bookings")]
         public async Task<IActionResult> GetBookings([FromQuery] AvitoBookingRequest avitoBookingRequest)
         {
             HttpClient _httpClient = new()
@@ -73,12 +73,12 @@ namespace RentHub.API.Controllers
             string skipError = avitoBookingRequest.SkipErrors.ToString().ToLower();
             string withUnpaid = avitoBookingRequest.WithUnpaid.ToString().ToLower();
 
-            string url = 
+            string url =
                 @$"realty/v1/accounts/{avitoBookingRequest.UserId}/" +
-                @$"items/{avitoBookingRequest.ItemId}/" + 
+                @$"items/{avitoBookingRequest.ItemId}/" +
                 @$"bookings?skip_error={skipError}&" +
                 @$"date_start={dateStart}&" +
-                $@"date_end={dateEnd}&" + 
+                $@"date_end={dateEnd}&" +
                 $@"with_unpaid={withUnpaid}";
 
             HttpResponseMessage response = await _httpClient.GetAsync(url);

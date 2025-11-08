@@ -1,0 +1,42 @@
+﻿@page
+@model RentHub.App.Pages.WelcomeModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body class="emailPage">
+
+    <div id="main-content-container">
+        <p id="main-text">
+            Войти или<br>зарегистрироваться
+        </p>
+
+        <form method="post" id="formPost">
+            <input type="email"
+                   id="emailInput"
+                   name="Email"
+                   placeholder="example@gmail.com"
+                   autocomplete="email">
+
+            <button type="submit" id="continueBtn">Продолжить</button>
+        </form>
+
+
+    </div>
+
+</body>
+@if (TempData["Message"] != null)
+    {
+    <script>
+        alert('@TempData["Message"]');
+    </script>
+    }
+
+</html>

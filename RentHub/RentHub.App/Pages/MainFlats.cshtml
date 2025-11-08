@@ -1,0 +1,89 @@
+﻿@page
+@model RentHub.App.Pages.MainFlatsModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Главная страница</title>
+    <link href="~/css/MainPage.css" rel="stylesheet"/>
+</head>
+<body>
+    <div id="side-bar">
+        <p id="main-text">Недвижимость</p>
+
+        <form class="menu-item" method="get" action="/MainFlats">
+            <img src="~/img/side-bar/House 1.svg" alt="404" />
+            <button type="submit" name="FlatsBtn">Квартиры</button>
+        </form>
+
+        <form class="menu-item" method="get" action="/Reservations">
+            <img src="~/img/side-bar/Calendar 1.svg" alt="404" />
+            <button type="submit">Бронирования</button>
+        </form>
+
+        <form class="menu-item" method="get" action="/RentersList">
+            <img src="~/img/side-bar/users 1.svg" alt="404" />
+            <button type="submit" name="CustomersBtn">Жильцы</button>
+        </form>
+
+        <form class="menu-item" method="get">
+            <img src="~/img/side-bar/chart-no-axes-column 1.svg" alt="404" />
+            <button type="submit" name="recordsBtn">Отчетность</button>
+        </form>
+    </div>
+
+    <div id="main-content-main-page">
+        <div class="top-bar">
+            <a href="#"><img src="~/img/userIcon.svg" alt="Фотка иконки юзера" /></a>
+            <a href="#"><img src="~/img/bell.svg" alt="Фотка иконки уведомлений" /></a>
+        </div>
+        <div class="search-container">
+            <div class="search-bar-container">
+                <input type="text" placeholder="Поиск по адресу..."/>
+            </div>
+            <div class="filters-container">
+                <select>
+                    <option value="" disabled selected hidden>Город</option>
+                </select>
+                <select placeholder>
+                    <option value="" disabled selected hidden>Кол-во комнат</option>
+                </select>
+            </div>
+        </div>
+        <div class="flats-card-container">
+            <div class="flat-card">
+                <img src="~/img/flat1.png" alt="Фотка квартиры" />
+                <div class="flat-info-container">
+                    <p> <span>Адрес:</span> ул.Ленина 56 1к.</p>
+                    <p> <span>Арендная плата:</span> 3500 руб/сутки</p>
+                </div>
+            </div>
+            <div class="flat-card">
+                <img src="~/img/flat1.png" alt="Фотка квартиры" />
+                <div class="flat-info-container">
+                    <p> <span>Адрес:</span> ул.Ленина 56 1к.</p>
+                    <p> <span>Арендная плата:</span> 3500 руб/сутки</p>
+                </div>
+            </div>
+            <div class="flat-card">
+                <img src="~/img/flat1.png" alt="Фотка квартиры" />
+                <div class="flat-info-container">
+                    <p> <span>Адрес:</span> ул.Ленина 56 1к.</p>
+                    <p> <span>Арендная плата:</span> 3500 руб/сутки</p>
+                </div>
+            </div>
+            <div class="flat-card">
+                <img src="~/img/flat1.png" alt="Фотка квартиры" />
+                <div class="flat-info-container">
+                    <p> <span>Адрес:</span> ул.Ленина 56 1к.</p>
+                    <p> <span>Арендная плата:</span> 3500 руб/сутки</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

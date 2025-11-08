@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using RentHub.API.ResponceModels.Avito;
 using RentHub.Core.Model;
 using System.Text.Json;

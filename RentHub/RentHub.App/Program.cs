@@ -22,4 +22,6 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
+app.MapGet("/", () => Results.Redirect("/Welcome"));
+
 app.Run();

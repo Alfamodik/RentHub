@@ -7,9 +7,9 @@ namespace RentHub.API.RequestModels.Avito
         public string AccessToken { get; set; } = null!;
 
         public ulong UserId { get; set; }
-        
+
         public ulong ItemId { get; set; }
-        
+
         public bool SkipErrors { get; set; }
 
         [DataType(DataType.Date)]
@@ -17,7 +17,7 @@ namespace RentHub.API.RequestModels.Avito
 
         [DataType(DataType.Date)]
         public DateOnly DateEnd { get; set; }
-        
+
         public bool WithUnpaid { get; set; }
     }
 }
