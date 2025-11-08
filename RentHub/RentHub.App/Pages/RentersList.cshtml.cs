@@ -6,6 +6,7 @@ using RentHub.App.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Net.Http.Headers;
 
 namespace RentHub.App.Pages
 {
@@ -21,12 +22,14 @@ namespace RentHub.App.Pages
         [BindProperty]
         public RenterViewModel NewRenter { get; set; } = new RenterViewModel();
 
+        [BindProperty]
+        public int RenterIdToDelete { get; set; }
+
         public async Task OnGet()
         {
             var token = Request.Cookies["jwt"];
 
-            client.DefaultRequestHeaders.Authorization =
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             try
             {
@@ -75,7 +78,31 @@ namespace RentHub.App.Pages
                     return Page();
                 }
             }
-            catch (Exception ex)
+            catch
+            {
+                return Page();
+            }
+        }
+        public async Task<ActionResult> OnPostDeleteRenter()
+        {
+            try
+            {
+                var token = Request.Cookies["jwt"];
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var response = await client.DeleteAsync($"Renters/renter/{RenterIdToDelete}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    await OnGet();
+                    return RedirectToPage();
+                }
+                else
+                {
+                    return Page();
+                }
+            }
+            catch
             {
                 return Page();
             }

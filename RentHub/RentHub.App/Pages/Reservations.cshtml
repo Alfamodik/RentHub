@@ -54,7 +54,7 @@
                     height: @(Model.FlatBookingsViewModels.Count * 100 + 30 + 30)px;">
                 @{
                     <div class="grid-row1" style="grid-template-columns: repeat(@(Model.DaysCount + 1), 75px);">
-                        <span style="display: flex; justify-content: stretch;"></span>
+                        <button id="addReservationBtn" class="add-button">+</button>
                         @{
                             foreach (var item in Model.Days)
                             {
@@ -124,6 +124,39 @@
                 }
             </div>
         </div>
+        <div id="addRenterModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Добавить новое бронирвоание</h2>
+                <form id="addRenterForm" method="post" asp-page-handler="AddRenter">
+                    <div class="form-group">
+                        <input type="text" placeholder="Фамилия" id="lastname" name="lastname" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Имя" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Отчество" id="patronymic" name="patronymic">
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" placeholder="Номер телефона" id="phoneNumber" name="phoneNumber" required>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="submit-btn">Добавить</button>
+                        <button type="button" class="cancel-btn">Отмена</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <script>
+        const modal = document.getElementById('addRenterModal');
+        const addBtn = document.getElementById('addReservationBtn');
+
+        addBtn.onclick = function () {
+            modal.style.display = 'block';
+        }
+    </script>
 </body>
 </html>
