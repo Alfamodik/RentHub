@@ -40,6 +40,20 @@ namespace RentHub.API.Controllers
             return Ok(advertisement);
         }
 
+        [HttpGet("advertisement-by-flat-id/platform-other/{id}")]
+        public ActionResult<Advertisement> GetAdvertisementOfFlat(int id)
+        {
+            using RentHubContext context = new();
+            Advertisement? advertisement = context.Advertisements.FirstOrDefault(r => r.FlatId == id && r.PlatformId == 3);
+
+            if (advertisement == null)
+            {
+                return NotFound($"Объявление квартиры с прочей платформой с ID {id} не найдено");
+            }
+
+            return Ok(advertisement);
+        }
+
         [Authorize]
         [HttpPost("advertisement")]
         public ActionResult AddAdvertisement(AdvertisementDTO advertisementdto)

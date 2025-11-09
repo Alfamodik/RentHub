@@ -62,7 +62,7 @@ namespace RentHub.App.Pages
                 return RedirectToPage("/RegisLogIn");
 
             }
-            catch (Exception ex)
+            catch
             {
                 ModelState.AddModelError("", "Ошибка проверки email.");
                 return Page();

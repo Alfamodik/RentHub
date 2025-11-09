@@ -124,11 +124,11 @@
                 }
             </div>
         </div>
-        <div id="addRenterModal" class="modal" style="display: none;">
+        <div id="addReservationModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <span class="close">&times;</span>
-                <h2>Добавить новое бронирвоание</h2>
-                <form id="addRenterForm" method="post" asp-page-handler="AddRenter">
+                <h2>Добавить новое бронирование</h2>
+                <form id="addReservationForm" method="post" asp-page-handler="AddReservation">
                     <div class="form-group">
                         <input type="text" placeholder="Фамилия" id="lastname" name="lastname" required>
                     </div>
@@ -151,11 +151,31 @@
     </div>
 
     <script>
-        const modal = document.getElementById('addRenterModal');
+        const modal = document.getElementById('addReservationModal');
         const addBtn = document.getElementById('addReservationBtn');
+        const closeBtn = document.querySelector('.close');
+        const cancelBtn = document.querySelector('.cancel-btn');
+        const form = document.querySelector('#addReservationForm')
 
         addBtn.onclick = function () {
             modal.style.display = 'block';
+        }
+
+        closeBtn.onclick = function () {
+            modal.style.display = 'none';
+            form.reset();
+        }
+
+        cancelBtn.onclick = function () {
+            modal.style.display = 'none';
+            form.reset();
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+                form.reset();
+            }
         }
     </script>
 </body>
