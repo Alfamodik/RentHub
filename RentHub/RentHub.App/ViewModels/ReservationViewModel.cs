@@ -2,6 +2,7 @@
 {
     public class ReservationViewModel
     {
+        public int Id { get; set; }
         public DateOnly DateOfStartReservation { get; set; }
         public DateOnly DateOfEndReservation { get; set; }
         public string RenterName { get; set; } = "";

@@ -61,7 +61,7 @@ namespace RentHub.App.Pages
                     string json = JsonSerializer.Serialize(regData);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    response = await client.PostAsync("Authentication/Register", content);
+                    response = await client.PostAsync("Authentication/register", content);
                 }
 
                 string body = await response.Content.ReadAsStringAsync();
