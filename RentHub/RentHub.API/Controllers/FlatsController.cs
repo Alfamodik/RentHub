@@ -110,12 +110,21 @@ namespace RentHub.API.Controllers
 
         [Authorize]
         [HttpPut("flat-data/{id}")]
-        public async Task<ActionResult> ChangeFlatData(int id, FlatDTO flatDto)
+        public async Task<ActionResult> ChangeFlatData(int id, [FromForm] FlatDTO flatDto)
         {
             using RentHubContext context = new();
-            byte[]? photoBytes = null;
+
+            Flat? flat = context.Flats.FirstOrDefault(fl => fl.FlatId == id);
+
+            if (flat == null)
+            {
+                return NotFound($"Квартира с ID {id} не найдена");
+            }
+
             if (flatDto.Photo != null)
             {
+                byte[]? photoBytes = null;
+
                 // Проверка размера файла (до 5MB)
                 if (flatDto.Photo.Length > 5 * 1024 * 1024)
                 {
@@ -132,14 +141,9 @@ namespace RentHub.API.Controllers
                 using var memoryStream = new MemoryStream();
                 await flatDto.Photo.CopyToAsync(memoryStream);
                 photoBytes = memoryStream.ToArray();
-                memoryStream.Close();
+                flat.Photo = photoBytes;
             }
-            Flat? flat = context.Flats.FirstOrDefault(fl => fl.FlatId == id);
-
-            if (flat == null)
-            {
-                return NotFound($"Квартира с ID {id} не найдена");
-            }
+            
             flat.Country = flatDto.Country;
             flat.City = flatDto.City;
             flat.District = flatDto.District;
@@ -149,7 +153,6 @@ namespace RentHub.API.Controllers
             flat.FloorNumber = flatDto.FloorNumber;
             flat.FloorsNumber = flatDto.FloorsNumber;
             flat.Description = flatDto.Description;
-            flat.Photo = photoBytes;
             context.SaveChanges();
 
             return Ok("Данные квартиры успешно изменены");
