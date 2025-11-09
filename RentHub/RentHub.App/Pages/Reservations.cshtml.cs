@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using RentHub.App.ViewModels;
 using RentHub.Core.Model;
 using System.Collections.ObjectModel;
+using System.Linq.Expressions;
 using System.Text;
 using System.Text.Json;
 
@@ -18,7 +19,7 @@ namespace RentHub.App.Pages
 
 
         [BindProperty]
-        public AdvertisimentViewModel newAdd { get; set; } = new AdvertisimentViewModel();
+        public ReservationFullViewModel newReservation { get; set; } = new ReservationFullViewModel();
 
         private readonly HttpClient client = new HttpClient()
         {
@@ -112,7 +113,7 @@ namespace RentHub.App.Pages
             };
         }
 
-        public async Task<AdvertisimentViewModel?> GetAddOnFlatIdOtherPlatform()
+        public async Task<AdvertisimentViewModel?> GetFlatIdOtherPlatform()
         {
             var token = Request.Cookies["jwt"];
 
@@ -145,11 +146,19 @@ namespace RentHub.App.Pages
 
         public async Task<ActionResult> OnPostAddReservation()
         {
+            AdvertisimentViewModel? add = await GetFlatIdOtherPlatform();
+            if (add == null)
+            {
+                return Page();
+            }
             var token = Request.Cookies["jwt"];
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             try
             {
-                var jsonData = JsonSerializer.Serialize(newAdd);
+                newReservation.AdvertisementId = add.AdvertisementId;
+                newReservation.Summ = Convert.ToDecimal((newReservation.DateOfEndReservation.DayOfYear - newReservation.DateOfStartReservation.DayOfYear) * add.PriceForPeriod);
+                newReservation.Income = Convert.ToDecimal((newReservation.DateOfEndReservation.DayOfYear - newReservation.DateOfStartReservation.DayOfYear) * add.PriceForPeriod);
+                var jsonData = JsonSerializer.Serialize(newReservation);
                 var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync("Renters/renter", content);
                 if (response.IsSuccessStatusCode)
