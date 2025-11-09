@@ -84,7 +84,7 @@ namespace RentHub.App.Pages
                 await PhotoUpload.CopyToAsync(ms);
                 ByteArrayContent fileContent = new(ms.ToArray());
                 fileContent.Headers.ContentType = new MediaTypeHeaderValue(PhotoUpload.ContentType);
-                content.Add(fileContent, nameof(PhotoUpload), PhotoUpload.FileName);
+                content.Add(fileContent, "Photo", PhotoUpload.FileName);
             }
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Request.Cookies["jwt"]);
@@ -95,7 +95,7 @@ namespace RentHub.App.Pages
             {
                 return RedirectToPage("/MainFlats");
             }
-
+            
             ModelState.AddModelError(string.Empty, "Ошибка при сохранении данных квартиры");
             return Page();
         }
