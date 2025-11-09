@@ -48,5 +48,10 @@ namespace RentHub.App.Pages
                 Flats = new ObservableCollection<FlatViewModel>();
             }
         }
+
+        public IActionResult OnPost(int flatId)
+        {
+            return RedirectToPage("/FlatDetails", new { id = flatId });
+        }
     }
 }

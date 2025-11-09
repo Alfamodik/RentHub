@@ -15,8 +15,22 @@ namespace RentHub.App.Pages
         {
             BaseAddress = new Uri("http://94.183.186.221:5000/")
         };
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            string? token = Request.Cookies["jwt"];
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                Response.Cookies.Append("jwt", token, new CookieOptions
+                {
+                    Secure = true,
+                    Expires = DateTime.Now.AddMinutes(60)
+                });
+
+                return RedirectToPage("/MainFlats");
+            }
+
+            return Page();
         }
 
         [BindProperty]
@@ -24,8 +38,6 @@ namespace RentHub.App.Pages
 
         public async Task<IActionResult> OnPost()
         {
-
-
             try
             {
                 var loginData = new
@@ -34,10 +46,8 @@ namespace RentHub.App.Pages
 
                 };
 
-                // Сериализуем в JSON
                 using var formData = new MultipartFormDataContent();
                 formData.Add(new StringContent(Email), "email");
-
 
                 var response = await client.PostAsync($"Auth/email_exists", formData);
 
@@ -46,10 +56,8 @@ namespace RentHub.App.Pages
                 var json2 = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<EmailExistsResponse>(json2);
 
-
                 TempData["Email"] = Email;
                 TempData["exists"] = result.exists ? "true" : "false";
-                //TempData["Message"] = $"{result.exists}";
                 return RedirectToPage("/RegisLogIn");
 
             }
@@ -58,10 +66,6 @@ namespace RentHub.App.Pages
                 ModelState.AddModelError("", "Ошибка проверки email.");
                 return Page();
             }
-
-
-
         }
-
     }
 }

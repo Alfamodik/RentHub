@@ -8,7 +8,7 @@
 <html lang="ru">
 <head>
     <meta charset="utf-8">
-    <title>Главная страница</title>
+    <title>Квартиры</title>
     <link href="~/css/MainPage.css" rel="stylesheet"/>
 </head>
 <body>
@@ -60,18 +60,22 @@
             {
                 @foreach (var flat in Model.Flats)
                 {
-                    <div class="flat-card"
-                         data-address="@($"{flat.Country} {flat.City} {flat.District} {flat.HouseNumber} {flat.ApartmentNumber}")"
-                         data-city="@flat.City"
-                         data-rooms="@flat.RoomCount">
-                        <img src="~/img/flat1.png" alt="Фотка квартиры" />
-                        <div class="flat-info-container">
-                            <p><span>Адрес:</span> @flat.City, ул.@flat.District, д.@flat.HouseNumber, кв.@flat.ApartmentNumber</p>
-                            <p><span>Комнат:</span> @flat.RoomCount</p>
-                            <p><span>Этаж:</span> @flat.FloorNumber/@flat.FloorsNumber</p>
-                            <p><span>Площадь:</span> @flat.Size м²</p>
+                    <form method="post">
+                        <input type="hidden" name="flatId" value="@flat.FlatId" />
+                        <div class="flat-card"
+                             onclick="this.closest('form').submit()"
+                             data-address="@($"{flat.Country} {flat.City} {flat.District} {flat.HouseNumber} {flat.ApartmentNumber}")"
+                             data-city="@flat.City"
+                             data-rooms="@flat.RoomCount">
+                            <img src="~/img/flat1.png" alt="Фотка квартиры" />
+                            <div class="flat-info-container">
+                                <p><span>Адрес:</span> @flat.City, ул.@flat.District, д.@flat.HouseNumber, кв.@flat.ApartmentNumber</p>
+                                <p><span>Комнат:</span> @flat.RoomCount</p>
+                                <p><span>Этаж:</span> @flat.FloorNumber/@flat.FloorsNumber</p>
+                                <p><span>Площадь:</span> @flat.Size м²</p>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 }
             }
             else
