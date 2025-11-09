@@ -15,6 +15,7 @@ namespace RentHub.App.Pages
         {
             BaseAddress = new Uri("http://94.183.186.221:5000/")
         };
+
         public IActionResult OnGet()
         {
             string? token = Request.Cookies["jwt"];
@@ -49,7 +50,7 @@ namespace RentHub.App.Pages
                 using var formData = new MultipartFormDataContent();
                 formData.Add(new StringContent(Email), "email");
 
-                var response = await client.PostAsync($"Auth/email_exists", formData);
+                var response = await client.PostAsync($"Authentication/email_exists", formData);
 
                 response.EnsureSuccessStatusCode();
 

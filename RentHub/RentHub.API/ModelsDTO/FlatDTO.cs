@@ -27,6 +27,5 @@
         public string Description { get; set; } = null!;
 
         public IFormFile? Photo { get; set; }
-
     }
 }
