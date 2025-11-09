@@ -5,8 +5,6 @@ using RentHub.API.ModelsDTO;
 using RentHub.Core.Model;
 using System.Security.Claims;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace RentHub.API.Controllers
 {
     [Route("[controller]")]
@@ -59,12 +57,6 @@ namespace RentHub.API.Controllers
             }
 
             List<Flat> flats = context.Flats.Where(fl => fl.UserId == userId).ToList();
-
-            if (flats.IsNullOrEmpty())
-            {
-                return NotFound($"Квартиры пользователя с ID {userId} не найдены");
-            }
-
             return Ok(flats);
         }
 
