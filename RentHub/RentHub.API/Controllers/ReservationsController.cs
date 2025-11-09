@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RentHub.API.ModelsDTO;
 using RentHub.Core.Model;
@@ -36,6 +37,23 @@ namespace RentHub.API.Controllers
                 return NotFound($"Бронирование с ID {id} не найден");
             }
             return Ok(reservation);
+        }
+
+        [HttpGet("reservation-by-flat-id/{id}")]
+        public ActionResult<Reservation> GetAdvertisementOfFlat(int id)
+        {
+            using RentHubContext context = new();
+            List<Reservation> reservations = context.Reservations
+                 .Include(r => r.Advertisement)
+                 .Where(r => r.Advertisement.FlatId == id)
+                 .ToList();
+
+            if (reservations.IsNullOrEmpty())
+            {
+                return NotFound($"Бронирования на квартиру ID {id} не найдено");
+            }
+
+            return Ok(reservations);
         }
 
         [Authorize]
