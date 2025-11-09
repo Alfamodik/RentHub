@@ -1,7 +1,11 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using RentHub.App.ViewModels;
 using RentHub.Core.Model;
+using System.Collections.ObjectModel;
+using System.Text;
+using System.Text.Json;
 
 namespace RentHub.App.Pages
 {
@@ -10,8 +14,16 @@ namespace RentHub.App.Pages
         public DateOnly CalendarStart;
         public int DaysCount;
         public List<DateOnly> Days;
-        public List<FlatBookingsViewModel> FlatBookingsViewModels;
+        public List<FlatBookingsViewModel>? FlatBookingsViewModels;
 
+
+        [BindProperty]
+        public AdvertisimentViewModel newAdd { get; set; } = new AdvertisimentViewModel();
+
+        private readonly HttpClient client = new HttpClient()
+        {
+            BaseAddress = new Uri("http://94.183.186.221:5000/")
+        };
 
         private readonly RentHubContext _context = new();
 
@@ -99,5 +111,62 @@ namespace RentHub.App.Pages
                 ColorHexCode = colorHexCode
             };
         }
+
+        public async Task<AdvertisimentViewModel?> GetAddOnFlatIdOtherPlatform()
+        {
+            var token = Request.Cookies["jwt"];
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            try
+            {
+                HttpResponseMessage response;
+                response = await client.GetAsync("Advertisements/advertisement-by-flat-id/platform-other/{}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    AdvertisimentViewModel? add = JsonSerializer.Deserialize<AdvertisimentViewModel>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                    return add;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<ActionResult> OnPostAddReservation()
+        {
+            var token = Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            try
+            {
+                var jsonData = JsonSerializer.Serialize(newAdd);
+                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync("Renters/renter", content);
+                if (response.IsSuccessStatusCode)
+                {
+                    OnGet();
+                    return RedirectToPage();
+                }
+                else
+                {
+                    return Page();
+                }
+            }
+            catch
+            {
+                return Page();
+            }
+        }
+
     }
 }
