@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using RentHub.API.ModelsDTO;
 using RentHub.Core.Model;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace RentHub.API.Controllers
 {
@@ -109,7 +110,7 @@ namespace RentHub.API.Controllers
 
         [Authorize]
         [HttpPut("flat-data/{id}")]
-        public ActionResult ChangeFlatData(int id, FlatDTO flatDto)
+        public async Task<ActionResult> ChangeFlatData(int id, FlatDTO flatDto)
         {
             using RentHubContext context = new();
             byte[]? photoBytes = null;
@@ -129,7 +130,7 @@ namespace RentHub.API.Controllers
                 }
 
                 using var memoryStream = new MemoryStream();
-                flatDto.Photo.CopyToAsync(memoryStream);
+                await flatDto.Photo.CopyToAsync(memoryStream);
                 photoBytes = memoryStream.ToArray();
                 memoryStream.Close();
             }
