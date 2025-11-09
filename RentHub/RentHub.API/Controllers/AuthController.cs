@@ -35,7 +35,7 @@ namespace RentHub.API.Controllers
             if (user == null)
                 return Unauthorized();
 
-            string token = GenerateJwtToken(request.Email);
+            string token = GenerateJwtToken(user.UserId, request.Email);
             return Ok(new { token });
         }
 
@@ -52,22 +52,24 @@ namespace RentHub.API.Controllers
             if (user != null)
                 return Conflict("Данный email уже зарегестрирован");
 
-            context.Users.Add(new()
+            user = new()
             {
                 Email = request.Email,
                 Password = request.Password
-            });
+            };
 
+            context.Users.Add(user);
             context.SaveChanges();
 
-            string token = GenerateJwtToken(request.Email);
+            string token = GenerateJwtToken(user.UserId, user.Email);
             return Ok(new { token });
         }
 
-        private static string GenerateJwtToken(string email)
+        private static string GenerateJwtToken(int userId, string email)
         {
             var claims = new[]
             {
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                 new Claim(ClaimTypes.Email, email)
             };
 
