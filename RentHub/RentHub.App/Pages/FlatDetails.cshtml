@@ -9,8 +9,38 @@
 <head>
     <meta charset="utf-8">
     <title>Квартиры</title>
-    <link href="~/css/MainPage.css" rel="stylesheet"/>
+    <link href="~/css/MainPage.css" rel="stylesheet" />
     <link href="~/css/RentersList.css" rel="stylesheet" />
+    <style>
+        .ads-btn {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+
+            .ads-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+            }
+
+        .submit-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 25px;
+        }
+    </style>
 </head>
 <body>
     <div id="side-bar">
@@ -31,6 +61,11 @@
             <button type="submit" name="CustomersBtn">Жильцы</button>
         </form>
 
+        <form class="menu-item" method="get" action="/AdvertisementsList">
+            <img src="~/img/side-bar/ad.svg" alt="404" />
+            <button type="submit" name="AdsBtn">Объявления</button>
+        </form>
+
         <form class="menu-item" method="get">
             <img src="~/img/side-bar/chart-no-axes-column 1.svg" alt="404" />
             <button type="submit" name="recordsBtn">Отчетность</button>
@@ -42,85 +77,95 @@
             <a href="#"><img src="~/img/userIcon.svg" alt="Фотка иконки юзера" /></a>
             <a href="#"><img src="~/img/bell.svg" alt="Фотка иконки уведомлений" /></a>
         </div>
-        <div class="flats-card-container" id="flatsContainer">
-            @if (Model.Flat != null)
-            {
-                <div class="flat-card renter-card" style="width: 100%">
-                    <form method="post" enctype="multipart/form-data" class="flat-form">
-                        <input type="hidden" asp-for="Flat.FlatId" />
 
-                        <div class="renter-info-container form-group">
-                            <label>Страна:</label>
-                            <input type="text" asp-for="Flat.Country" />
-                        </div>
-
-                        <div class="renter-info-container form-group">
-                            <label>Город:</label>
-                            <input type="text" asp-for="Flat.City" />
-                        </div>
-
-                        <div class="renter-info-container form-group">
-                            <label>Район:</label>
-                            <input type="text" asp-for="Flat.District" />
-                        </div>
-
-                        <div class="renter-info-container form-group">
-                            <label>Номер дома:</label>
-                            <input type="text" asp-for="Flat.HouseNumber" />
-                        </div>
-
-                        <div class="renter-info-container form-group">
-                            <label>Номер квартиры:</label>
-                            <input type="text" asp-for="Flat.ApartmentNumber" />
-                        </div>
-
-                        <div class="renter-info-container form-group">
-                            <label>Комнат:</label>
-                            <input type="number" asp-for="Flat.RoomCount" min="1" />
-                        </div>
-
-                        <div class="renter-info-container form-group">
-                            <label>Площадь (м²):</label>
-                            <input type="number" asp-for="Flat.Size" step="0.1" />
-                        </div>
-
-                        <div class="renter-info-container form-group">
-                            <label>Этаж:</label>
-                            <input type="number" asp-for="Flat.FloorNumber" />
-                        </div>
-
-                        <div class="renter-info-container form-group">
-                            <label>Этажей в доме:</label>
-                            <input type="number" asp-for="Flat.FloorsNumber" />
-                        </div>
-
-                        <div class="renter-info-container form-group">
-                            <label>Описание:</label>
-                            <textarea asp-for="Flat.Description"></textarea>
-                        </div>
-
-                        <div class="renter-info-container form-group photo-section">
-                            <label>Фото:</label>
-                            @if (Model.Flat.Photo != null)
-                            {
-                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Flat.Photo)" alt="Фото квартиры" class="flat-photo" />
-                            }
-                            <input type="file" asp-for="PhotoUpload" style="display:flex;margin-top:10px;" />
-                        </div>
-
-                        <div class="form-buttons submit-row">
-                            <button type="submit" class="submit-btn">Сохранить</button>
-                        </div>
-                    </form>
-                </div>
-            }
-            else
-            {
-                <div class="no-flats">
-                    <p>Квартира не найдены</p>
-                </div>
-            }
+        <div class="search-container">
+            <div class="search-bar-container">
+                <a href="/MainFlats" class="back-link" style="color: #94a3b8; text-decoration: none; display: inline-block; margin-bottom: 15px; font-size: 16px;">
+                    ← Назад к списку квартир
+                </a>
+            </div>
         </div>
+
+        @if (Model.Flat != null)
+        {
+            <div class="flat-card renter-card" style="margin: 25px 50px; width: calc(100% - 100px);">
+                <form method="post" enctype="multipart/form-data" class="flat-form">
+                    <input type="hidden" asp-for="Flat.FlatId" />
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 25px;">
+                        <div class="form-group">
+                            <label>Страна:</label>
+                            <input type="text" asp-for="Flat.Country" value="@Model.Flat.Country" style="width:100%" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Город:</label>
+                            <input type="text" asp-for="Flat.City" value="@Model.Flat.City" style="width:100%" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Район:</label>
+                            <input type="text" asp-for="Flat.District" value="@Model.Flat.District" style="width:100%" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Номер дома:</label>
+                            <input type="text" asp-for="Flat.HouseNumber" value="@Model.Flat.HouseNumber" style="width:100%" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Номер квартиры:</label>
+                            <input type="text" asp-for="Flat.ApartmentNumber" value="@Model.Flat.ApartmentNumber" style="width:100%" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Комнат:</label>
+                            <input type="number" asp-for="Flat.RoomCount" min="1" value="@Model.Flat.RoomCount" style="width:100%" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Площадь (м²):</label>
+                            <input type="number" asp-for="Flat.Size" step="0.1" value="@Model.Flat.Size" style="width:100%" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Этаж:</label>
+                            <input type="number" asp-for="Flat.FloorNumber" value="@Model.Flat.FloorNumber" style="width:100%" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Этажей в доме:</label>
+                            <input type="number" asp-for="Flat.FloorsNumber" value="@Model.Flat.FloorsNumber" style="width:100%" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Описание:</label>
+                        <textarea asp-for="Flat.Description" style="width:100%; min-height:150px;">@Model.Flat.Description</textarea>
+                    </div>
+
+                    <div class="form-group photo-section">
+                        <label>Фото квартиры:</label>
+                        @if (Model.Flat.Photo != null)
+                        {
+                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Flat.Photo)" alt="Фото квартиры" class="flat-photo" style="max-width:300px; margin-top:10px;" />
+                        }
+                        <input type="file" asp-for="PhotoUpload" style="margin-top:10px; width:100%" />
+                    </div>
+
+                    <div class="submit-row">
+                        <button type="submit" class="submit-btn">Сохранить изменения</button>
+                        <a href="/AdvertismentsList?flatId=@Model.Flat.FlatId" class="ads-btn">Управление объявлениями</a>
+                    </div>
+                </form>
+            </div>
+        }
+        else
+        {
+            <div class="no-flats">
+                <p>Квартира не найдена</p>
+            </div>
+        }
     </div>
 </body>
 </html>
