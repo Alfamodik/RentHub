@@ -1,0 +1,88 @@
+﻿/*body {
+    background-color: #0F172A;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+
+#main-content-main-page {
+    
+    width: 79vw;
+    height: 100vh;
+}
+
+.top-bar {
+    
+    height: 12vh;
+    background: url('../img/top bar.svg');
+    
+}*/
+
+body {
+    background-color: #0F172A;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    display: flex;
+}
+
+#side-bar {
+    width: 250px;
+    background-color: #1E293B;
+    height: 100vh;
+    padding: 20px;
+}
+
+#main-text {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 40px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+    .menu-item img {
+        width: 24px;
+        margin-right: 10px;
+    }
+
+    .menu-item button {
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+    }
+
+.main-cont {
+    flex: 1;
+    padding: 40px;
+    background: #0F172A;
+}
+
+.filter-bar {
+    margin-bottom: 30px;
+}
+
+.form-select {
+    background: #1E293B;
+    color: white;
+    border: 1px solid #334155;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.charts-container {
+    display: flex;
+    gap: 40px;
+}
+
+.chart-box {
+    flex: 1;
+    background: #1E293B;
+    border-radius: 10px;
+    padding: 20px;
+}

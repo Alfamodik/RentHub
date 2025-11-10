@@ -40,7 +40,7 @@ namespace RentHub.App.Pages
                 formData.Add(new StringContent(Email), "email");
 
 
-                var response = await client.PostAsync($"Auth/email_exists", formData);
+                var response = await client.PostAsync($"Authentication/email_exists", formData);
                 
                 response.EnsureSuccessStatusCode();
                 

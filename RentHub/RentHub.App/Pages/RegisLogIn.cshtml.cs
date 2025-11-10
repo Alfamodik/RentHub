@@ -52,7 +52,7 @@ namespace RentHub.App.Pages
                     string json = JsonSerializer.Serialize(loginData);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    response = await client.PostAsync("Auth/login", content);
+                    response = await client.PostAsync("Authentication/login", content);
                 }
                 else
                 {
@@ -66,7 +66,7 @@ namespace RentHub.App.Pages
                     string json = JsonSerializer.Serialize(regData);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    response = await client.PostAsync("Auth/Register", content);
+                    response = await client.PostAsync("Authentication/Register", content);
                 }
 
                 string body = await response.Content.ReadAsStringAsync();
@@ -91,6 +91,7 @@ namespace RentHub.App.Pages
                     TempData["Message"] = $"Ошибка API: {response.StatusCode}. {body}";
                     return Page();
                 }
+                
 
                 TempData["Message"] = emailExists ? "Успешный вход!" : "Регистрация успешна!";
                 return RedirectToPage("/MainFlats");
