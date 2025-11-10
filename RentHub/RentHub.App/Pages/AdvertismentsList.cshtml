@@ -1,0 +1,179 @@
+﻿@page
+@model RentHub.App.Pages.AdvertismentsListModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Объявления квартиры: @Model.FlatAddressFromCookie</title>
+    <link href="~/css/MainPage.css" rel="stylesheet" />
+    <link href="~/css/RentersList.css" rel="stylesheet">
+</head>
+<body>
+
+    <div id="side-bar">
+        <p id="main-text">Недвижимость</p>
+
+        <form class="menu-item" method="get" action="/MainFlats">
+            <img src="~/img/side-bar/House 1.svg" alt="404" />
+            <button type="submit" name="FlatsBtn">Квартиры</button>
+        </form>
+
+        <form class="menu-item" method="get" action="/Reservations">
+            <img src="~/img/side-bar/Calendar 1.svg" alt="404" />
+            <button type="submit" name="ReservationsBtn">Бронирования</button>
+        </form>
+
+        <form class="menu-item" method="get" action="/RentersList">
+            <img src="~/img/side-bar/users 1.svg" alt="404" />
+            <button type="submit" name="CustomersBtn">Жильцы</button>
+        </form>
+
+        <form class="menu-item" method="get">
+            <img src="~/img/side-bar/chart-no-axes-column 1.svg" alt="404" />
+            <button type="submit" name="recordsBtn">Отчетность</button>
+        </form>
+    </div>
+
+    <div id="main-content-main-page">
+        <div class="top-bar">
+            <a href="#"><img src="~/img/userIcon.svg" alt="Фотка иконки юзера" /></a>
+            <a href="#"><img src="~/img/bell.svg" alt="Фотка иконки уведомлений" /></a>
+        </div>
+
+        <div class="search-container">
+            <div class="search-bar-container">
+                <input id="searchInput" type="text" placeholder="Поиск по объявлениям..." />
+            </div>
+        </div>
+
+        <div class="renters-card-container" id="advertisementsContainer">
+            @if (Model.Advertisements != null && Model.Advertisements.Any())
+            {
+                @foreach (var ad in Model.Advertisements)
+                {
+                    <div class="advertisement-card" data-search="@($"{ad.Platform.PlatformName} {ad.RentType} {ad.PriceForPeriod} {ad.LinkToAdvertisement}")">
+                        <div class="advertisement-info-container">
+                            <h3>@ad.Platform.PlatformName</h3>
+                            <p><span>Тип аренды:</span> @ad.RentType</p>
+                            <p><span>Цена:</span> @ad.PriceForPeriod.ToString("C")</p>
+                            <p><span>Ссылка:</span> <a href="@ad.LinkToAdvertisement" target="_blank" style="color:#3498db;">Перейти</a></p>
+                        </div>
+                        <div class="delete-advertisement-container">
+                            <form method="post" asp-page-handler="DeleteAdvertisement" onsubmit="return confirm('Вы уверены, что хотите удалить это объявление?');">
+                                <input type="hidden" name="AdvertisementIdToDelete" value="@ad.AdvertisementId" />
+                                <button type="submit" id="deleteButton" style="background:none; border:none; cursor:pointer; font-size:20px;">🗑</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="no-renters" style="display: block; text-align: center; padding: 20px;">
+                    <p>Для этой квартиры еще нет объявлений</p>
+                </div>
+            }
+        </div>
+
+        <div id="noResults" class="no-renters" style="display: none;">
+            <p>Объявления не найдены</p>
+        </div>
+
+        <button id="addAdvertisementBtn" class="add-button">+</button>
+    </div>
+
+    <div id="addAdvertisementModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Добавить объявление для квартиры: @Model.FlatAddressFromCookie</h2>
+            <form id="addAdvertisementForm" method="post" asp-page-handler="AddAdvertisement">
+                <input type="hidden" name="FlatId" value="@Model.FlatIdFromCookie" />
+
+                <div class="form-group">
+                    <label for="platformSelect">Платформа размещения</label>
+                    <select id="platformSelect" name="PlatformId" class="platform-select" required>
+                        <option value="">Выберите платформу</option>
+                        @foreach (var platform in Model.Platforms)
+                        {
+                            <option value="@platform.PlatformId">@platform.PlatformName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="text" placeholder="Тип аренды" name="RentType" required>
+                </div>
+
+                <div class="form-group">
+                    <input type="number" step="0.01" placeholder="Цена за период" name="PriceForPeriod" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <input type="url" placeholder="Ссылка на объявление" name="LinkToAdvertisement" required>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" class="submit-btn">Добавить</button>
+                    <button type="button" class="cancel-btn">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('addAdvertisementModal');
+        const addBtn = document.getElementById('addAdvertisementBtn');
+        const closeBtn = document.querySelector('.close');
+        const cancelBtn = document.querySelector('.cancel-btn');
+        const form = document.querySelector('#addAdvertisementForm');
+
+         addBtn.onclick = function () {
+            modal.style.display = 'block';
+         }
+
+         closeBtn.onclick = function () {
+            modal.style.display = 'none';
+            form.reset();
+         }
+
+         cancelBtn.onclick = function () {
+            modal.style.display = 'none';
+            form.reset();
+         }
+
+         window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+                form.reset();
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function (e) {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.advertisement-card');
+            const noResults = document.getElementById('noResults');
+            let hasVisible = false;
+
+            cards.forEach(card => {
+                const searchText = card.getAttribute('data-search').toLowerCase();
+                if (searchText.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                    hasVisible = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (!hasVisible && searchTerm !== '') {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

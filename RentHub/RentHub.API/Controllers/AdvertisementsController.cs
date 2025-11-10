@@ -40,6 +40,15 @@ namespace RentHub.API.Controllers
             return Ok(advertisement);
         }
 
+        [Authorize]
+        [HttpGet("flat/{id}")]
+        public ActionResult<IEnumerable<Advertisement>> GetFlatAdvertisements(int id)
+        {
+            using RentHubContext context = new();
+            IEnumerable<Advertisement>? advertisements = context.Advertisements.Where(r => r.FlatId == id);
+            return Ok(advertisements);
+        }
+
         [HttpGet("advertisement-by-flat-id/platform-other/{id}")]
         public ActionResult<Advertisement> GetAdvertisementOfFlat(int id)
         {
