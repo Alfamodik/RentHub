@@ -24,14 +24,11 @@ namespace RentHub.App.Pages
 
         public void OnGet()
         {
-            // восстанавливаем данные из TempData
             if (TempData.TryGetValue("Email", out var e))
                 Email = e?.ToString() ?? string.Empty;
 
             if (TempData.TryGetValue("exists", out var ex))
                 emailExists = string.Equals(ex?.ToString(), "true", StringComparison.OrdinalIgnoreCase);
-
-            //TempData["Message"] = $"{emailExists}";
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -42,7 +39,6 @@ namespace RentHub.App.Pages
 
                 if (emailExists)
                 {
-                    // 🔹 Существует → логин
                     var loginData = new
                     {
                         email = Email,
@@ -56,7 +52,6 @@ namespace RentHub.App.Pages
                 }
                 else
                 {
-                    // 🔹 Не существует → регистрация
                     var regData = new
                     {
                         email = Email,
@@ -93,6 +88,12 @@ namespace RentHub.App.Pages
                 }
                 
 
+                string? jwt = JsonSerializer.Deserialize<JsonElement>(body).GetProperty("token").GetString();
+                Response.Cookies.Append("jwt", jwt, new CookieOptions
+                {
+                    Secure = true,
+                    Expires = DateTime.Now.AddMinutes(60)
+                });
                 TempData["Message"] = emailExists ? "Успешный вход!" : "Регистрация успешна!";
                 return RedirectToPage("/MainFlats");
             }

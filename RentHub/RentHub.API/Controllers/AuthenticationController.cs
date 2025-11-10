@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Playwright;
 using RentHub.Core.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -37,7 +36,7 @@ namespace RentHub.API.Controllers
             if (user == null)
                 return Unauthorized();
 
-            if (!(new PasswordHasher<User>().VerifyHashedPassword(null, user.Password, request.Password) == PasswordVerificationResult.Success))
+            if (new PasswordHasher<User>().VerifyHashedPassword(null, user.Password, request.Password) != PasswordVerificationResult.Success)
                 return Unauthorized();
 
             string token = GenerateJwtToken(user.UserId, user.Email);

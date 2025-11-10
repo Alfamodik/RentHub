@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace RentHub.Core.Model;
+﻿namespace RentHub.Core.Model;
 
 public partial class Renter
 {

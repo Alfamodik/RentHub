@@ -8,5 +8,9 @@ public partial class User
 
     public string Password { get; set; } = null!;
 
+    public string? AvitoAccessToken { get; set; }
+
+    public string? AvitoRefreshToken { get; set; }
+
     public virtual ICollection<Flat> Flats { get; set; } = new List<Flat>();
 }

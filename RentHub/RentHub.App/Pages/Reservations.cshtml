@@ -11,7 +11,7 @@
 <html lang="ru">
 <head>
     <meta charset="utf-8">
-    <title>Главная страница</title>
+    <title>Бронирования</title>
     <link href="~/css/MainPage.css" rel="stylesheet" />
     <link href="~/css/Reservations.css" rel="stylesheet" />
 </head>
@@ -20,8 +20,8 @@
     <div id="side-bar">
         <p id="main-text">Недвижимость</p>
 
-        <form class="menu-item" method="get">
-            <img src="~/img/side-bar/House 1.svg" alt="404" />
+        <form class="menu-item" method="get" action="/MainFlats">
+            <img src="~/img/side-bar/House 1.svg" alt="/MainFlats" />
             <button type="submit" name="FlatsBtn">Квартиры</button>
         </form>
 
@@ -30,8 +30,8 @@
             <button type="submit" name="ReservationsBtn">Бронирования</button>
         </form>
 
-        <form class="menu-item" method="get">
-            <img src="~/img/side-bar/users 1.svg" alt="404" />
+        <form class="menu-item" method="get" action="/RentersList">
+            <img src="~/img/side-bar/users 1.svg" alt="/RentersList" />
             <button type="submit" name="CustomersBtn">Жильцы</button>
         </form>
 
@@ -43,6 +43,8 @@
 
     <div id="main-content-main-page">
         <div class="top-bar">
+            <a href="#"><img src="~/img/userIcon.svg" alt="Фотка иконки юзера" /></a>
+            <a href="#"><img src="~/img/bell.svg" alt="Фотка иконки уведомлений" /></a>
         </div>
 
         <div class="calendar-container">
@@ -52,7 +54,7 @@
                     height: @(Model.FlatBookingsViewModels.Count * 100 + 30 + 30)px;">
                 @{
                     <div class="grid-row1" style="grid-template-columns: repeat(@(Model.DaysCount + 1), 75px);">
-                        <span style="display: flex; justify-content: stretch;"></span>
+                        <button id="addReservationBtn" class="add-button">+</button>
                         @{
                             foreach (var item in Model.Days)
                             {
@@ -102,8 +104,8 @@
                                                 align-content: center;
                                                 justify-content: center;
                                                 flex-direction: column">
-                                             <p style="color: #fffe">@reservation.RenterName</p>
-                                            <p style="color: #fffe">@reservation.PhoneNumber</p>
+                                             <p style="color: var(--text-color); padding-left: 5px">@reservation.RenterName</p>
+                                            <p style="color: var(--text-color); padding-left: 5px">@reservation.PhoneNumber</p>
                                         </div>
 
                                         j += length;
@@ -122,6 +124,56 @@
                 }
             </div>
         </div>
+        <div id="addReservationModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Добавить новое бронирование</h2>
+                <form id="addReservationForm" method="post" asp-page-handler="AddReservation">
+                    <div class="form-group">
+                        <input type="text" placeholder="" id="lastname" name="lastname" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Имя" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Отчество" id="patronymic" name="patronymic">
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="submit-btn">Добавить</button>
+                        <button type="button" class="cancel-btn">Отмена</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <script>
+        const modal = document.getElementById('addReservationModal');
+        const addBtn = document.getElementById('addReservationBtn');
+        const closeBtn = document.querySelector('.close');
+        const cancelBtn = document.querySelector('.cancel-btn');
+        const form = document.querySelector('#addReservationForm')
+
+        addBtn.onclick = function () {
+            modal.style.display = 'block';
+        }
+
+        closeBtn.onclick = function () {
+            modal.style.display = 'none';
+            form.reset();
+        }
+
+        cancelBtn.onclick = function () {
+            modal.style.display = 'none';
+            form.reset();
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+                form.reset();
+            }
+        }
+    </script>
 </body>
 </html>

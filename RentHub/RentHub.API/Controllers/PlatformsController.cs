@@ -17,12 +17,12 @@ namespace RentHub.API.Controllers
         public ActionResult<List<PlacementPlatform>> GetPlatforms()
         {
             using RentHubContext context = new();
-                List<PlacementPlatform> platformsList = context.PlacementPlatforms.ToList();
-                if (platformsList.IsNullOrEmpty())
-                {
-                    return NotFound("Список платформ пуст");
-                }
-                return platformsList;
+            List<PlacementPlatform> platformsList = context.PlacementPlatforms.ToList();
+            if (platformsList.IsNullOrEmpty())
+            {
+                return NotFound("Список платформ пуст");
+            }
+            return platformsList;
         }
 
         [Authorize]
@@ -30,14 +30,14 @@ namespace RentHub.API.Controllers
         public ActionResult<PlacementPlatform> GetPlatform(int id)
         {
             using RentHubContext context = new();
-                PlacementPlatform? platform = context.PlacementPlatforms.FirstOrDefault(p => p.PlatformId == id);
+            PlacementPlatform? platform = context.PlacementPlatforms.FirstOrDefault(p => p.PlatformId == id);
 
-                if (platform == null)
-                {
-                    return NotFound($"Платформа с ID {id} не найдена");
-                }
+            if (platform == null)
+            {
+                return NotFound($"Платформа с ID {id} не найдена");
+            }
 
-                return Ok(platform);
+            return Ok(platform);
         }
 
         [Authorize]
@@ -45,12 +45,12 @@ namespace RentHub.API.Controllers
         public ActionResult AddPlatform(PlatformDTO platformDTO)
         {
             using RentHubContext context = new();
-                PlacementPlatform placement = new PlacementPlatform
-                {
-                    PlatformName = platformDTO.PlatformName
-                };
-                context.PlacementPlatforms.Add(placement).Context.SaveChanges();
-                return Ok("Платформа успешно добавлена");
+            PlacementPlatform placement = new PlacementPlatform
+            {
+                PlatformName = platformDTO.PlatformName
+            };
+            context.PlacementPlatforms.Add(placement).Context.SaveChanges();
+            return Ok("Платформа успешно добавлена");
         }
 
         [Authorize]
@@ -58,16 +58,16 @@ namespace RentHub.API.Controllers
         public ActionResult ChangePlatformData(int id, PlatformDTO platformDTO)
         {
             using RentHubContext context = new();
-                PlacementPlatform? platform = context.PlacementPlatforms.FirstOrDefault(p => p.PlatformId == id);
+            PlacementPlatform? platform = context.PlacementPlatforms.FirstOrDefault(p => p.PlatformId == id);
 
-                if (platform == null)
-                {
-                    return NotFound($"Платформа с ID {id} не найдена");
-                }
-                platform.PlatformName = platformDTO.PlatformName;
-                context.SaveChanges();
+            if (platform == null)
+            {
+                return NotFound($"Платформа с ID {id} не найдена");
+            }
+            platform.PlatformName = platformDTO.PlatformName;
+            context.SaveChanges();
 
-                return Ok("Данные платформы успешно изменены");
+            return Ok("Данные платформы успешно изменены");
         }
 
         [Authorize]
@@ -75,15 +75,15 @@ namespace RentHub.API.Controllers
         public ActionResult DeletePlatform(int id)
         {
             using RentHubContext context = new();
-                PlacementPlatform? platform = context.PlacementPlatforms.FirstOrDefault(p => p.PlatformId == id);
+            PlacementPlatform? platform = context.PlacementPlatforms.FirstOrDefault(p => p.PlatformId == id);
 
-                if (platform == null)
-                {
-                    return NotFound($"Платформа с ID {id} не найдена");
-                }
-                context.PlacementPlatforms.Remove(platform);
-                context.SaveChanges();
-                return Ok("Платформа успешно удалена");
+            if (platform == null)
+            {
+                return NotFound($"Платформа с ID {id} не найдена");
+            }
+            context.PlacementPlatforms.Remove(platform);
+            context.SaveChanges();
+            return Ok("Платформа успешно удалена");
         }
     }
 }

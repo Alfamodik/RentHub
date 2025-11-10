@@ -32,7 +32,7 @@ namespace RentHub.API.Controllers
 
             string responseBody = await response.Content.ReadAsStringAsync();
 
-            AvitoAccessTokenResponse? accessTokenResponse = JsonSerializer.Deserialize<AvitoAccessTokenResponse>(responseBody);
+            AvitoAccessTokenResponseExperement? accessTokenResponse = JsonSerializer.Deserialize<AvitoAccessTokenResponseExperement>(responseBody);
 
             return Ok(accessTokenResponse);
         }
@@ -73,12 +73,12 @@ namespace RentHub.API.Controllers
             string skipError = avitoBookingRequest.SkipErrors.ToString().ToLower();
             string withUnpaid = avitoBookingRequest.WithUnpaid.ToString().ToLower();
 
-            string url = 
+            string url =
                 @$"realty/v1/accounts/{avitoBookingRequest.UserId}/" +
-                @$"items/{avitoBookingRequest.ItemId}/" + 
+                @$"items/{avitoBookingRequest.ItemId}/" +
                 @$"bookings?skip_error={skipError}&" +
                 @$"date_start={dateStart}&" +
-                $@"date_end={dateEnd}&" + 
+                $@"date_end={dateEnd}&" +
                 $@"with_unpaid={withUnpaid}";
 
             HttpResponseMessage response = await _httpClient.GetAsync(url);

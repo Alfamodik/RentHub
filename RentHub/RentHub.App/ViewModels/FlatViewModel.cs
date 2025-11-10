@@ -1,6 +1,6 @@
-﻿namespace RentHub.API.ModelsDTO
+﻿namespace RentHub.App.ViewModels
 {
-    public class FlatDTO
+    public class FlatViewModel
     {
         public int FlatId { get; set; }
 
@@ -26,6 +26,6 @@
 
         public string Description { get; set; } = null!;
 
-        public IFormFile? Photo { get; set; }
+        public byte[]? Photo { get; set; }
     }
 }

@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using RentHub.App.ViewModels;
 using RentHub.Core.Model;
+using System.Collections.ObjectModel;
+using System.Linq.Expressions;
+using System.Text;
+using System.Text.Json;
 
 namespace RentHub.App.Pages
 {
@@ -11,8 +15,16 @@ namespace RentHub.App.Pages
         public DateOnly CalendarStart;
         public int DaysCount;
         public List<DateOnly> Days;
-        public List<FlatBookingsViewModel> FlatBookingsViewModels;
+        public List<FlatBookingsViewModel>? FlatBookingsViewModels;
 
+
+        [BindProperty]
+        public ReservationFullViewModel newReservation { get; set; } = new ReservationFullViewModel();
+
+        private readonly HttpClient client = new HttpClient()
+        {
+            BaseAddress = new Uri("http://94.183.186.221:5000/")
+        };
 
         private readonly RentHubContext _context = new();
 
@@ -50,8 +62,8 @@ namespace RentHub.App.Pages
                     foreach (Reservation reservation in advertisement.Reservations)
                     {
                         ReservationViewModel? reservationViewModel = CreateReservationDisplay(reservation);
-                        
-                        if (reservationViewModel != null) 
+
+                        if (reservationViewModel != null)
                             reservations.Add(reservationViewModel);
                     }
                 }
@@ -77,7 +89,7 @@ namespace RentHub.App.Pages
             int clippedEnd = Math.Min(DaysCount - 1, endOffset);
             int length = clippedEnd - clippedStart + 1;
 
-            if (length <= 0) 
+            if (length <= 0)
                 return null;
 
             string colorHexCode;
@@ -100,5 +112,70 @@ namespace RentHub.App.Pages
                 ColorHexCode = colorHexCode
             };
         }
+
+        public async Task<AdvertisimentViewModel?> GetFlatIdOtherPlatform()
+        {
+            var token = Request.Cookies["jwt"];
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            try
+            {
+                HttpResponseMessage response;
+                response = await client.GetAsync("Advertisements/advertisement-by-flat-id/platform-other/{}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    AdvertisimentViewModel? add = JsonSerializer.Deserialize<AdvertisimentViewModel>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                    return add;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<ActionResult> OnPostAddReservation()
+        {
+            AdvertisimentViewModel? add = await GetFlatIdOtherPlatform();
+            if (add == null)
+            {
+                return Page();
+            }
+            var token = Request.Cookies["jwt"];
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            try
+            {
+                newReservation.AdvertisementId = add.AdvertisementId;
+                newReservation.Summ = Convert.ToDecimal((newReservation.DateOfEndReservation.DayOfYear - newReservation.DateOfStartReservation.DayOfYear) * add.PriceForPeriod);
+                newReservation.Income = Convert.ToDecimal((newReservation.DateOfEndReservation.DayOfYear - newReservation.DateOfStartReservation.DayOfYear) * add.PriceForPeriod);
+                var jsonData = JsonSerializer.Serialize(newReservation);
+                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync("Renters/renter", content);
+                if (response.IsSuccessStatusCode)
+                {
+                    OnGet();
+                    return RedirectToPage();
+                }
+                else
+                {
+                    return Page();
+                }
+            }
+            catch
+            {
+                return Page();
+            }
+        }
+
     }
 }
