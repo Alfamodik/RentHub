@@ -44,28 +44,23 @@
             <a href="#"><img src="~/img/bell.svg" alt="Фотка иконки уведомлений" /></a>
         </div>
 
-        <div class="search-container">
-            <div class="search-bar-container">
-                <input id="searchInput" type="text" placeholder="Поиск по объявлениям..." />
-            </div>
-        </div>
-
         <div class="renters-card-container" id="advertisementsContainer">
             @if (Model.Advertisements != null && Model.Advertisements.Any())
             {
                 @foreach (var ad in Model.Advertisements)
                 {
-                    <div class="advertisement-card" data-search="@($"{ad.Platform.PlatformName} {ad.RentType} {ad.PriceForPeriod} {ad.LinkToAdvertisement}")">
-                        <div class="advertisement-info-container">
+                    <div class="renter-card" data-search="@($"{ad.Platform.PlatformName} {ad.RentType} {ad.PriceForPeriod} {ad.LinkToAdvertisement}")">
+                        <div class="renter-info-container">
                             <h3>@ad.Platform.PlatformName</h3>
                             <p><span>Тип аренды:</span> @ad.RentType</p>
                             <p><span>Цена:</span> @ad.PriceForPeriod.ToString("C")</p>
                             <p><span>Ссылка:</span> <a href="@ad.LinkToAdvertisement" target="_blank" style="color:#3498db;">Перейти</a></p>
                         </div>
-                        <div class="delete-advertisement-container">
+                        <div class="delete-renter-container">
                             <form method="post" asp-page-handler="DeleteAdvertisement" onsubmit="return confirm('Вы уверены, что хотите удалить это объявление?');">
                                 <input type="hidden" name="AdvertisementIdToDelete" value="@ad.AdvertisementId" />
-                                <button type="submit" id="deleteButton" style="background:none; border:none; cursor:pointer; font-size:20px;">🗑</button>
+                                <input type="hidden" name="FlatId" value="@Model.FlatId" />
+                                <button type="submit" id="deleteButton">🗑</button>
                             </form>
                         </div>
                     </div>
@@ -79,10 +74,6 @@
             }
         </div>
 
-        <div id="noResults" class="no-renters" style="display: none;">
-            <p>Объявления не найдены</p>
-        </div>
-
         <button id="addAdvertisementBtn" class="add-button">+</button>
     </div>
 
@@ -91,7 +82,7 @@
             <span class="close">&times;</span>
             <h2>Добавить объявление для квартиры: @Model.FlatAddressFromCookie</h2>
             <form id="addAdvertisementForm" method="post" asp-page-handler="AddAdvertisement">
-                <input type="hidden" name="FlatId" value="@Model.FlatIdFromCookie" />
+                <input type="hidden" name="FlatId" value="@Model.FlatId" />
 
                 <div class="form-group">
                     <label for="platformSelect">Платформа размещения</label>
@@ -105,11 +96,20 @@
                 </div>
 
                 <div class="form-group">
-                    <input type="text" placeholder="Тип аренды" name="RentType" required>
+                    <label for="rentTypeSelect">Тип аренды</label>
+                    <select id="rentTypeSelect" name="RentType" class="platform-select" required>
+                        <option value="">Выберите тип аренды</option>
+                        <option value="Посуточно">Посуточно</option>
+                        <option value="Длительный период">Длительный период</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
-                    <input type="number" step="0.01" placeholder="Цена за период" name="PriceForPeriod" min="0" required>
+                    <input type="number" step="0.01" placeholder="Цена за сутки" name="PriceForPeriod" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <input type="number" step="0.01" placeholder="Доход за сутки" name="IncomeForPeriod" min="0" required>
                 </div>
 
                 <div class="form-group">

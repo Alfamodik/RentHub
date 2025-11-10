@@ -1,4 +1,6 @@
-﻿namespace RentHub.Core.Model;
+﻿using System.Text.Json.Serialization;
+
+namespace RentHub.Core.Model;
 
 public partial class Advertisement
 {
@@ -10,9 +12,9 @@ public partial class Advertisement
 
     public string RentType { get; set; } = null!;
 
-    public double PriceForPeriod { get; set; }
+    public decimal PriceForPeriod { get; set; }
 
-    public double IncomeForPeriod { get; set; }
+    public decimal IncomeForPeriod { get; set; }
 
     public string LinkToAdvertisement { get; set; } = null!;
 

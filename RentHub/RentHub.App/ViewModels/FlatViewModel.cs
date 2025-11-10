@@ -27,5 +27,7 @@
         public string Description { get; set; } = null!;
 
         public byte[]? Photo { get; set; }
+
+        public string FullAddress => $"{Country}, {City}, {District}, д. {HouseNumber}, кв. {ApartmentNumber}";
     }
 }

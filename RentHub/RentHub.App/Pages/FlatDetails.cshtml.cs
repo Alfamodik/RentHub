@@ -55,6 +55,13 @@ namespace RentHub.App.Pages
                 Description = flat.Description,
                 Photo = flat.Photo
             };
+
+            Response.Cookies.Append("FlatAddress", Flat.FullAddress, new CookieOptions
+            {
+                HttpOnly = false,
+                Secure = false,
+                Expires = DateTime.UtcNow.AddDays(7)
+            });
         }
 
         public async Task<IActionResult> OnPostAsync()
