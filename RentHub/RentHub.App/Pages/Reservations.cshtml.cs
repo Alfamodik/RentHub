@@ -5,6 +5,7 @@ using RentHub.App.ViewModels;
 using RentHub.Core.Model;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -22,42 +23,46 @@ namespace RentHub.App.Pages
         [BindProperty]
         public ReservationFullViewModel newReservation { get; set; } = new ReservationFullViewModel();
 
-        private readonly HttpClient client = new HttpClient()
+        private readonly HttpClient _client = new()
         {
             BaseAddress = new Uri("http://94.183.186.221:5000/")
         };
-
-        public ObservableCollection<RenterViewModel>? Renters { get; set; } = new ObservableCollection<RenterViewModel>();
-
-        public ObservableCollection<FlatViewModel>? Flats { get; set; }
 
         [BindProperty]
         public int FlatID { get; set; }
         [BindProperty]
         public int ReservationID { get; set; }
 
-        private readonly RentHubContext _context = new();
-
-        public async Task OnGet()
+        public async Task<IActionResult> OnGet()
         {
-            await Getrenters();
-            await GetFlats();
+            string? token = Request.Cookies["jwt"];
+
+            if (string.IsNullOrEmpty(token))
+                return RedirectToPage("/Welcome");
+
             CalendarStart = DateOnly.FromDateTime(DateTime.Today.AddDays(-10));
             DaysCount = 40;
 
             Days = Enumerable.Range(0, DaysCount)
                 .Select(CalendarStart.AddDays)
                 .ToList();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            List<Flat> flats = _context.Flats
-                .Include(flat => flat.Advertisements)
-                .ThenInclude(advertisement => advertisement.Reservations)
-                .ThenInclude(reservation => reservation.Renter)
-                .Include(flat => flat.Advertisements)
-                .ThenInclude(advertisement => advertisement.Platform)
-                .OrderBy(f => f.FlatId)
-                .ToList();
+            HttpResponseMessage response;
+            response = await _client.GetAsync($"Flats/user-flats");
 
+            List<Flat>? flats = null;
+
+            if (response.IsSuccessStatusCode)
+            {
+                string platformsJson = await response.Content.ReadAsStringAsync();
+                flats = JsonSerializer.Deserialize<List<Flat>>(platformsJson, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+
+            flats ??= new();
             FlatBookingsViewModels = flats.Select(flat =>
             {
                 string photo;
@@ -88,66 +93,8 @@ namespace RentHub.App.Pages
                     Reservations = reservations,
                 };
             }).ToList();
-        }
 
-        private async Task Getrenters()
-        {
-            var token = Request.Cookies["jwt"];
-
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            try
-            {
-                HttpResponseMessage response;
-                response = await client.GetAsync("Renters/renters");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-                    Renters = JsonSerializer.Deserialize<ObservableCollection<RenterViewModel>>(json, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-                }
-                else
-                {
-                    Renters = new ObservableCollection<RenterViewModel>();
-                }
-            }
-            catch
-            {
-                Renters = new ObservableCollection<RenterViewModel>();
-            }
-        }
-        private async Task GetFlats()
-        {
-            var token = Request.Cookies["jwt"];
-
-            client.DefaultRequestHeaders.Authorization =
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            try
-            {
-                HttpResponseMessage response;
-                response = await client.GetAsync("Flats/flats");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-                    Flats = JsonSerializer.Deserialize<ObservableCollection<FlatViewModel>>(json, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-                }
-                else
-                {
-                    Flats = new ObservableCollection<FlatViewModel>();
-                }
-            }
-            catch
-            {
-                Flats = new ObservableCollection<FlatViewModel>();
-            }
+            return Page();
         }
 
         private ReservationViewModel? CreateReservationDisplay(Reservation reservation)
@@ -190,12 +137,12 @@ namespace RentHub.App.Pages
         {
             var token = Request.Cookies["jwt"];
 
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             try
             {
                 HttpResponseMessage response;
-                response = await client.GetAsync($"Advertisements/advertisement-by-flat-id/platform-other/{FlatID}");
+                response = await _client.GetAsync($"Advertisements/advertisement-by-flat-id/platform-other/{FlatID}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -225,7 +172,7 @@ namespace RentHub.App.Pages
                 return Page();
             }
             var token = Request.Cookies["jwt"];
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             try
             {
                 newReservation.AdvertisementId = add.AdvertisementId;
@@ -233,7 +180,8 @@ namespace RentHub.App.Pages
                 newReservation.Income = Convert.ToDecimal((newReservation.DateOfEndReservation.DayOfYear - newReservation.DateOfStartReservation.DayOfYear) * add.PriceForPeriod);
                 var jsonData = JsonSerializer.Serialize(newReservation);
                 var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync("Reservations/reservation", content);
+                HttpResponseMessage response = await _client.PostAsync("Reservations/reservation", content);
+                
                 if (response.IsSuccessStatusCode)
                 {
                     await OnGet();
@@ -259,12 +207,11 @@ namespace RentHub.App.Pages
             try
             {
                 var token = Request.Cookies["jwt"];
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                var response = await client.DeleteAsync($"Reservations/reservation/{reservationIdToDelete}");
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await _client.DeleteAsync($"Reservations/reservation/{reservationIdToDelete}");
 
                 if (response.IsSuccessStatusCode)
                 {
-                    //TempData["ReservationMessage"] = "Бронирование удалено";
                     return RedirectToPage();
                 }
                 else

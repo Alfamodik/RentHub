@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RentHub.API.ModelsDTO;
 using RentHub.Core.Model;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace RentHub.API.Controllers
 {
@@ -45,7 +44,11 @@ namespace RentHub.API.Controllers
         public ActionResult<IEnumerable<Advertisement>> GetFlatAdvertisements(int id)
         {
             using RentHubContext context = new();
-            IEnumerable<Advertisement>? advertisements = context.Advertisements.Where(r => r.FlatId == id);
+            List<Advertisement>? advertisements = context.Advertisements
+                .Where(advertisement => advertisement.FlatId == id)
+                .Include(advertisement => advertisement.Platform)
+                .ToList();
+
             return Ok(advertisements);
         }
 
@@ -86,7 +89,7 @@ namespace RentHub.API.Controllers
         public ActionResult ChangeAdvertisementData(int id, AdvertisementDTO advertisementdto)
         {
             using RentHubContext context = new();
-            Advertisement? advertisement = context.Advertisements.FirstOrDefault(r => r.AdvertisementId == id);
+            Advertisement? advertisement = context.Advertisements.FirstOrDefault(item => item.AdvertisementId == id);
             if (advertisement == null)
             {
                 return NotFound($"Объявление с ID {id} не найдено");
@@ -107,12 +110,19 @@ namespace RentHub.API.Controllers
         public ActionResult DeleteAdvertisement(int id)
         {
             using RentHubContext context = new();
-            Advertisement? advertisement = context.Advertisements.FirstOrDefault(r => r.AdvertisementId == id);
+            Advertisement? advertisement = context.Advertisements
+                .Include(item => item.Reservations)
+                .FirstOrDefault(r => r.AdvertisementId == id);
+            
             if (advertisement == null)
             {
                 return NotFound($"Объявление с ID {id} не найдено");
             }
-            context.Advertisements.Remove(advertisement).Context.SaveChanges();
+
+            context.Reservations.RemoveRange(advertisement.Reservations);
+            context.Advertisements.Remove(advertisement);
+            context.SaveChanges();
+
             return Ok("Объявление успешно удалено");
         }
     }

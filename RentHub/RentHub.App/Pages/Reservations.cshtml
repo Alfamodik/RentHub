@@ -182,9 +182,6 @@
         const cancelBtn = document.querySelector('.cancel-btn');
         const form = document.querySelector('#addReservationForm')
 
-        var renters = @Json.Serialize(Model.Renters)
-        var flats = @Json.Serialize(Model.Flats)
-
         setupDateConstraints();
         fillRenterSelect();
         fillFlatsSelect();

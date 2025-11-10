@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using RentHub.API.ModelsDTO;
 using RentHub.Core.Model;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 
 namespace RentHub.App.Pages
@@ -13,7 +16,7 @@ namespace RentHub.App.Pages
             BaseAddress = new Uri("http://94.183.186.221:5000/")
         };
 
-        public string? FlatIdFromCookie { get; set; }
+        public int FlatId { get; set; }
 
         public string? FlatAddressFromCookie { get; set; }
 
@@ -22,17 +25,20 @@ namespace RentHub.App.Pages
         public List<PlacementPlatform>? Platforms { get; set; }
 
         [BindProperty]
+        public string RentType { get; set; } = string.Empty;
+
+        [BindProperty]
         public Advertisement? NewAdvertisement { get; set; }
 
-        public async Task<IActionResult> OnGet(int? flatId = null)
+        public async Task<IActionResult> OnGet(int flatId)
         {
-            FlatAddressFromCookie = Request.Cookies["SelectedFlatAddress"];
-
             string? token = Request.Cookies["jwt"];
 
             if (string.IsNullOrEmpty(token))
                 return RedirectToPage("/Welcome");
 
+            FlatId = flatId;
+            FlatAddressFromCookie = Request.Cookies["FlatAddress"];
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             HttpResponseMessage response;
@@ -47,8 +53,6 @@ namespace RentHub.App.Pages
                 });
             }
 
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             HttpResponseMessage placementPlatformResponse;
             placementPlatformResponse = await client.GetAsync($"Platforms/platforms");
 
@@ -62,6 +66,51 @@ namespace RentHub.App.Pages
             }
 
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostAddAdvertisement(int FlatId, int PlatformId, string RentType, decimal PriceForPeriod, decimal IncomeForPeriod, string LinkToAdvertisement)
+        {
+            if (RentType != "Посуточно" && RentType != "Длительный период")
+            {
+                ModelState.AddModelError("RentType", "Недопустимый тип аренды.");
+                return Page();
+            }
+
+            AdvertisementDTO advertisementDto = new AdvertisementDTO
+            {
+                FlatId = FlatId,
+                PlatformId = PlatformId,
+                RentType = RentType,
+                PriceForPeriod = PriceForPeriod,
+                IncomeForPeriod = IncomeForPeriod,
+                LinkToAdvertisement = LinkToAdvertisement
+            };
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Request.Cookies["jwt"]);
+
+            var json = JsonSerializer.Serialize(advertisementDto);
+            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PostAsync("Advertisements/advertisement", content);
+            return Redirect($"AdvertismentsList?flatId={FlatId}");
+        }
+
+        public async Task<IActionResult> OnPostDeleteAdvertisement(int AdvertisementIdToDelete, int FlatId)
+        {
+            string? token = Request.Cookies["jwt"];
+
+            if (string.IsNullOrEmpty(token))
+                return RedirectToPage("/Welcome");
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            HttpResponseMessage response = await client.DeleteAsync($"Advertisements/advertisement/{AdvertisementIdToDelete}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Не удалось удалить объявление.");
+            }
+
+            return Redirect($"AdvertismentsList?flatId={FlatId}");
         }
     }
 }

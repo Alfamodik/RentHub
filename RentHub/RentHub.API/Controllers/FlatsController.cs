@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RentHub.API.ModelsDTO;
 using RentHub.Core.Model;
@@ -14,15 +15,10 @@ namespace RentHub.API.Controllers
     {
         [Authorize]
         [HttpGet("flats")]
-        public ActionResult<List<Flat>> GetFlats()
+        public ActionResult<IEnumerable<Flat>> GetFlats()
         {
             using RentHubContext context = new();
-            List<Flat> FlatsList = context.Flats.ToList();
-            if (FlatsList.IsNullOrEmpty())
-            {
-                return NotFound("Список квартир пустой");
-            }
-            return FlatsList;
+            return context.Flats;
         }
 
         [Authorize]
@@ -42,22 +38,24 @@ namespace RentHub.API.Controllers
 
         [Authorize]
         [HttpGet("user-flats")]
-        public ActionResult<List<Flat>> GetUserFlats()
+        public ActionResult<IEnumerable<Flat>> GetUserFlats()
         {
             using RentHubContext context = new();
             string? claimedUserid = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(claimedUserid))
-            {
-                return Unauthorized("Не найден токен");
-            }
 
             if (!int.TryParse(claimedUserid, out int userId))
             {
                 return Unauthorized("Неверный формат токена");
             }
 
-            List<Flat> flats = context.Flats.Where(fl => fl.UserId == userId).ToList();
+            IEnumerable<Flat> flats = context.Flats
+                .Where(flat => flat.UserId == userId)
+                .Include(flat => flat.Advertisements)
+                .ThenInclude(advertisement => advertisement.Reservations)
+                .ThenInclude(reservation => reservation.Renter)
+                .Include(flat => flat.Advertisements)
+                .ThenInclude(advertisement => advertisement.Platform);
+
             return Ok(flats);
         }
 
