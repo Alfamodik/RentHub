@@ -50,7 +50,7 @@ namespace RentHub.API.Controllers
 
             if (reservations.IsNullOrEmpty())
             {
-                return NotFound($"Бронирования на квартиру ID {id} не найдено");
+                return Ok(new List<Reservation>());
             }
 
             return Ok(reservations);
@@ -61,6 +61,16 @@ namespace RentHub.API.Controllers
         public ActionResult AddReservation(ReservationDTO reservationdto)
         {
             using RentHubContext context = new();
+            bool hasOverlap = context.Reservations
+                .Where(r => r.AdvertisementId == reservationdto.AdvertisementId)
+                .Any(r => (reservationdto.DateOfStartReservation <= r.DateOfEndReservation &&
+                  reservationdto.DateOfEndReservation >= r.DateOfStartReservation));
+
+            if (hasOverlap)
+            {
+                return BadRequest("Период бронирования пересекается с существующими бронированиями");
+            }
+
             Reservation reservation = new Reservation
             {
                 AdvertisementId = reservationdto.AdvertisementId,

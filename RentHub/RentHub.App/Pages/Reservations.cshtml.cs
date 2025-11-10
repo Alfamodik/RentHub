@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RentHub.App.Pages
 {
@@ -14,7 +15,7 @@ namespace RentHub.App.Pages
     {
         public DateOnly CalendarStart;
         public int DaysCount;
-        public List<DateOnly> Days;
+        public List<DateOnly>? Days = new List<DateOnly>();
         public List<FlatBookingsViewModel>? FlatBookingsViewModels;
 
 
@@ -26,10 +27,21 @@ namespace RentHub.App.Pages
             BaseAddress = new Uri("http://94.183.186.221:5000/")
         };
 
+        public ObservableCollection<RenterViewModel>? Renters { get; set; } = new ObservableCollection<RenterViewModel>();
+
+        public ObservableCollection<FlatViewModel>? Flats { get; set; }
+
+        [BindProperty]
+        public int FlatID { get; set; }
+        [BindProperty]
+        public int ReservationID { get; set; }
+
         private readonly RentHubContext _context = new();
 
-        public void OnGet()
+        public async Task OnGet()
         {
+            await Getrenters();
+            await GetFlats();
             CalendarStart = DateOnly.FromDateTime(DateTime.Today.AddDays(-10));
             DaysCount = 40;
 
@@ -78,6 +90,66 @@ namespace RentHub.App.Pages
             }).ToList();
         }
 
+        private async Task Getrenters()
+        {
+            var token = Request.Cookies["jwt"];
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            try
+            {
+                HttpResponseMessage response;
+                response = await client.GetAsync("Renters/renters");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    Renters = JsonSerializer.Deserialize<ObservableCollection<RenterViewModel>>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                }
+                else
+                {
+                    Renters = new ObservableCollection<RenterViewModel>();
+                }
+            }
+            catch
+            {
+                Renters = new ObservableCollection<RenterViewModel>();
+            }
+        }
+        private async Task GetFlats()
+        {
+            var token = Request.Cookies["jwt"];
+
+            client.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            try
+            {
+                HttpResponseMessage response;
+                response = await client.GetAsync("Flats/flats");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    Flats = JsonSerializer.Deserialize<ObservableCollection<FlatViewModel>>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                }
+                else
+                {
+                    Flats = new ObservableCollection<FlatViewModel>();
+                }
+            }
+            catch
+            {
+                Flats = new ObservableCollection<FlatViewModel>();
+            }
+        }
+
         private ReservationViewModel? CreateReservationDisplay(Reservation reservation)
         {
             DateTime startDate = reservation.DateOfStartReservation.ToDateTime(TimeOnly.MinValue);
@@ -105,6 +177,7 @@ namespace RentHub.App.Pages
 
             return new ReservationViewModel
             {
+                Id = reservation.ReservationId,
                 DateOfStartReservation = reservation.DateOfStartReservation,
                 DateOfEndReservation = reservation.DateOfEndReservation,
                 RenterName = $"{reservation.Renter.Name} {reservation.Renter.Patronymic}",
@@ -122,7 +195,7 @@ namespace RentHub.App.Pages
             try
             {
                 HttpResponseMessage response;
-                response = await client.GetAsync("Advertisements/advertisement-by-flat-id/platform-other/{}");
+                response = await client.GetAsync($"Advertisements/advertisement-by-flat-id/platform-other/{FlatID}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -160,22 +233,51 @@ namespace RentHub.App.Pages
                 newReservation.Income = Convert.ToDecimal((newReservation.DateOfEndReservation.DayOfYear - newReservation.DateOfStartReservation.DayOfYear) * add.PriceForPeriod);
                 var jsonData = JsonSerializer.Serialize(newReservation);
                 var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync("Renters/renter", content);
+                HttpResponseMessage response = await client.PostAsync("Reservations/reservation", content);
                 if (response.IsSuccessStatusCode)
                 {
-                    OnGet();
+                    await OnGet();
+                    TempData["ReservationMessage"] = "Бронирование успешно добавлено!";
                     return RedirectToPage();
                 }
                 else
                 {
+                    string error = await response.Content.ReadAsStringAsync();
+                    TempData["ReservationMessage"] = "" + error;
                     return Page();
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                TempData["ReservationMessage"] = "Ошибка: " + ex.Message;
                 return Page();
             }
         }
 
+        public async Task<ActionResult> OnPostDeleteReservationAsync(int reservationIdToDelete)
+        {
+            try
+            {
+                var token = Request.Cookies["jwt"];
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                var response = await client.DeleteAsync($"Reservations/reservation/{reservationIdToDelete}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    //TempData["ReservationMessage"] = "Бронирование удалено";
+                    return RedirectToPage();
+                }
+                else
+                {
+                    TempData["ReservationMessage"] = "Ошибка при удалении бронирования";
+                    return Page();
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ReservationMessage"] = "Ошибка: " + ex.Message;
+                return Page();
+            }
+        }
     }
 }
