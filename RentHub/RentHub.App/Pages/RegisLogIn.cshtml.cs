@@ -86,6 +86,7 @@ namespace RentHub.App.Pages
                     TempData["Message"] = $"Ошибка API: {response.StatusCode}. {body}";
                     return Page();
                 }
+                
 
                 string? jwt = JsonSerializer.Deserialize<JsonElement>(body).GetProperty("token").GetString();
                 Response.Cookies.Append("jwt", jwt, new CookieOptions

@@ -64,7 +64,7 @@ namespace RentHub.App.Pages
             }
             catch
             {
-                ModelState.AddModelError("", "Ошибка проверки email.");
+                ModelState.AddModelError("", "ГЋГёГЁГЎГЄГ  ГЇГ°Г®ГўГҐГ°ГЄГЁ email.");
                 return Page();
             }
         }

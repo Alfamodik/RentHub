@@ -1,0 +1,132 @@
+﻿@page
+@model RentHub.App.Pages.ReportcshtmlModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Отчетность</title>
+    <link href="~/css/report.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="side-bar">
+        <p id="main-text">Недвижимость</p>
+
+        <form class="menu-item" method="get">
+            <img src="~/img/side-bar/House 1.svg" alt="404" />
+            <button type="submit" name="FlatsBtn">Квартиры</button>
+        </form>
+
+        <form class="menu-item" method="get" action="/Reservations">
+            <img src="~/img/side-bar/Calendar 1.svg" alt="404" />
+            <button type="submit">Бронирования</button>
+        </form>
+
+        <form class="menu-item" method="get">
+            <img src="~/img/side-bar/users 1.svg" alt="404" />
+            <button type="submit" name="CustomersBtn">Жильцы</button>
+        </form>
+
+        <form class="menu-item" method="get">
+            <img src="~/img/side-bar/chart-no-axes-column 1.svg" alt="404" />
+            <button type="submit" name="recordsBtn">Отчетность</button>
+        </form>
+    </div>
+
+    <div class="main-cont">
+        <div class="filter-bar">
+            <label for="apartmentSelect">Квартира:</label>
+            <select id="apartmentSelect" class="form-select">
+                <option value="">Все квартиры</option>
+                @foreach (var flat in Model.Flats)
+                {
+                    <option value="@flat.FlatId">
+                        @($"{flat.City}, {flat.District}, д.{flat.HouseNumber}, кв.{flat.ApartmentNumber}")
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="charts-container">
+            <div class="chart-box">
+                <h3>Количество броней по месяцам</h3>
+                <canvas id="bookingsChart"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3>Процент заполняемости</h3>
+                <canvas id="occupancyChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apartmentSelect = document.getElementById('apartmentSelect');
+        let bookingsChart, occupancyChart;
+
+        async function loadReport(flatId = '') {
+            const url = flatId
+                ? `http://94.183.186.221:5000/Reservations/reservation-by-flat-id/${flatId}`
+                : `http://94.183.186.221:5000/Reservations/reservation-by-flat-id/4`; // можно сделать общий эндпоинт
+
+            const res = await fetch(url);
+            const data = await res.json();
+
+            // Группировка по месяцам
+            const bookingsByMonth = {};
+            data.forEach(r => {
+                const start = new Date(r.dateOfStartReservation);
+                const key = `${start.getFullYear()}-${start.getMonth() + 1}`;
+                bookingsByMonth[key] = (bookingsByMonth[key] || 0) + 1;
+            });
+
+            const labels = Object.keys(bookingsByMonth);
+            const values = Object.values(bookingsByMonth);
+
+            // Процент заполняемости (условно, по дням)
+            const occupancy = values.map(v => Math.min(v * 10, 100)); // фейковая метрика
+
+            // Рендер графиков
+            if (bookingsChart) bookingsChart.destroy();
+            if (occupancyChart) occupancyChart.destroy();
+
+            bookingsChart = new Chart(document.getElementById('bookingsChart'), {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Брони',
+                        data: values,
+                        backgroundColor: '#38bdf8'
+                    }]
+                }
+            });
+
+            occupancyChart = new Chart(document.getElementById('occupancyChart'), {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Заполняемость (%)',
+                        data: occupancy,
+                        borderColor: '#fbbf24',
+                        backgroundColor: 'rgba(251,191,36,0.3)',
+                        fill: true
+                    }]
+                }
+            });
+        }
+
+        apartmentSelect.addEventListener('change', e => {
+            const flatId = e.target.value;
+            loadReport(flatId);
+        });
+
+        loadReport();
+    </script>
+</body>
+</html>
