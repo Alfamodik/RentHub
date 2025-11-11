@@ -26,14 +26,7 @@ namespace RentHub.API.Controllers
         public ActionResult<Flat> GetFlat(int id)
         {
             using RentHubContext context = new();
-            Flat? flat = context.Flats.FirstOrDefault(fl => fl.FlatId == id);
-
-            if (flat == null)
-            {
-                return NotFound($"Квартира с ID {id} не найдена");
-            }
-
-            return Ok(flat);
+            return Ok(context.Flats.FirstOrDefault(fl => fl.FlatId == id));
         }
 
         [Authorize]
@@ -54,7 +47,8 @@ namespace RentHub.API.Controllers
                 .ThenInclude(advertisement => advertisement.Reservations)
                 .ThenInclude(reservation => reservation.Renter)
                 .Include(flat => flat.Advertisements)
-                .ThenInclude(advertisement => advertisement.Platform);
+                .ThenInclude(advertisement => advertisement.Platform)
+                .ToList();
 
             return Ok(flats);
         }
