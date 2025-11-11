@@ -76,6 +76,11 @@ namespace RentHub.API.Services
             return CreateReservations(dateStates);
         }
 
+        internal static async Task GetReservations(object url)
+        {
+            throw new NotImplementedException();
+        }
+
         private static List<Reservation> CreateReservations(List<DateState> dateStates)
         {
             List<Reservation> reservations = [];

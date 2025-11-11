@@ -6,7 +6,7 @@ public partial class Reservation
 
     public int AdvertisementId { get; set; }
 
-    public int RenterId { get; set; }
+    public int? RenterId { get; set; }
 
     public DateOnly DateOfStartReservation { get; set; }
 
