@@ -10,7 +10,7 @@ namespace RentHub.API.Controllers
     public class CallbackController : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] string code, [FromQuery] string state)
+        public async Task<IActionResult> Get([FromQuery] string code)
         {
             if (string.IsNullOrEmpty(code))
                 return BadRequest("Код отсутствует.");
@@ -42,11 +42,11 @@ namespace RentHub.API.Controllers
             if (accessTokenResponse == null)
                 return BadRequest("Ошибка десериализации ответа от Avito");
 
-            if (!int.TryParse(state, out int userId))
-                return BadRequest("Некорректный параметр state");
+            /*if (!int.TryParse("6", out int userId))
+                return BadRequest("Некорректный параметр state");*/
 
             RentHubContext context = new();
-            User? user = context.Users.FirstOrDefault(user => user.UserId == userId);
+            User? user = context.Users.FirstOrDefault(user => user.UserId == 6);
 
             if (user == null)
                 return NotFound();
@@ -56,7 +56,7 @@ namespace RentHub.API.Controllers
             
             context.SaveChanges();
 
-            return NoContent();
+            return Ok(json);
         }
     }
 }

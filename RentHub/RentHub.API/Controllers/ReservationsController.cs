@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RentHub.API.ModelsDTO;
+using RentHub.API.Services;
 using RentHub.Core.Model;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using System;
 
 namespace RentHub.API.Controllers
 {
@@ -18,12 +18,7 @@ namespace RentHub.API.Controllers
         public ActionResult<List<Reservation>> GetReservations()
         {
             using RentHubContext context = new();
-            List<Reservation> ReservationsList = context.Reservations.ToList();
-            if (ReservationsList.IsNullOrEmpty())
-            {
-                return NotFound("Список бронирований пуст");
-            }
-            return ReservationsList;
+            return context.Reservations.ToList();
         }
 
         [Authorize]
@@ -32,10 +27,12 @@ namespace RentHub.API.Controllers
         {
             using RentHubContext context = new();
             Reservation? reservation = context.Reservations.FirstOrDefault(r => r.ReservationId == id);
+
             if (reservation == null)
             {
                 return NotFound($"Бронирование с ID {id} не найден");
             }
+
             return Ok(reservation);
         }
 
@@ -47,11 +44,6 @@ namespace RentHub.API.Controllers
                  .Include(r => r.Advertisement)
                  .Where(r => r.Advertisement.FlatId == id)
                  .ToList();
-
-            if (reservations.IsNullOrEmpty())
-            {
-                return Ok(new List<Reservation>());
-            }
 
             return Ok(reservations);
         }
@@ -117,6 +109,68 @@ namespace RentHub.API.Controllers
             }
             context.Reservations.Remove(reservation).Context.SaveChanges();
             return Ok("Бронирование успешно удалено");
+        }
+
+        [Authorize]
+        [HttpGet("update")]
+        public async Task<IActionResult> UpdateAsync(int flatId)
+        {
+            RentHubContext context = new();
+
+            Flat? flat = context.Flats
+                .Include(flat => flat.Advertisements)
+                .ThenInclude(advertisiment => advertisiment.Platform)
+                .FirstOrDefault(flat => flat.FlatId == flatId);
+
+            if (flat == null)
+            {
+                return NotFound($"Flat with id = {flatId} not found");
+            }
+
+            foreach (Advertisement advertisiment in flat.Advertisements)
+            {
+                switch (advertisiment.Platform.PlatformName)
+                {
+                    case "Avito":
+
+
+
+                        break;
+
+                    case "Sutochno":
+                        List<Reservation>? reservations = await SutochnoParser.GetReservations(advertisiment.LinkToAdvertisement);
+
+                        if (reservations == null)
+                            break;
+
+                        foreach (Reservation reservation in reservations)
+                        {
+                            if (context.Reservations
+                                .Any(reservation => 
+                                reservation.DateOfStartReservation == reservation.DateOfStartReservation
+                                || reservation.DateOfEndReservation == reservation.DateOfEndReservation))
+                            {
+                                continue;
+                            }
+
+                            int days = (
+                                reservation.DateOfEndReservation.ToDateTime(TimeOnly.MinValue) - 
+                                reservation.DateOfStartReservation.ToDateTime(TimeOnly.MinValue)
+                                ).Days;
+
+                            reservation.AdvertisementId = advertisiment.AdvertisementId;
+                            reservation.Summ = days * advertisiment.PriceForPeriod;
+                            reservation.Income = days * advertisiment.IncomeForPeriod;
+                            context.Reservations.Add(reservation);
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            
+            return NoContent();
         }
     }
 }
