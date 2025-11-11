@@ -56,7 +56,7 @@ namespace RentHub.API.Controllers
             
             context.SaveChanges();
 
-            return Ok(new {user = accessTokenResponse, avitoResponse = accessTokenResponse });
+            return Ok(new {user, accessTokenResponse, json });
         }
     }
 }
