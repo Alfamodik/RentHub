@@ -18,7 +18,7 @@ namespace RentHub.API.Controllers
         public ActionResult<IEnumerable<Flat>> GetFlats()
         {
             using RentHubContext context = new();
-            return context.Flats;
+            return context.Flats.ToList();
         }
 
         [Authorize]
