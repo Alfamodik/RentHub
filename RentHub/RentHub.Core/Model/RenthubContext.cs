@@ -216,6 +216,9 @@ public partial class RentHubContext : DbContext
             entity.Property(e => e.AvitoRefreshToken)
                 .HasMaxLength(1000)
                 .HasColumnName("avito_refresh_token");
+
+            entity.Property(e => e.TokenExpiresAt)
+                .HasColumnName("token_expires_at");
         });
 
         OnModelCreatingPartial(modelBuilder);

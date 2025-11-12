@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RentHub.API.ModelsDTO;
+using RentHub.API.RequestModels.Avito;
 using RentHub.API.Services;
 using RentHub.Core.Model;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace RentHub.API.Controllers
@@ -122,6 +124,10 @@ namespace RentHub.API.Controllers
                 return Unauthorized();
 
             RentHubContext context = new();
+            User? user = context.Users.FirstOrDefault(user => user.UserId == userId);
+
+            if (user == null)
+                return Unauthorized();
 
             List<Flat>? flats = context.Flats
                 .Include(flat => flat.Advertisements)
@@ -129,52 +135,64 @@ namespace RentHub.API.Controllers
                 .Where(flat => flat.UserId == userId)
                 .ToList();
 
+            List<Reservation>? reservations = null;
+
             foreach (Flat flat in flats)
             {
+                List<Reservation> existingReservations = context.Reservations
+                    .Where(r => r.Advertisement.FlatId == flat.FlatId)
+                    .ToList();
+
+                List<Reservation> newReservations = new();
+
                 foreach (Advertisement advertisiment in flat.Advertisements)
                 {
                     switch (advertisiment.Platform.PlatformName)
                     {
                         case "Avito":
-
-
-
+                            reservations = await AvitoServices.GetReservations(user, advertisiment.LinkToAdvertisement);
                             break;
 
                         case "Sutochno":
-                            List<Reservation>? reservations = await SutochnoParser.GetReservations(advertisiment.LinkToAdvertisement);
-
-                            if (reservations == null)
-                                break;
-
-                            foreach (Reservation reservation in reservations)
-                            {
-                                if (context.Reservations
-                                    .Any(reservation =>
-                                    reservation.DateOfStartReservation == reservation.DateOfStartReservation
-                                    || reservation.DateOfEndReservation == reservation.DateOfEndReservation))
-                                {
-                                    continue;
-                                }
-
-                                int days = (
-                                    reservation.DateOfEndReservation.ToDateTime(TimeOnly.MinValue) -
-                                    reservation.DateOfStartReservation.ToDateTime(TimeOnly.MinValue)
-                                    ).Days;
-
-                                reservation.AdvertisementId = advertisiment.AdvertisementId;
-                                reservation.Summ = days * advertisiment.PriceForPeriod;
-                                reservation.Income = days * advertisiment.IncomeForPeriod;
-                                context.Reservations.Add(reservation);
-                            }
+                            reservations = await SutochnoParser.GetReservations(advertisiment.LinkToAdvertisement);
                             break;
 
                         default:
-                            break;
+                            continue;
+                    }
+
+                    if (reservations == null)
+                        continue;
+
+                    foreach (Reservation reservation in reservations)
+                    {
+                        if (context.Reservations
+                            .Where(item => item.Advertisement.FlatId == flat.FlatId)
+                            .ToList()
+                            .Concat(newReservations)
+                            .Any(existing =>
+                            !(existing.DateOfEndReservation <= reservation.DateOfStartReservation ||
+                            reservation.DateOfEndReservation <= existing.DateOfStartReservation)))
+                        {
+                            continue;
+                        }
+
+                        int days = (
+                            reservation.DateOfEndReservation.ToDateTime(TimeOnly.MinValue) -
+                            reservation.DateOfStartReservation.ToDateTime(TimeOnly.MinValue)
+                            ).Days;
+
+                        reservation.AdvertisementId = advertisiment.AdvertisementId;
+                        reservation.Summ = days * advertisiment.PriceForPeriod;
+                        reservation.Income = days * advertisiment.IncomeForPeriod;
+                        
+                        newReservations.Add(reservation);
+                        context.Reservations.Add(reservation);
                     }
                 }
             }
 
+            context.SaveChanges();
             return NoContent();
         }
     }

@@ -42,9 +42,6 @@ namespace RentHub.API.Controllers
             if (accessTokenResponse == null)
                 return BadRequest("Ошибка десериализации ответа от Avito");
 
-            /*if (!int.TryParse("6", out int userId))
-                return BadRequest("Некорректный параметр state");*/
-
             RentHubContext context = new();
             User? user = context.Users.FirstOrDefault(user => user.UserId == 6);
 
@@ -53,10 +50,10 @@ namespace RentHub.API.Controllers
 
             user.AvitoAccessToken = accessTokenResponse.AccessToken;
             user.AvitoRefreshToken = accessTokenResponse.RefreshToken;
-            
-            context.SaveChanges();
+            user.TokenExpiresAt = DateOnly.FromDateTime(DateTime.Now);
 
-            return Ok(new {user, accessTokenResponse, json });
+            context.SaveChanges();
+            return NoContent();
         }
     }
 }

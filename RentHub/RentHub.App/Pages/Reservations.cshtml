@@ -59,7 +59,7 @@
 
         <div class="calendar-container">
             <div class="calendar"
-                 style="
+            style="
                     grid-template: repeat(1, 75px)/repeat(1,2fr);
                     height: @(Model.FlatBookingsViewModels?.Count * 100 + 30 + 30)px;">
                 @{
@@ -91,9 +91,16 @@
                             {
                                 FlatBookingsViewModel flat = Model.FlatBookingsViewModels[i];
 
-                                for (int j = 0; j < Model.Days.Count;)
+                                int j = 0;
+
+                                while (j < Model.Days.Count)
                                 {
-                                    ReservationViewModel? reservation = flat.Reservations.FirstOrDefault(reservation => reservation.DateOfStartReservation == Model.Days[j]);
+                                    var reservationsForThisDay = flat.Reservations.Where(reservation =>
+                                        Model.Days[j] >= reservation.DateOfStartReservation &&
+                                        Model.Days[j] < reservation.DateOfEndReservation
+                                    ).ToList();
+
+                                    ReservationViewModel? reservation = reservationsForThisDay.FirstOrDefault();
 
                                     if (reservation != null)
                                     {
@@ -103,8 +110,9 @@
                                         int endOffset = (endDate.Date - Model.CalendarStart.ToDateTime(TimeOnly.MinValue).Date).Days;
 
                                         int clippedStart = Math.Max(0, startOffset);
-                                        int clippedEnd = Math.Min(Model.DaysCount - 1, endOffset);
-                                        int length = clippedEnd - clippedStart + 1;
+                                        int clippedEnd = Math.Min(Model.DaysCount - 1, endOffset - 1);
+
+                                        int length = Math.Max(0, clippedEnd - clippedStart + 1);
 
                                         <div ondblclick="showDeleteForm(@reservation.Id)"
                                             class="calendar-flat-reservation"

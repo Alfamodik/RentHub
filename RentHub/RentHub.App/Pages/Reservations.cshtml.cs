@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using RentHub.App.ResponseModels;
 using RentHub.App.ViewModels;
 using RentHub.Core.Model;
 using System.Net.Http.Headers;
@@ -19,6 +20,8 @@ namespace RentHub.App.Pages
         [BindProperty]
         public ReservationFullViewModel newReservation { get; set; } = new ReservationFullViewModel();
 
+        private List<Flat>? _flats;
+
         private readonly HttpClient _client = new()
         {
             BaseAddress = new Uri("http://94.183.186.221:5000/")
@@ -36,8 +39,10 @@ namespace RentHub.App.Pages
             if (string.IsNullOrEmpty(token))
                 return RedirectToPage("/Welcome");
 
-            CalendarStart = DateOnly.FromDateTime(DateTime.Today.AddDays(-10));
-            DaysCount = 40;
+            CalendarStart = DateOnly.FromDateTime(DateTime.Today.AddDays(-DateTime.Today.Day + 1));
+            DateOnly firstDayOfNextMonth = CalendarStart.AddMonths(2);
+            DateOnly lastDayOfCurrentMonth = firstDayOfNextMonth.AddDays(-1);
+            DaysCount = lastDayOfCurrentMonth.DayNumber - CalendarStart.DayNumber + 1;
 
             Days = Enumerable.Range(0, DaysCount)
                 .Select(CalendarStart.AddDays)
@@ -45,22 +50,19 @@ namespace RentHub.App.Pages
             
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage response;
-            response = await _client.GetAsync($"Flats/user-flats");
-
-            List<Flat>? flats = null;
+            HttpResponseMessage response = await _client.GetAsync($"Flats/user-flats");
 
             if (response.IsSuccessStatusCode)
             {
                 string platformsJson = await response.Content.ReadAsStringAsync();
-                flats = JsonSerializer.Deserialize<List<Flat>>(platformsJson, new JsonSerializerOptions
+                _flats = JsonSerializer.Deserialize<List<Flat>>(platformsJson, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
             }
 
-            flats ??= new();
-            FlatBookingsViewModels = flats.Select(flat =>
+            _flats ??= new();
+            FlatBookingsViewModels = _flats.Select(flat =>
             {
                 string photo;
 
@@ -75,7 +77,7 @@ namespace RentHub.App.Pages
                 {
                     foreach (Reservation reservation in advertisement.Reservations)
                     {
-                        ReservationViewModel? reservationViewModel = CreateReservationDisplay(reservation);
+                        ReservationViewModel? reservationViewModel = CreateReservationDisplay(reservation, advertisement);
 
                         if (reservationViewModel != null)
                             reservations.Add(reservationViewModel);
@@ -94,16 +96,50 @@ namespace RentHub.App.Pages
             return Page();
         }
 
-        public async Task OnPostRefreshReservations()
+        public async Task<IActionResult> OnPostRefreshReservations()
         {
             string? token = Request.Cookies["jwt"];
 
+            if (string.IsNullOrEmpty(token))
+                return RedirectToPage("/Welcome");
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            HttpResponseMessage response = await _client.GetAsync($"Flats/user-flats");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string platformsJson = await response.Content.ReadAsStringAsync();
+                _flats = JsonSerializer.Deserialize<List<Flat>>(platformsJson, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+
+            if (_flats?.Any(flat => flat.Advertisements.Any(advertisement => advertisement.Platform.PlatformName == "Avito")) == true)
+            {
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                HttpResponseMessage accessResponse = await _client.GetAsync($"Authentication/has-avito-access");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string platformsJson = await accessResponse.Content.ReadAsStringAsync();
+                    HasAvitoAsseccResponse? hasAvitoAsseccResponse = JsonSerializer.Deserialize<HasAvitoAsseccResponse>(platformsJson, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    if (hasAvitoAsseccResponse?.HasAccess == true)
+                        return Redirect("https://www.avito.ru/oauth?response_type=code&client_id=hqQSMZCzT_szv7cre5vG&scope=short_term_rent:read,user:read");
+                }
+            }
+
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage response = await _client.GetAsync($"Reservations/update"));
+            HttpResponseMessage updateResponse = await _client.GetAsync($"Reservations/update");
+            return Redirect("/Reservations");
         }
 
-        private ReservationViewModel? CreateReservationDisplay(Reservation reservation)
+        private ReservationViewModel? CreateReservationDisplay(Reservation reservation, Advertisement advertisement)
         {
             DateTime startDate = reservation.DateOfStartReservation.ToDateTime(TimeOnly.MinValue);
             DateTime endDate = reservation.DateOfEndReservation.ToDateTime(TimeOnly.MinValue);
@@ -119,11 +155,11 @@ namespace RentHub.App.Pages
 
             string colorHexCode;
 
-            if (reservation.Advertisement.Platform.PlatformName == "Yandex")
+            if (advertisement.Platform.PlatformName == "Yandex")
                 colorHexCode = "#4F5533";
-            else if (reservation.Advertisement.Platform.PlatformName == "Sutochno")
+            else if (advertisement.Platform.PlatformName == "Sutochno")
                 colorHexCode = "#612B2B";
-            else if (reservation.Advertisement.Platform.PlatformName == "Avito")
+            else if (advertisement.Platform.PlatformName == "Avito")
                 colorHexCode = "#345533";
             else
                 colorHexCode = "#334155";
@@ -133,8 +169,8 @@ namespace RentHub.App.Pages
                 Id = reservation.ReservationId,
                 DateOfStartReservation = reservation.DateOfStartReservation,
                 DateOfEndReservation = reservation.DateOfEndReservation,
-                RenterName = $"{reservation.Renter.Name} {reservation.Renter.Patronymic}",
-                PhoneNumber = reservation.Renter.PhoneNumber,
+                RenterName = $"{reservation.Renter?.Name} {reservation.Renter?.Patronymic}",
+                PhoneNumber = $"{reservation.Renter?.PhoneNumber}",
                 ColorHexCode = colorHexCode
             };
         }
