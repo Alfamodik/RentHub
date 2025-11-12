@@ -17,10 +17,10 @@ namespace RentHub.API.RequestModels.Avito
         public decimal BasePrice { get; set; }
 
         [JsonPropertyName("check_in")]
-        public string CheckIn { get; set; }
+        public DateOnly CheckIn { get; set; }
 
         [JsonPropertyName("check_out")]
-        public string CheckOut { get; set; }
+        public DateOnly CheckOut { get; set; }
 
         [JsonPropertyName("contact")]
         public BookingContact Contact { get; set; }

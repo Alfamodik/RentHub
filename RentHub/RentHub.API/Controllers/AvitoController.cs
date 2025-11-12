@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RentHub.API.RequestModels.Avito;
 using RentHub.API.ResponceModels.Avito;
+using RentHub.Core.Model;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -89,7 +90,33 @@ namespace RentHub.API.Controllers
 
             AvitoBookingsResponse? bookingsResponse = JsonSerializer.Deserialize<AvitoBookingsResponse>(responseBody);
 
-            return Ok(bookingsResponse?.Bookings);
+            if (bookingsResponse == null)
+                return BadRequest();
+
+            List<Reservation> reservations = new();
+            RentHubContext context = new();
+
+            foreach (Booking booking in bookingsResponse.Bookings)
+            {
+                Renter? renter = context.Renters.FirstOrDefault(renter => renter.Name == booking.Contact.Name);
+                renter ??= new()
+                {
+                    Name = booking.Contact.Name,
+                    PhoneNumber = booking.Contact.Phone
+                };
+
+                Reservation reservation = new()
+                {
+                    RenterId = renter.RenterId,
+                    DateOfStartReservation = booking.CheckIn,
+                    DateOfEndReservation = booking.CheckOut,
+                    Renter = renter
+                };
+
+                reservations.Add(reservation);
+            }
+
+            return Ok(new { bookingsResponse, reservations });
         }
     }
 }

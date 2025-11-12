@@ -1,14 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using RentHub.App.ViewModels;
 using RentHub.Core.Model;
-using System.Collections.ObjectModel;
-using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RentHub.App.Pages
 {
@@ -46,6 +42,7 @@ namespace RentHub.App.Pages
             Days = Enumerable.Range(0, DaysCount)
                 .Select(CalendarStart.AddDays)
                 .ToList();
+            
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             HttpResponseMessage response;
@@ -95,6 +92,15 @@ namespace RentHub.App.Pages
             }).ToList();
 
             return Page();
+        }
+
+        public async Task OnPostRefreshReservations()
+        {
+            string? token = Request.Cookies["jwt"];
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            HttpResponseMessage response = await _client.GetAsync($"Reservations/update"));
         }
 
         private ReservationViewModel? CreateReservationDisplay(Reservation reservation)
