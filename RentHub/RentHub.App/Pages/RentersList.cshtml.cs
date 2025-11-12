@@ -25,9 +25,12 @@ namespace RentHub.App.Pages
         [BindProperty]
         public int RenterIdToDelete { get; set; }
 
-        public async Task OnGet()
+        public async Task<IActionResult> OnGet()
         {
-            var token = Request.Cookies["jwt"];
+            string? token = Request.Cookies["jwt"];
+
+            if (string.IsNullOrEmpty(token))
+                return RedirectToPage("/Welcome");
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
@@ -53,16 +56,23 @@ namespace RentHub.App.Pages
             {
                 Renters = new ObservableCollection<RenterViewModel>();
             }
+
+            return Page();
         }
         public async Task<ActionResult> OnPostAddRenter()
         {
+            string? token = Request.Cookies["jwt"];
+
+            if (string.IsNullOrEmpty(token))
+                return RedirectToPage("/Welcome");
+
             if (NewRenter == null)
             {
                 NewRenter = new RenterViewModel();
             }
-            var token = Request.Cookies["jwt"];
-            client.DefaultRequestHeaders.Authorization =
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 var jsonData = JsonSerializer.Serialize(NewRenter);
@@ -87,7 +97,11 @@ namespace RentHub.App.Pages
         {
             try
             {
-                var token = Request.Cookies["jwt"];
+                string? token = Request.Cookies["jwt"];
+
+                if (string.IsNullOrEmpty(token))
+                    return RedirectToPage("/Welcome");
+
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var response = await client.DeleteAsync($"Renters/renter/{RenterIdToDelete}");

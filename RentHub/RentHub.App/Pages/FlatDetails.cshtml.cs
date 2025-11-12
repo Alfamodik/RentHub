@@ -23,15 +23,19 @@ namespace RentHub.App.Pages
         [BindProperty]
         public IFormFile? PhotoUpload { get; set; }
 
-        public async Task OnGet()
+        public async Task<IActionResult> OnGet()
         {
             string? token = Request.Cookies["jwt"];
+
+            if (string.IsNullOrEmpty(token))
+                return RedirectToPage("/Welcome");
+
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             HttpResponseMessage response = await client.GetAsync($"Flats/flat-by-id/{Id}");
 
             if (!response.IsSuccessStatusCode)
-                return;
+                return Page();
 
             string json = await response.Content.ReadAsStringAsync();
 
@@ -62,6 +66,8 @@ namespace RentHub.App.Pages
                 Secure = false,
                 Expires = DateTime.UtcNow.AddDays(7)
             });
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
