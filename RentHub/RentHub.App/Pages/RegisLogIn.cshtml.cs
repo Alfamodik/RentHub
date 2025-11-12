@@ -22,13 +22,27 @@ namespace RentHub.App.Pages
         [BindProperty]
         public bool emailExists { get; set; }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            string? token = Request.Cookies["jwt"];
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                Response.Cookies.Append("jwt", token, new CookieOptions
+                {
+                    Expires = DateTime.Now.AddMinutes(60)
+                });
+
+                return RedirectToPage("/MainFlats");
+            }
+
             if (TempData.TryGetValue("Email", out var e))
                 Email = e?.ToString() ?? string.Empty;
 
             if (TempData.TryGetValue("exists", out var ex))
                 emailExists = string.Equals(ex?.ToString(), "true", StringComparison.OrdinalIgnoreCase);
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -91,7 +105,6 @@ namespace RentHub.App.Pages
                 string? jwt = JsonSerializer.Deserialize<JsonElement>(body).GetProperty("token").GetString();
                 Response.Cookies.Append("jwt", jwt, new CookieOptions
                 {
-                    Secure = true,
                     Expires = DateTime.Now.AddMinutes(60)
                 });
                 TempData["Message"] = emailExists ? "Успешный вход!" : "Регистрация успешна!";

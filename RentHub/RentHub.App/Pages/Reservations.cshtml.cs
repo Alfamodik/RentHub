@@ -171,7 +171,12 @@ namespace RentHub.App.Pages
             {
                 return Page();
             }
-            var token = Request.Cookies["jwt"];
+
+            string? token = Request.Cookies["jwt"];
+
+            if (string.IsNullOrEmpty(token))
+                return RedirectToPage("/Welcome");
+
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             try
             {
@@ -206,7 +211,11 @@ namespace RentHub.App.Pages
         {
             try
             {
-                var token = Request.Cookies["jwt"];
+                string? token = Request.Cookies["jwt"];
+
+                if (string.IsNullOrEmpty(token))
+                    return RedirectToPage("/Welcome");
+
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = await _client.DeleteAsync($"Reservations/reservation/{reservationIdToDelete}");
 

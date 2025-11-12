@@ -24,7 +24,6 @@ namespace RentHub.App.Pages
             {
                 Response.Cookies.Append("jwt", token, new CookieOptions
                 {
-                    Secure = true,
                     Expires = DateTime.Now.AddMinutes(60)
                 });
 
