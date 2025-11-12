@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using RentHub.API.ResponceModels;
 using RentHub.Core.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -67,6 +69,27 @@ namespace RentHub.API.Controllers
 
             string token = GenerateJwtToken(user.UserId, request.Email);
             return Ok(new { token });
+        }
+
+        [Authorize]
+        [HttpGet("has-avito-access")]
+        public IActionResult UserHasAvitoAccess()
+        {
+            string? claimedUserid = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(claimedUserid, out int userId))
+                return Unauthorized();
+
+            RentHubContext context = new();
+            User? user = context.Users.FirstOrDefault(user => user.UserId == userId);
+
+            if (user == null)
+                return Unauthorized();
+
+            if (user.AvitoAccessToken != null && user.AvitoRefreshToken != null)
+                return Ok(new HasAvitoAccessResponse() { HasAccess = true });
+
+            return Ok(new HasAvitoAccessResponse() { HasAccess = false });
         }
 
         private static string GenerateJwtToken(int userId, string email)

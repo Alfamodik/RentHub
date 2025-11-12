@@ -18,5 +18,5 @@ public partial class Reservation
 
     public virtual Advertisement Advertisement { get; set; } = null!;
 
-    public virtual Renter Renter { get; set; } = null!;
+    public virtual Renter? Renter { get; set; }
 }

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RentHub.API.RequestModels.Avito;
 using RentHub.API.ResponceModels.Avito;
+using RentHub.API.Services;
 using RentHub.Core.Model;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace RentHub.API.Controllers
@@ -56,67 +58,6 @@ namespace RentHub.API.Controllers
             AvitoUserResponse? avitoUserResponse = JsonSerializer.Deserialize<AvitoUserResponse>(responseBody);
 
             return Ok(avitoUserResponse);
-        }
-
-        [HttpGet("get-bookings")]
-        public async Task<IActionResult> GetBookings([FromQuery] AvitoBookingRequest avitoBookingRequest)
-        {
-            HttpClient _httpClient = new()
-            {
-                BaseAddress = new Uri("https://api.avito.ru/")
-            };
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", avitoBookingRequest.AccessToken);
-
-            string dateStart = avitoBookingRequest.DateStart.ToString("yyyy-MM-dd");
-            string dateEnd = avitoBookingRequest.DateEnd.ToString("yyyy-MM-dd");
-
-            string skipError = avitoBookingRequest.SkipErrors.ToString().ToLower();
-            string withUnpaid = avitoBookingRequest.WithUnpaid.ToString().ToLower();
-
-            string url =
-                @$"realty/v1/accounts/{avitoBookingRequest.UserId}/" +
-                @$"items/{avitoBookingRequest.ItemId}/" +
-                @$"bookings?skip_error={skipError}&" +
-                @$"date_start={dateStart}&" +
-                $@"date_end={dateEnd}&" +
-                $@"with_unpaid={withUnpaid}";
-
-            HttpResponseMessage response = await _httpClient.GetAsync(url);
-
-            response.EnsureSuccessStatusCode();
-
-            string responseBody = await response.Content.ReadAsStringAsync();
-
-            AvitoBookingsResponse? bookingsResponse = JsonSerializer.Deserialize<AvitoBookingsResponse>(responseBody);
-
-            if (bookingsResponse == null)
-                return BadRequest();
-
-            List<Reservation> reservations = new();
-            RentHubContext context = new();
-
-            foreach (Booking booking in bookingsResponse.Bookings)
-            {
-                Renter? renter = context.Renters.FirstOrDefault(renter => renter.Name == booking.Contact.Name);
-                renter ??= new()
-                {
-                    Name = booking.Contact.Name,
-                    PhoneNumber = booking.Contact.Phone
-                };
-
-                Reservation reservation = new()
-                {
-                    RenterId = renter.RenterId,
-                    DateOfStartReservation = booking.CheckIn,
-                    DateOfEndReservation = booking.CheckOut,
-                    Renter = renter
-                };
-
-                reservations.Add(reservation);
-            }
-
-            return Ok(new { bookingsResponse, reservations });
         }
     }
 }
