@@ -128,7 +128,7 @@ namespace RentHub.App.Pages
                         PropertyNameCaseInsensitive = true
                     });
 
-                    if (hasAvitoAsseccResponse?.HasAccess == true)
+                    if (hasAvitoAsseccResponse?.HasAccess == false)
                         return Redirect("https://www.avito.ru/oauth?response_type=code&client_id=hqQSMZCzT_szv7cre5vG&scope=short_term_rent:read,user:read");
                 }
             }
