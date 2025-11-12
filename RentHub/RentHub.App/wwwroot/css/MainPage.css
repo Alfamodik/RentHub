@@ -129,8 +129,8 @@ body {
 
 .flats-card-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 340px);
-    justify-content: center;
+    grid-template-columns: repeat(auto-fit, minmax(310px, max-content));
+    justify-items: start;
     gap: 30px;
     padding: 25px;
 }
@@ -140,11 +140,14 @@ body {
     overflow: hidden;
     border-radius: 10px;
     box-shadow: #3B82F6 0 0 10px 1px;
+    width: 310px;
 }
 
 .flat-card img {
     display: flex;
     justify-self: center;
+    width: 100%;
+    height: auto; 
 }
 
 .flat-info-container p {

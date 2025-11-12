@@ -28,7 +28,7 @@ namespace RentHub.App.Pages
             try
             {
                 HttpResponseMessage response;
-                response = await client.GetAsync("Flats/flats");
+                response = await client.GetAsync("Flats/user-flats");
 
                 if (response.IsSuccessStatusCode)
                 {
