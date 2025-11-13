@@ -20,16 +20,15 @@ namespace RentHub.App.Pages
         {
             BaseAddress = new Uri("http://94.183.186.221:5000/")
         };
-        private readonly HttpClient clientTESTAPI = new HttpClient()
-        {
-            BaseAddress = new Uri("http://localhost:5188/")
-        };
 
         [BindProperty]
         public FlatViewModel NewFlat { get; set; } = new FlatViewModel();
 
         [BindProperty]
-        public IFormFile? PhotoUpload { get; set; }
+        public IFormFile? PhotoUploadAdd { get; set; }
+
+        [BindProperty]
+        public int FlatIdToDelete { get; set; }
 
         public ObservableCollection<FlatViewModel>? Flats { get; set; }
 
@@ -82,10 +81,9 @@ namespace RentHub.App.Pages
             return RedirectToPage("/FlatDetails", new { id = flatId });
         }
 
-        public async Task<ActionResult> OnPostAddFlat()
+        public async Task<IActionResult> OnPostAddFlat()
         {
-            //string? token = Request.Cookies["jwt"];
-            string? token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIxIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoibmV3bGVnYTIwMjFAZ21haWwuY29tIiwiZXhwIjoxNzYzMDMzNTk3LCJpc3MiOiJSZW50SHViIiwiYXVkIjoiUmVudEh1YlVzZXJzIn0.R7VHVVc-kAhRcacQ9KEKRIGAaFHB4vd3NId2LrG6jQs";
+            string? token = Request.Cookies["jwt"];
 
             if (string.IsNullOrEmpty(token))
                 return RedirectToPage("/Welcome");
@@ -94,14 +92,36 @@ namespace RentHub.App.Pages
             {
                 NewFlat = new FlatViewModel();
             }
-
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             try
             {
-                var jsonData = JsonSerializer.Serialize(NewFlat);
-                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await clientTESTAPI.PostAsync("Flats/flat", content);
+                MultipartFormDataContent content = new()
+            {
+                { new StringContent("21"), nameof(NewFlat.UserId) },
+                { new StringContent(NewFlat.Country), nameof(NewFlat.Country) },
+                { new StringContent(NewFlat.City), nameof(NewFlat.City) },
+                { new StringContent(NewFlat.District), nameof(NewFlat.District) },
+                { new StringContent(NewFlat.HouseNumber), nameof(NewFlat.HouseNumber) },
+                { new StringContent(NewFlat.ApartmentNumber), nameof(NewFlat.ApartmentNumber) },
+                { new StringContent(NewFlat.RoomCount.ToString()), nameof(NewFlat.RoomCount) },
+                { new StringContent(NewFlat.Size.ToString()), nameof(NewFlat.Size) },
+                { new StringContent(NewFlat.FloorNumber.ToString()), nameof(NewFlat.FloorNumber) },
+                { new StringContent(NewFlat.FloorsNumber?.ToString() ?? ""), nameof(NewFlat.FloorsNumber) },
+                { new StringContent(NewFlat.Description), nameof(NewFlat.Description) },
+                
+            };
+
+                if (PhotoUploadAdd != null)
+                {
+                    using var ms = new MemoryStream();
+                    await PhotoUploadAdd.CopyToAsync(ms);
+                    ByteArrayContent fileContent = new(ms.ToArray());
+                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(PhotoUploadAdd.ContentType);
+                    content.Add(fileContent, "Photo", PhotoUploadAdd.FileName);
+                }
+
+                HttpResponseMessage response = await client.PostAsync("Flats/flat", content);
                 if (response.IsSuccessStatusCode)
                 {
                     TempData["AddFlatMessage"] = " вартира успешно добавлена!";
@@ -117,6 +137,37 @@ namespace RentHub.App.Pages
             catch (Exception ex)
             {
                 TempData["AddFlatError"] = "ќшибка: " + ex.Message;
+                return Page();
+            }
+        }
+        public async Task<ActionResult> OnPostDeleteFlat()
+        {
+            try
+            {
+                string? token = Request.Cookies["jwt"];
+
+                if (string.IsNullOrEmpty(token))
+                    return RedirectToPage("/Welcome");
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var response = await client.DeleteAsync($"Flats/flat/{FlatIdToDelete}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["AddFlatMessage"] = " вартира успешно удалена!";
+                    return RedirectToPage();
+                }
+                else
+                {
+                    string error = response.Content.ReadAsStringAsync().Result;
+                    TempData["DeleteFlatError"] = response.StatusCode + ": " + error;
+                    return Page();
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["DeleteFlatError"] = "ќшибка: " + ex.Message;
                 return Page();
             }
         }

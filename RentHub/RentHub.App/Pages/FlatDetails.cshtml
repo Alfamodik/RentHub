@@ -61,12 +61,12 @@
             <button type="submit" name="CustomersBtn">Жильцы</button>
         </form>
 
-        <form class="menu-item" method="get" action="/AdvertisementsList">
+        <form class="menu-item" method="get" action="/AdvertismentsList">
             <img src="~/img/addvertisement.png" alt="404" />
             <button type="submit" name="AdsBtn">Объявления</button>
         </form>
 
-        <form class="menu-item" method="get">
+        <form class="menu-item" method="get" action="/Reportcshtml">
             <img src="~/img/side-bar/chart-no-axes-column 1.svg" alt="404" />
             <button type="submit" name="recordsBtn">Отчетность</button>
         </form>
@@ -129,7 +129,7 @@
 
                         <div class="form-group">
                             <label>Площадь (м²):</label>
-                            <input type="number" asp-for="Flat.Size" step="0.1" value="@Model.Flat.Size" style="width:100%" />
+                            <input type="number" asp-for="Flat.Size" step="0.1" value="@Convert.ToInt32(Model.Flat.Size)" style="width:100%" />
                         </div>
 
                         <div class="form-group">

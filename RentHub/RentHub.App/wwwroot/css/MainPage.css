@@ -141,6 +141,7 @@ body {
     border-radius: 10px;
     box-shadow: #3B82F6 0 0 10px 1px;
     width: 310px;
+    height:fit-content;
 }
 
 .flat-card img {
@@ -168,6 +169,32 @@ body {
     color: var(--text_color);
     font-size: 16px;
 }
+
+.delete-flat-container {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 10px;
+}
+
+.delete-btn {
+    height: 40px;
+    width: 40px;
+    background-color: unset;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    font-size: 30px;
+}
+
+    .delete-btn:hover {
+        cursor: pointer;
+        border: solid 1px var(--text_color);
+    }
+
+    .delete-btn:active {
+        transform: scale(1.05);
+        font-size: 32px;
+    }
 
 .add-button {
     position: fixed;
@@ -222,6 +249,14 @@ body {
 
 textarea {
     resize: horizontal;
+    background-color: #1e293b;
+    border: none;
+    border-radius: 10px;
+    height:40px;
+    padding-inline: 5px;
+    color: var(--text_color);
+    outline: none;
+    border: 1px solid #475569;
 }
 
 .close {

@@ -7,7 +7,7 @@
     public string ConvertToImageSrcAsync(byte[]? blobData)
     {
         if (blobData == null || blobData.Length == 0)
-            return "~/img/AnyFlat.svg";
+            return "~/img/FlatPlaceholder.svg";
         
         string base64String = Convert.ToBase64String(blobData);
         return $"data:image/jpeg;base64,{base64String}";
@@ -74,22 +74,31 @@
             {
                 @foreach (var flat in Model.Flats)
                 {
-                    <form asp-page-handler="SaveChange" method="post">
-                        <input type="hidden" name="flatId" value="@flat.FlatId" />
-                        <div class="flat-card"
-                             onclick="this.closest('form').submit()"
-                             data-address="@($"{flat.Country} {flat.City} {flat.District} {flat.HouseNumber} {flat.ApartmentNumber}")"
-                             data-city="@flat.City"
-                             data-rooms="@flat.RoomCount">
-                            <img src="@ConvertToImageSrcAsync(flat.Photo)" alt="Фотка квартиры" />
-                            <div class="flat-info-container">
-                                <p><span>Адрес:</span> @flat.City, ул.@flat.District, д.@flat.HouseNumber, кв.@flat.ApartmentNumber</p>
-                                <p><span>Комнат:</span> @flat.RoomCount</p>
-                                <p><span>Этаж:</span> @flat.FloorNumber/@flat.FloorsNumber</p>
-                                <p><span>Площадь:</span> @flat.Size м²</p>
+                    <div class="flat-card"
+                         data-address="@($"{flat.Country} {flat.City} {flat.District} {flat.HouseNumber} {flat.ApartmentNumber}")"
+                         data-city="@flat.City"
+                         data-rooms="@flat.RoomCount">
+
+                        <form asp-page-handler="SaveChange" method="post" class="main-card-form">
+                            <input type="hidden" name="flatId" value="@flat.FlatId" />
+                            <div class="card-content" onclick="this.closest('form').submit()">
+                                <img src="@ConvertToImageSrcAsync(flat.Photo)" alt="Фотка квартиры" />
+                                <div class="flat-info-container">
+                                    <p><span>Адрес:</span> @flat.City, ул.@flat.District, д.@flat.HouseNumber, кв.@flat.ApartmentNumber</p>
+                                    <p><span>Комнат:</span> @flat.RoomCount</p>
+                                    <p><span>Этаж:</span> @flat.FloorNumber/@flat.FloorsNumber</p>
+                                    <p><span>Площадь:</span> @flat.Size м²</p>
+                                </div>
                             </div>
+                        </form>
+
+                        <div class="delete-flat-container">
+                            <form method="post" asp-page-handler="DeleteFlat" onsubmit="return confirm('Вы уверены, что хотите удалить эту квартиру?');">
+                                <input type="hidden" name="FlatIdToDelete" value="@flat.FlatId" />
+                                <button type="submit" class="delete-btn">🗑</button>
+                            </form>
                         </div>
-                    </form>
+                    </div>
                 }
             }
             else
@@ -109,7 +118,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Добавить новую квартиру</h2>
-            <form id="addFlatForm" method="post" asp-page-handler="AddFlat">
+            <form id="addFlatForm" method="post" enctype="multipart/form-data" asp-page-handler="AddFlat">
                 <div class="form-group">
                     <input type="text" placeholder="Страна" asp-for="NewFlat.Country" id="country" name="country" maxlength="100" required>
                     <input type="text" placeholder="Город" asp-for="NewFlat.City" id="city" name="city" maxlength="100" required>
@@ -127,7 +136,7 @@
                 </div>
                 <div class="form-group">
                     <label for="size">Площадь:</label>
-                    <input type="number" asp-for="NewFlat.Size" id="size" name="size" min="5" max="1000.00" required>
+                    <input type="number" asp-for="NewFlat.Size" id="size" name="size" min="5" max="1000" required>
                 </div>
                 <div class="form-group">
                     <label for="floorNumber">Этаж:</label>
@@ -137,11 +146,11 @@
                     <input type="number" placeholder="Кол-во этажей" asp-for="NewFlat.FloorsNumber" id="floorsNumber" name="floorsNumber" min="1" max="163">
                 </div>
                 <div class="form-group">
-                    <textarea  type="text" placeholder="Описание" asp-for="NewFlat.Description" id="description" name="description" required></textarea>
+                    <textarea type="text" placeholder="Описание" asp-for="NewFlat.Description" id="description" name="description" required></textarea>
                 </div>
                 <div class="form-group photo-section">
-                    <label for="photo">Фото квартиры:</label>
-                    <input type="file" asp-for="PhotoUpload" name="photo" style="margin-top:10px; width:100%" />
+                    <label>Фото квартиры:</label>
+                    <input type="file" asp-for="PhotoUploadAdd" style="margin-top:10px; width:100%" />
                 </div>
                 <div class="form-buttons">
                     <button type="submit" class="submit-btn">Добавить</button>
