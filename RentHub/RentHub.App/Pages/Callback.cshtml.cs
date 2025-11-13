@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Net.Http.Headers;
 using System.Text.Json;
 
 namespace RentHub.App.Pages
@@ -16,6 +17,12 @@ namespace RentHub.App.Pages
 
         public async Task<IActionResult> OnGet()
         {
+            string? token = Request.Cookies["jwt"];
+
+            if (string.IsNullOrEmpty(token))
+                return RedirectToPage("/Welcome");
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             HttpResponseMessage response = await _client.GetAsync($"Callback?code={Code}");
             return Redirect("Reservations");
         }
