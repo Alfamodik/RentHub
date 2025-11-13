@@ -18,58 +18,73 @@
     
 }*/
 
+:root {
+    --text_color: #CBD5E1;
+}
+
+*{
+    padding:0;
+    margin:0;
+}
+
 body {
-    background-color: #0F172A;
-    color: white;
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
     display: flex;
+    margin: 0;
+    color: var(--text_color);
+    background: linear-gradient(260deg, #0d1323, #0d1323, #162446);
 }
 
 #side-bar {
-    width: 250px;
-    background-color: #1E293B;
-    height: 100vh;
-    padding: 20px;
+    width: 21vw;
+    /*background-image: url("../img/side-bar/sideBarBG.svg");*/
+    /*background-size: cover;*/
+    /*background-repeat: no-repeat;*/
 }
 
 #main-text {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 40px;
+    font-size: 40px;
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding-top: 50px;
+    color: var(--text_color);
 }
 
 .menu-item {
     display: flex;
-    align-items: center;
-    margin-bottom: 15px;
+    padding-left: 30px;
+    gap: 10px;
+    margin-top: 20px;
+    color: var(--text_color);
 }
 
     .menu-item img {
-        width: 24px;
-        margin-right: 10px;
+        width: 30px;
+        height: 30px;
     }
 
     .menu-item button {
         background: none;
         border: none;
         color: white;
+        font-size: 18px;
+        color: var(--text_color);
         cursor: pointer;
     }
+
+        .menu-item button:hover {
+            text-decoration: underline;
+        }
 
 .main-cont {
     flex: 1;
     padding: 40px;
-    background: #0F172A;
-}
-
-.filter-bar {
-    margin-bottom: 30px;
+    background: linear-gradient(140deg, #0d1323, #162446, #162446);
 }
 
 .form-select {
     background: #1E293B;
-    color: white;
+    color: var(--text_color);
     border: 1px solid #334155;
     padding: 10px;
     border-radius: 8px;
@@ -82,7 +97,32 @@ body {
 
 .chart-box {
     flex: 1;
-    background: #1E293B;
+    background: #334155;
     border-radius: 10px;
     padding: 20px;
 }
+
+.filter-bar {
+    display: flex;
+    align-items: center;
+    padding-bottom: 20px;
+    gap: 15px;
+}
+
+.filter-bar select {
+    background-color: #1E293B;
+    border: none;
+    padding-inline: 15px;
+    padding-block: 10px;
+    padding-right: 40px;
+    color: var(--text_color);
+    border-radius: 10px;
+    font-size: 16px;
+    appearance: none;
+    background-image: url(../img/chevron-down.svg);
+    background-repeat: no-repeat;
+    background-position-x: 95%;
+    background-position-y: center;
+    background-size: 25px;
+}
+

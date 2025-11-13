@@ -57,6 +57,12 @@ namespace RentHub.API.Controllers
         [HttpPost("flat")]
         public ActionResult AddFlat(FlatDTO flatDto)
         {
+            string? claimedUserid = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(claimedUserid, out int userId))
+            {
+                return Unauthorized("Неверный формат токена");
+            }
             using RentHubContext context = new();
             byte[]? photoBytes = null;
             if (flatDto.Photo != null)
@@ -81,7 +87,7 @@ namespace RentHub.API.Controllers
             }
             var flat = new Flat
             {
-                UserId = flatDto.UserId,
+                UserId = userId,
                 Country = flatDto.Country,
                 City = flatDto.City,
                 District = flatDto.District,

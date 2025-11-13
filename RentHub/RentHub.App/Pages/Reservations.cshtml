@@ -35,7 +35,7 @@
             <button type="submit" name="CustomersBtn">Жильцы</button>
         </form>
 
-        <form class="menu-item" method="get">
+        <form class="menu-item" method="get" action="/Reportcshtml">
             <img src="~/img/side-bar/chart-no-axes-column 1.svg" alt="404" />
             <button type="submit" name="recordsBtn">Отчетность</button>
         </form>
@@ -43,16 +43,20 @@
 
     <div id="main-content-main-page">
         <div class="top-bar">
-            <a href="#"><img src="~/img/userIcon.svg" alt="Фотка иконки юзера" /></a>
+            <form asp-page-handler="Logout" id="logoutForm">
+                <a href="#" onclick="confirmLogout()">
+                    <img src="~/img/userIcon.svg" alt="Фотка иконки юзера" />
+                </a>
+            </form>
             <a href="#"><img src="~/img/bell.svg" alt="Фотка иконки уведомлений" /></a>
             <form method="post">
-                <button type="submit" asp-page-handler="RefreshReservations">Обновить данные</button>
+                <button type="submit" class="update_btn" asp-page-handler="RefreshReservations">Обновить данные</button>
             </form>
         </div>
 
         @if (TempData["ReservationMessage"] != null)
         {
-            <div style="background: #ffebee; color: #005828; padding: 10px; margin: 10px 0; border-radius: 5px;">
+            <div style="background: #334155; color: #CBD5E1; padding: 10px; margin: 10px 0; border-radius: 5px;">
                 @TempData["ReservationMessage"]
             </div>
         }
@@ -61,7 +65,9 @@
             <div class="calendar"
             style="
                     grid-template: repeat(1, 75px)/repeat(1,2fr);
-                    height: @(Model.FlatBookingsViewModels?.Count * 100 + 30 + 30)px;">
+                    height: @(Model.FlatBookingsViewModels?.Count * 100 + 30 + 30)px;
+                    padding-bottom: 30px;
+">
                 @{
                     <div class="grid-row1" style="grid-template-columns: repeat(@(Model.DaysCount + 1), 75px);">
                         <button id="addReservationBtn" class="add-button">+</button>
@@ -78,7 +84,7 @@
                             for (int i = 0; i < Model.FlatBookingsViewModels?.Count; i++)
                             {
                                 FlatBookingsViewModel flat = Model.FlatBookingsViewModels[i];
-                                <img src="~/img/AnyFlat.svg" style="height: 75px; width: 75px; z-index: 10;" />
+                                <img src="@flat.PhotoBase64" style="height: 75px; width: 75px; z-index: 10; object-fit: cover" />
                             }
                         }
                     </div>
@@ -158,7 +164,7 @@
                 <form id="addReservationForm" method="post" asp-page-handler="AddReservation">
                     <div class="form-group">
                         <select class="flat-select" asp-for="newReservation.RenterId" id="renterSelect" required>
-                            <option value="">Выберите арендодателя</option>
+                            <option value="">Выберите арендателя</option>
                         </select>
                         <span asp-validation-for="newReservation.RenterId"></span>
                     </div>
@@ -187,11 +193,20 @@
     </div>
 
     <script>
+
+        function confirmLogout() {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                document.getElementById('logoutForm').submit();
+            }
+        }
         const modal = document.getElementById('addReservationModal');
         const addBtn = document.getElementById('addReservationBtn');
         const closeBtn = document.querySelector('.close');
         const cancelBtn = document.querySelector('.cancel-btn');
         const form = document.querySelector('#addReservationForm')
+
+        var renters = @Json.Serialize(Model.Renters)
+        var flats = @Json.Serialize(Model.Flats)
 
         setupDateConstraints();
         fillRenterSelect();
@@ -220,7 +235,7 @@
 
         function fillRenterSelect() {
             const select = document.getElementById('renterSelect');
-            select.innerHTML = '<option value="">Выберите арендодателя</option>';
+            select.innerHTML = '<option value="">Выберите арендателя</option>';
 
             renters.forEach(renter => {
                 const option = document.createElement('option');

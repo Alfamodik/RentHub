@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using RentHub.App.ResponseModels;
 using RentHub.App.ViewModels;
 using RentHub.Core.Model;
+using System.Collections.ObjectModel;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -21,6 +22,8 @@ namespace RentHub.App.Pages
         public ReservationFullViewModel newReservation { get; set; } = new ReservationFullViewModel();
 
         private List<Flat>? _flats;
+        public ObservableCollection<RenterViewModel>? Renters { get; set; } = new ObservableCollection<RenterViewModel>();
+        public ObservableCollection<FlatViewModel>? Flats { get; set; } = new ObservableCollection<FlatViewModel>();
 
         private readonly HttpClient _client = new()
         {
@@ -34,6 +37,9 @@ namespace RentHub.App.Pages
 
         public async Task<IActionResult> OnGet()
         {
+            await Getrenters();
+            await GetFlats();
+
             string? token = Request.Cookies["jwt"];
 
             if (string.IsNullOrEmpty(token))
@@ -95,6 +101,65 @@ namespace RentHub.App.Pages
 
             return Page();
         }
+
+        private async Task Getrenters()
+        {
+            var token = Request.Cookies["jwt"];
+
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            try
+            {
+                HttpResponseMessage response;
+                response = await _client.GetAsync("Renters/renters");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    Renters = JsonSerializer.Deserialize<ObservableCollection<RenterViewModel>>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                }
+                else
+                {
+                    Renters = new ObservableCollection<RenterViewModel>();
+                }
+            }
+            catch
+            {
+                Renters = new ObservableCollection<RenterViewModel>();
+            }
+        }
+        private async Task GetFlats()
+        {
+            var token = Request.Cookies["jwt"];
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            try
+            {
+                HttpResponseMessage response = await _client.GetAsync($"Flats/user-flats");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    Flats = JsonSerializer.Deserialize<ObservableCollection<FlatViewModel>>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                }
+                else
+                {
+                    Flats = new ObservableCollection<FlatViewModel>();
+                }
+            }
+            catch
+            {
+                Flats = new ObservableCollection<FlatViewModel>();
+            }
+        }
+
 
         public async Task<IActionResult> OnPostRefreshReservations()
         {
@@ -197,11 +262,14 @@ namespace RentHub.App.Pages
                 }
                 else
                 {
+                    string error = await response.Content.ReadAsStringAsync();
+                    TempData["ReservationMessage"] = response.StatusCode + ": " + error;
                     return null;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                TempData["ReservationMessage"] = "Ошибка: " + ex.Message;
                 return null;
             }
         }
@@ -238,7 +306,7 @@ namespace RentHub.App.Pages
                 else
                 {
                     string error = await response.Content.ReadAsStringAsync();
-                    TempData["ReservationMessage"] = "" + error;
+                    TempData["ReservationMessage"] = response.StatusCode + ": " + error;
                     return Page();
                 }
             }
@@ -276,6 +344,11 @@ namespace RentHub.App.Pages
                 TempData["ReservationMessage"] = "Ошибка: " + ex.Message;
                 return Page();
             }
+        }
+        public ActionResult OnPostLogout()
+        {
+            Response.Cookies.Delete("jwt");
+            return RedirectToPage("/Welcome");
         }
     }
 }

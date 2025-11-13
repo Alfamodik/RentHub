@@ -62,7 +62,7 @@
         </form>
 
         <form class="menu-item" method="get" action="/AdvertisementsList">
-            <img src="~/img/side-bar/ad.svg" alt="404" />
+            <img src="~/img/addvertisement.png" alt="404" />
             <button type="submit" name="AdsBtn">Объявления</button>
         </form>
 
@@ -74,13 +74,17 @@
 
     <div id="main-content-main-page">
         <div class="top-bar">
-            <a href="#"><img src="~/img/userIcon.svg" alt="Фотка иконки юзера" /></a>
+            <form asp-page-handler="Logout" id="logoutForm">
+                <a href="#" onclick="confirmLogout()">
+                    <img src="~/img/userIcon.svg" alt="Фотка иконки юзера" />
+                </a>
+            </form>
             <a href="#"><img src="~/img/bell.svg" alt="Фотка иконки уведомлений" /></a>
         </div>
 
         <div class="search-container">
             <div class="search-bar-container">
-                <a href="/MainFlats" class="back-link" style="color: #94a3b8; text-decoration: none; display: inline-block; margin-bottom: 15px; font-size: 16px;">
+                <a href="/MainFlats" class="back-link" style="color: var(--text_color); text-decoration: none; font-size: 16px;">
                     ← Назад к списку квартир
                 </a>
             </div>
@@ -167,5 +171,12 @@
             </div>
         }
     </div>
+    <script>
+        function confirmLogout() {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                document.getElementById('logoutForm').submit();
+            }
+        }
+    </script>
 </body>
 </html>
