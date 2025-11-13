@@ -10,3 +10,5 @@
 <b>Аутентификация</b>: JWT Tokens <br>
 
 <b>Ссылка на макет</b> - https://www.figma.com/design/q84G3plz7QrXy4T1HDr52A/RentHub?m=auto&t=SzOyEgmERZ2eF0RW-1
+
+<b>Ссылка на сайт</b> - http://94.183.186.221:5168
