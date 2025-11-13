@@ -112,5 +112,10 @@ namespace RentHub.App.Pages
 
             return Redirect($"AdvertismentsList?flatId={FlatId}");
         }
+        public ActionResult OnPostLogout()
+        {
+            Response.Cookies.Delete("jwt");
+            return RedirectToPage("/Welcome");
+        }
     }
 }

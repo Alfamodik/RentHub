@@ -112,5 +112,10 @@ namespace RentHub.App.Pages
             ModelState.AddModelError(string.Empty, "Ошибка при сохранении данных квартиры");
             return Page();
         }
+        public ActionResult OnPostLogout()
+        {
+            Response.Cookies.Delete("jwt");
+            return RedirectToPage("/Welcome");
+        }
     }
 }

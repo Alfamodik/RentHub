@@ -32,7 +32,7 @@
             <button type="submit" name="CustomersBtn">Жильцы</button>
         </form>
 
-        <form class="menu-item" method="get">
+        <form class="menu-item" method="get" action="/Reportcshtml">
             <img src="~/img/side-bar/chart-no-axes-column 1.svg" alt="404" />
             <button type="submit" name="recordsBtn">Отчетность</button>
         </form>
@@ -40,7 +40,11 @@
 
     <div id="main-content-main-page">
         <div class="top-bar">
-            <a href="#"><img src="~/img/userIcon.svg" alt="Фотка иконки юзера" /></a>
+            <form asp-page-handler="Logout" id="logoutForm">
+                <a href="#" onclick="confirmLogout()">
+                    <img src="~/img/userIcon.svg" alt="Фотка иконки юзера" />
+                </a>
+            </form>
             <a href="#"><img src="~/img/bell.svg" alt="Фотка иконки уведомлений" /></a>
         </div>
 
@@ -125,6 +129,12 @@
     </div>
 
     <script>
+        function confirmLogout() {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                document.getElementById('logoutForm').submit();
+            }
+        }
+
         const modal = document.getElementById('addAdvertisementModal');
         const addBtn = document.getElementById('addAdvertisementBtn');
         const closeBtn = document.querySelector('.close');

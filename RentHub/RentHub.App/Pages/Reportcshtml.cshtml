@@ -16,7 +16,7 @@
     <div id="side-bar">
         <p id="main-text">Недвижимость</p>
 
-        <form class="menu-item" method="get">
+        <form class="menu-item" method="get" action="/MainFlats">
             <img src="~/img/side-bar/House 1.svg" alt="404" />
             <button type="submit" name="FlatsBtn">Квартиры</button>
         </form>
@@ -26,20 +26,20 @@
             <button type="submit">Бронирования</button>
         </form>
 
-        <form class="menu-item" method="get">
+        <form class="menu-item" method="get" action="/RentersList">
             <img src="~/img/side-bar/users 1.svg" alt="404" />
             <button type="submit" name="CustomersBtn">Жильцы</button>
         </form>
 
-        <form class="menu-item" method="get">
+        <form class="menu-item" method="get" asp-page="/Reportcshtml">
             <img src="~/img/side-bar/chart-no-axes-column 1.svg" alt="404" />
-            <button type="submit" name="recordsBtn">Отчетность</button>
+            <button type="submit">Отчетность</button>
         </form>
     </div>
 
     <div class="main-cont">
         <div class="filter-bar">
-            <label for="apartmentSelect">Квартира:</label>
+            <label for="apartmentSelect">Фильтр по квартирам:</label>
             <select id="apartmentSelect" class="form-select">
                 <option value="">Все квартиры</option>
                 @foreach (var flat in Model.Flats)

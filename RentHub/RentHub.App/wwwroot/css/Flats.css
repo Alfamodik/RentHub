@@ -22,6 +22,18 @@
     color: var(--text_color);
 }
 
+textarea {
+    resize: horizontal;
+    background-color: #1e293b;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    padding-inline: 5px;
+    color: var(--text_color);
+    outline: none;
+    border: 1px solid #475569;
+}
+
 .form-group input,
 .form-group textarea,
 .form-group select {

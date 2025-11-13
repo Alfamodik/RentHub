@@ -121,5 +121,10 @@ namespace RentHub.App.Pages
                 return Page();
             }
         }
+        public ActionResult OnPostLogout()
+        {
+            Response.Cookies.Delete("jwt");
+            return RedirectToPage("/Welcome");
+        }
     }
 }

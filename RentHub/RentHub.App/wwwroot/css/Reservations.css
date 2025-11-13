@@ -94,6 +94,23 @@
     gap: 15px;
 }
 
+.update_btn {
+    border-radius: 10px;
+    background: #334155;
+    color: var(--text_color);
+    border: none;
+    padding: 1vh;
+    padding-inline: 2vh;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.update_btn:hover {
+    transform: scale(1.1);
+}
+
 #addReservationBtn {
     border-radius: 50px;
     background: #334155;
@@ -111,7 +128,7 @@
     width: 50%;
     position: relative;
     overflow: hidden;
-    z-index:1000;
+    z-index: 1000;
 }
 
 #addReservationBtn:hover {
@@ -269,4 +286,16 @@
     margin: 15px;
     color: white;
 
+}
+
+textarea {
+    resize: horizontal;
+    background-color: #1e293b;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    padding-inline: 5px;
+    color: var(--text_color);
+    outline: none;
+    border: 1px solid #475569;
 }

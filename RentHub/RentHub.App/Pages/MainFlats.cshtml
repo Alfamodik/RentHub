@@ -3,6 +3,16 @@
 @{
     Layout = null;
 }
+@functions {
+    public string ConvertToImageSrcAsync(byte[]? blobData)
+    {
+        if (blobData == null || blobData.Length == 0)
+            return "~/img/FlatPlaceholder.svg";
+        
+        string base64String = Convert.ToBase64String(blobData);
+        return $"data:image/jpeg;base64,{base64String}";
+    }
+}
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -38,7 +48,11 @@
 
     <div id="main-content-main-page">
         <div class="top-bar">
-            <a href="#"><img src="~/img/userIcon.svg" alt="Фотка иконки юзера" /></a>
+            <form asp-page-handler="Logout" id="logoutForm">
+                <a href="#" onclick="confirmLogout()">
+                    <img src="~/img/userIcon.svg" alt="Фотка иконки юзера" />
+                </a>
+            </form>
             <a href="#"><img src="~/img/bell.svg" alt="Фотка иконки уведомлений" /></a>
         </div>
         <div class="search-container">
@@ -60,22 +74,31 @@
             {
                 @foreach (var flat in Model.Flats)
                 {
-                    <form method="post">
-                        <input type="hidden" name="flatId" value="@flat.FlatId" />
-                        <div class="flat-card"
-                             onclick="this.closest('form').submit()"
-                             data-address="@($"{flat.Country} {flat.City} {flat.District} {flat.HouseNumber} {flat.ApartmentNumber}")"
-                             data-city="@flat.City"
-                             data-rooms="@flat.RoomCount">
-                            <img src="~/img/flat1.png" alt="Фотка квартиры" />
-                            <div class="flat-info-container">
-                                <p><span>Адрес:</span> @flat.City, ул.@flat.District, д.@flat.HouseNumber, кв.@flat.ApartmentNumber</p>
-                                <p><span>Комнат:</span> @flat.RoomCount</p>
-                                <p><span>Этаж:</span> @flat.FloorNumber/@flat.FloorsNumber</p>
-                                <p><span>Площадь:</span> @flat.Size м²</p>
+                    <div class="flat-card"
+                         data-address="@($"{flat.Country} {flat.City} {flat.District} {flat.HouseNumber} {flat.ApartmentNumber}")"
+                         data-city="@flat.City"
+                         data-rooms="@flat.RoomCount">
+
+                        <form asp-page-handler="SaveChange" method="post" class="main-card-form">
+                            <input type="hidden" name="flatId" value="@flat.FlatId" />
+                            <div class="card-content" onclick="this.closest('form').submit()">
+                                <img src="@ConvertToImageSrcAsync(flat.Photo)" alt="Фотка квартиры" />
+                                <div class="flat-info-container">
+                                    <p><span>Адрес:</span> @flat.City, ул.@flat.District, д.@flat.HouseNumber, кв.@flat.ApartmentNumber</p>
+                                    <p><span>Комнат:</span> @flat.RoomCount</p>
+                                    <p><span>Этаж:</span> @flat.FloorNumber/@flat.FloorsNumber</p>
+                                    <p><span>Площадь:</span> @flat.Size м²</p>
+                                </div>
                             </div>
+                        </form>
+
+                        <div class="delete-flat-container">
+                            <form method="post" asp-page-handler="DeleteFlat" onsubmit="return confirm('Вы уверены, что хотите удалить эту квартиру?');">
+                                <input type="hidden" name="FlatIdToDelete" value="@flat.FlatId" />
+                                <button type="submit" class="delete-btn">🗑</button>
+                            </form>
                         </div>
-                    </form>
+                    </div>
                 }
             }
             else
@@ -84,13 +107,92 @@
                     <p>Квартиры не найдены</p>
                 </div>
             }
+            <button id="addFlatBtn" class="add-button">+</button>
         </div>
 
         <div id="noFlatsResults" class="no-flats" style="display: none;">
             <p>Квартиры не найдены</p>
         </div>
     </div>
+    <div id="addFlatModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Добавить новую квартиру</h2>
+            <form id="addFlatForm" method="post" enctype="multipart/form-data" asp-page-handler="AddFlat">
+                <div class="form-group">
+                    <input type="text" placeholder="Страна" asp-for="NewFlat.Country" id="country" name="country" maxlength="100" required>
+                    <input type="text" placeholder="Город" asp-for="NewFlat.City" id="city" name="city" maxlength="100" required>
+                    <input type="text" placeholder="Улица" asp-for="NewFlat.District" id="district" name="district" maxlength="100" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Номер дома" asp-for="NewFlat.HouseNumber" id="houseNumber" name="houseNumber" maxlength="10" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Номер квартиры" asp-for="NewFlat.ApartmentNumber" id="apartmentNumber" name="apartmentNumber" maxlength="5" required>
+                </div>
+                <div class="form-group">
+                    <label for="roomCount">Кол-во комнат:</label>
+                    <input type="number" asp-for="NewFlat.RoomCount" id="roomCount" name="roomCount" min="1" max="11" required>
+                </div>
+                <div class="form-group">
+                    <label for="size">Площадь:</label>
+                    <input type="number" asp-for="NewFlat.Size" id="size" name="size" min="5" max="1000" required>
+                </div>
+                <div class="form-group">
+                    <label for="floorNumber">Этаж:</label>
+                    <input type="number" asp-for="NewFlat.FloorNumber" id="floorNumber" name="floorNumber" min="1" max="163" required>
+                </div>
+                <div class="form-group">
+                    <input type="number" placeholder="Кол-во этажей" asp-for="NewFlat.FloorsNumber" id="floorsNumber" name="floorsNumber" min="1" max="163">
+                </div>
+                <div class="form-group">
+                    <textarea type="text" placeholder="Описание" asp-for="NewFlat.Description" id="description" name="description" required></textarea>
+                </div>
+                <div class="form-group photo-section">
+                    <label>Фото квартиры:</label>
+                    <input type="file" asp-for="PhotoUploadAdd" style="margin-top:10px; width:100%" />
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="submit-btn">Добавить</button>
+                    <button type="button" class="cancel-btn">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <script>
+
+        const modal = document.getElementById('addFlatModal');
+        const addBtn = document.getElementById('addFlatBtn');
+        const closeBtn = document.querySelector('.close');
+        const cancelBtn = document.querySelector('.cancel-btn');
+        const form = document.querySelector('#addFlatForm')
+
+         addBtn.onclick = function () {
+            modal.style.display = 'block';
+         }
+
+         closeBtn.onclick = function () {
+            modal.style.display = 'none';
+            form.reset();
+         }
+
+         cancelBtn.onclick = function () {
+            modal.style.display = 'none';
+            form.reset();
+         }
+
+         window.onclick = function (event) {
+         if (event.target == modal) {
+                modal.style.display = 'none';
+                form.reset();
+         }
+        }
+
+        function confirmLogout() {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                document.getElementById('logoutForm').submit();
+            }
+        }
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchFlatsInput');
             const cityFilter = document.getElementById('cityFilter');
@@ -211,6 +313,7 @@
                     flatsContainer.style.display = 'grid';
                 }
             }
+
         });
     </script>
 </body>
