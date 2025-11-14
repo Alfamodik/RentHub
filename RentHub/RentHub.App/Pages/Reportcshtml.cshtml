@@ -75,7 +75,6 @@
             const values = bookingsData.map(item => item.value);
             const occupancyValues = occupancyData.map(item => item.value);
 
-            // Очистка старых графиков
             if (bookingsChart) bookingsChart.destroy();
             if (occupancyChart) occupancyChart.destroy();
 
@@ -110,14 +109,12 @@
             });
         }
 
-        // Инициализация графиков
         renderCharts();
 
-        // Обработчик фильтра
         document.getElementById('apartmentSelect').addEventListener('change', function (e) {
             const flatId = e.target.value;
             const newUrl = `/Reportcshtml?flatId=${flatId}`;
-            window.location.href = newUrl; // Перезагрузка страницы с новым параметром
+            window.location.href = newUrl;
         });
     </script>
 </body>

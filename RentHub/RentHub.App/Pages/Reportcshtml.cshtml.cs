@@ -23,11 +23,11 @@ namespace RentHub.App.Pages
                     return RedirectToPage("/Welcome");
 
                 _http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                var data = await _http.GetFromJsonAsync<List<Flat>>("http://localhost:5188/Flats/user-flats");
+                var data = await _http.GetFromJsonAsync<List<Flat>>("http://94.183.186.221:5000/Flats/user-flats");
                 if (data != null)
                     Flats = data;
 
-                var url = $"http://localhost:5188/Reservations/reservation-by-flat-id/{flatId}";
+                var url = $"http://94.183.186.221:5000/Reservations/reservation-by-flat-id/{flatId}";
 
                 var reservations = await _http.GetFromJsonAsync<List<Reservation>>(url);
                 if (reservations != null)
@@ -59,12 +59,11 @@ namespace RentHub.App.Pages
             OccupancyData = BookingsByMonth.Select(item => new ChartData
             {
                 Label = item.Label,
-                Value = Math.Min(item.Value * 10, 100) // фейковая метрика
+                Value = Math.Min(item.Value * 10, 100)
             }).ToList();
         }
     }
 
-// Вспомогательный класс для передачи данных в JS
 public class ChartData
 {
     public string Label { get; set; } = "";

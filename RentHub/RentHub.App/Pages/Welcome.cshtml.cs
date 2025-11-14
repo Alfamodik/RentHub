@@ -13,7 +13,7 @@ namespace RentHub.App.Pages
     {
         HttpClient client = new HttpClient()
         {
-            BaseAddress = new Uri("http://localhost:5188/")
+            BaseAddress = new Uri("http://94.183.186.221:5000/")
         };
 
         public IActionResult OnGet()
