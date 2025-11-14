@@ -10,8 +10,10 @@ namespace RentHub.App.Pages
         private HttpClient _http = new HttpClient(); // статический клиент, без фабрики
 
         public List<Flat> Flats { get; set; } = new();
+        public List<ChartData> BookingsByMonth { get; set; } = new();
+        public List<ChartData> OccupancyData { get; set; } = new();
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(int? flatId = null)
         {
             try
             {
@@ -21,9 +23,18 @@ namespace RentHub.App.Pages
                     return RedirectToPage("/Welcome");
 
                 _http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                var data = await _http.GetFromJsonAsync<List<Flat>>("http://94.183.186.221:5000/Flats/flats");
+                var data = await _http.GetFromJsonAsync<List<Flat>>("http://localhost:5188/Flats/user-flats");
                 if (data != null)
                     Flats = data;
+
+                var url = $"http://localhost:5188/Reservations/reservation-by-flat-id/{flatId}";
+
+                var reservations = await _http.GetFromJsonAsync<List<Reservation>>(url);
+                if (reservations != null)
+                {
+                    ProcessReservationData(reservations);
+                }
+
             }
             catch (Exception ex)
             {
@@ -32,5 +43,31 @@ namespace RentHub.App.Pages
 
             return Page();
         }
+        private void ProcessReservationData(List<Reservation> reservations)
+        {
+            var bookingsByMonth = new Dictionary<string, int>();
+            foreach (var r in reservations)
+            {
+                
+                var key = $"{r.DateOfStartReservation:yyyy-MM}";
+                bookingsByMonth[key] = bookingsByMonth.GetValueOrDefault(key, 0) + 1;
+            }
+
+            BookingsByMonth = bookingsByMonth.Select(kvp => new ChartData { Label = kvp.Key, Value = kvp.Value }).ToList();
+
+            // ¬ычисление заполн€емости
+            OccupancyData = BookingsByMonth.Select(item => new ChartData
+            {
+                Label = item.Label,
+                Value = Math.Min(item.Value * 10, 100) // фейкова€ метрика
+            }).ToList();
+        }
     }
+
+// ¬спомогательный класс дл€ передачи данных в JS
+public class ChartData
+{
+    public string Label { get; set; } = "";
+    public int Value { get; set; }
+}
 }

@@ -100,9 +100,20 @@ namespace RentHub.API.Controllers
                 Description = flatDto.Description,
                 Photo = photoBytes
             };
+
             context.Flats.Add(flat);
             context.SaveChanges();
 
+            var add = new Advertisement
+            {
+                FlatId = flat.FlatId,
+                PlatformId = 3,
+                RentType = "Посуточно",
+                PriceForPeriod = 500,
+                IncomeForPeriod = 500
+            };
+            context.Advertisements.Add(add);
+            context.SaveChanges();
             return Ok("Квартира успешно добавлена");
         }
 
