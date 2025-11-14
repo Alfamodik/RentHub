@@ -44,7 +44,7 @@
                 <option value="">Все квартиры</option>
                 @foreach (var flat in Model.Flats)
                 {
-                    <option value="@flat.FlatId">
+                    <option value="@flat.FlatId" selected="@(Request.Query["flatId"] == flat.FlatId.ToString())">
                         @($"{flat.City}, {flat.District}, д.{flat.HouseNumber}, кв.{flat.ApartmentNumber}")
                     </option>
                 }
@@ -65,39 +65,26 @@
     </div>
 
     <script>
-        const apartmentSelect = document.getElementById('apartmentSelect');
+        const bookingsData = @Html.Raw(Json.Serialize(Model.BookingsByMonth));
+        const occupancyData = @Html.Raw(Json.Serialize(Model.OccupancyData));
+
         let bookingsChart, occupancyChart;
 
-        async function loadReport(flatId = '') {
-            const url = flatId
-                ? `http://94.183.186.221:5000/Reservations/reservation-by-flat-id/${flatId}`
-                : `http://94.183.186.221:5000/Reservations/reservation-by-flat-id/4`; // можно сделать общий эндпоинт
+        function renderCharts() {
+            const labels = bookingsData.map(item => item.label);
+            const values = bookingsData.map(item => item.value);
+            const occupancyValues = occupancyData.map(item => item.value);
 
-            const res = await fetch(url);
-            const data = await res.json();
-
-            // Группировка по месяцам
-            const bookingsByMonth = {};
-            data.forEach(r => {
-                const start = new Date(r.dateOfStartReservation);
-                const key = `${start.getFullYear()}-${start.getMonth() + 1}`;
-                bookingsByMonth[key] = (bookingsByMonth[key] || 0) + 1;
-            });
-
-            const labels = Object.keys(bookingsByMonth);
-            const values = Object.values(bookingsByMonth);
-
-            // Процент заполняемости (условно, по дням)
-            const occupancy = values.map(v => Math.min(v * 10, 100)); // фейковая метрика
-
-            // Рендер графиков
+            // Очистка старых графиков
             if (bookingsChart) bookingsChart.destroy();
             if (occupancyChart) occupancyChart.destroy();
 
-            bookingsChart = new Chart(document.getElementById('bookingsChart'), {
+            // График броней
+            const ctx1 = document.getElementById('bookingsChart').getContext('2d');
+            bookingsChart = new Chart(ctx1, {
                 type: 'bar',
                 data: {
-                    labels,
+                    labels: labels,
                     datasets: [{
                         label: 'Брони',
                         data: values,
@@ -106,13 +93,15 @@
                 }
             });
 
-            occupancyChart = new Chart(document.getElementById('occupancyChart'), {
+            // График заполняемости
+            const ctx2 = document.getElementById('occupancyChart').getContext('2d');
+            occupancyChart = new Chart(ctx2, {
                 type: 'line',
                 data: {
-                    labels,
+                    labels: labels,
                     datasets: [{
                         label: 'Заполняемость (%)',
-                        data: occupancy,
+                        data: occupancyValues,
                         borderColor: '#fbbf24',
                         backgroundColor: 'rgba(251,191,36,0.3)',
                         fill: true
@@ -121,12 +110,15 @@
             });
         }
 
-        apartmentSelect.addEventListener('change', e => {
-            const flatId = e.target.value;
-            loadReport(flatId);
-        });
+        // Инициализация графиков
+        renderCharts();
 
-        loadReport();
+        // Обработчик фильтра
+        document.getElementById('apartmentSelect').addEventListener('change', function (e) {
+            const flatId = e.target.value;
+            const newUrl = `/Reportcshtml?flatId=${flatId}`;
+            window.location.href = newUrl; // Перезагрузка страницы с новым параметром
+        });
     </script>
 </body>
 </html>

@@ -16,7 +16,7 @@ public partial class Advertisement
 
     public decimal IncomeForPeriod { get; set; }
 
-    public string LinkToAdvertisement { get; set; } = string.Empty;
+    public string? LinkToAdvertisement { get; set; }
 
     public virtual Flat Flat { get; set; } = null!;
 
