@@ -99,6 +99,10 @@ namespace RentHub.App.Pages
                 };
             }).ToList();
 
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            HttpResponseMessage updateResponse = await _client.GetAsync($"Reservations/update");
+            string responseContent = await updateResponse.Content.ReadAsStringAsync();
             return Page();
         }
 
@@ -198,10 +202,7 @@ namespace RentHub.App.Pages
                 }
             }
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            HttpResponseMessage updateResponse = await _client.GetAsync($"Reservations/update");
-            return Redirect("/Reservations");
+            return Page();
         }
 
         private ReservationViewModel? CreateReservationDisplay(Reservation reservation, Advertisement advertisement)
