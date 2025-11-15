@@ -64,35 +64,34 @@
         <div class="calendar-container">
             <div class="calendar"
             style="
-                    grid-template: repeat(1, 75px)/repeat(1,2fr);
-                    height: @(Model.FlatBookingsViewModels?.Count * 100 + 30 + 30)px;
-                    padding-bottom: 30px;
-">
+                grid-template: repeat(1, 75px)/repeat(1,2fr);
+                height: @(Model.FlatBookingsViewModels?.Count * 100 + 30 + 30)px;
+                padding-bottom: 30px;">
                 @{
-                    <div class="grid-row1" style="grid-template-columns: repeat(@(Model.DaysCount + 1), 75px);">
-                        <button id="addReservationBtn" class="add-button">+</button>
-                        @{
-                            foreach (var item in Model.Days)
-                            {
-                                <span style="display: flex; justify-content: center;">@item.ToString("dd.MM")</span>
-                            }
-                        }
-                    </div>
+                            <div class="grid-row1" style="grid-template-columns: repeat(@(Model.DaysCount + 1), 75px);">
+                                <button id="addReservationBtn">+</button>
+                                @{
+                                foreach (var item in Model.Days)
+                                {
+                                            <span style="display: flex; justify-content: center;">@item.ToString("dd.MM")</span>
+                                }
+                                }
+                            </div>
 
-                    <div class="grid-column1" style="grid-template-rows: repeat(@(Model.FlatBookingsViewModels?.Count), 75px);">
-                        @{
+                            <div class="grid-column1" style="grid-template-rows: repeat(@(Model.FlatBookingsViewModels?.Count), 75px);">
+                                @{
                             for (int i = 0; i < Model.FlatBookingsViewModels?.Count; i++)
                             {
                                 FlatBookingsViewModel flat = Model.FlatBookingsViewModels[i];
-                                <img src="@flat.PhotoBase64" style="height: 75px; width: 75px; z-index: 10; object-fit: cover" />
+                                                <img src="@flat.PhotoBase64" style="height: 75px; width: 75px; z-index: 10; object-fit: cover" />
                             }
-                        }
-                    </div>
-                    <div class="calendar-content" style="
-                            grid-template-columns: repeat(@(Model.DaysCount), 75px);
-                            grid-template-rows: 30px repeat(@(Model.FlatBookingsViewModels?.Count), 75px;
-                            height: @(Model.FlatBookingsViewModels?.Count * 75)px;">
-                        @{
+                                }
+                            </div>
+                            <div class="calendar-content" style="
+                                    grid-template-columns: repeat(@(Model.DaysCount), 75px);
+                                    grid-template-rows: 30px repeat(@(Model.FlatBookingsViewModels?.Count), 75px;
+                                    height: @(Model.FlatBookingsViewModels?.Count * 75)px;">
+                                @{
                             for (int i = 0; i < Model.FlatBookingsViewModels?.Count; i++)
                             {
                                 FlatBookingsViewModel flat = Model.FlatBookingsViewModels[i];
@@ -120,40 +119,53 @@
 
                                         int length = Math.Max(0, clippedEnd - clippedStart + 1);
 
-                                        <div ondblclick="showDeleteForm(@reservation.Id)"
-                                            class="calendar-flat-reservation"
-                                             style="
-                                                grid-column: span @length;
-                                                background-color: @reservation.ColorHexCode;
-                                                display: flex;
-                                                align-content: center;
-                                                justify-content: center;
-                                                flex-direction: column">
-                                            <div id="deleteForm-@reservation.Id" class="delete-form" style="display: none;">
-                                                <p>Удалить бронь?</p>
-                                                <form method="post" asp-page-handler="DeleteReservation">
-                                                    <input type="hidden" name="reservationIdToDelete" value="@reservation.Id" />
-                                                    <button type="submit" class="btn-delete">Да</button>
-                                                    <button type="button" onclick="hideDeleteForm(@reservation.Id)" class="btn-cancel">Нет</button>
-                                                </form>
-                                            </div>
-                                             <p style="color: var(--text-color); padding-left: 5px">@reservation.RenterName</p>
-                                            <p style="color: var(--text-color); padding-left: 5px">@reservation.PhoneNumber</p>
-                                        </div>
+                                        <div onclick="showChangeForm(this, @reservation.Id)"
+                                             data-renter-name="@reservation.RenterName"
+                                             class="calendar-flat-reservation"
+                                                        style="
+                                                        grid-column: span @length;
+                                                        background-color: @reservation.ColorHexCode;
+                                                        display: flex;
+                                                        align-content: center;
+                                                        justify-content: center;
+                                                        flex-direction: column;
+                                                        overflow: scroll;">
 
+                                                    <p style="color: var(--text-color); padding-left: 5px">@reservation.RenterName</p>
+                                                    <p style="color: var(--text-color); padding-left: 5px">@reservation.PhoneNumber</p>
+                                                    <div id="changeForm-@reservation.Id" class="change-form" style="display: none;">
+                                                        <p style="font-size: 17px">Редактирование брони</p>
+                                                        <form class="change-form-group" asp-page-handler="ChangeReservation">
+                                                            <p>Изменить жильца:</p>
+                                                            <select class="flat-select change-reservation-select" asp-for="newReservation.RenterId" required>
+                                                                <option value="">Выберите арендателя</option>
+                                                            </select>
+                                                            <input type="hidden" name="reservationId" value="@reservation.Id" />
+                                                            <span asp-validation-for="newReservation.RenterId"></span>
+                                                            <div class="change-form-buttons">
+                                                                <button type="submit" class="submit-btn">Сохранить</button>
+                                                                <button type="button" onclick="hideChangeForm(@reservation.Id); event.stopPropagation()" class="cancel-btn">Отмена</button>
+                                                            </div>
+                                                        </form>
+                                                        <form method="post" asp-page-handler="DeleteReservation" onsubmit="return confirm('Вы уверены, что хотите удалить эту бронь?');">
+                                                            <input type="hidden" name="reservationIdToDelete" value="@reservation.Id" />
+                                                            <button type="submit" class="btn-delete">🗑</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                         j += length;
                                     }
                                     else
                                     {
-                                        <div class="calendar-flat-item">
-                                        </div>
+                                                        <div class="calendar-flat-item">
+                                                        </div>
 
                                         j++;
                                     }
                                 }
                             }
-                        }
-                    </div>
+                                }
+                            </div>
                 }
             </div>
         </div>
@@ -185,7 +197,7 @@
                     </div>
                     <div class="form-buttons">
                         <button type="submit" class="submit-btn">Добавить</button>
-                        <button type="button" class="cancel-btn">Отмена</button>
+                        <button type="button" class="modal-cancel-btn">Отмена</button>
                     </div>
                 </form>
             </div>
@@ -202,7 +214,7 @@
         const modal = document.getElementById('addReservationModal');
         const addBtn = document.getElementById('addReservationBtn');
         const closeBtn = document.querySelector('.close');
-        const cancelBtn = document.querySelector('.cancel-btn');
+        const modalCancelBtn = document.querySelector('.modal-cancel-btn');
         const form = document.querySelector('#addReservationForm')
 
         var renters = @Json.Serialize(Model.Renters)
@@ -221,7 +233,7 @@
             form.reset();
         }
 
-        cancelBtn.onclick = function () {
+        modalCancelBtn.onclick = function () {
             modal.style.display = 'none';
             form.reset();
         }
@@ -248,11 +260,30 @@
                 select.appendChild(option);
             });
         }
+        function fillRenterSelectForReservation(form, renterName) {
+            const select = form.querySelector('.change-reservation-select');
+            if (!select) return;
+            if (select.children.length <= 1) {
+                select.innerHTML = '<option value="">Выберите арендателя</option>';
+
+                renters.forEach(renter => {
+                    const renterFullName = `${renter.name} ${renter.patronymic || ''}`.trim();
+
+                    if (renterFullName === renterName) return;
+
+                    const option = document.createElement('option');
+                    option.value = renter.renterId;
+                    const fullName = `${renter.patronymic || ''} ${renter.name} ${renter.lastname}`.trim();
+                    option.textContent = fullName;
+                    select.appendChild(option);
+                });
+            }
+        }
         function fillFlatsSelect() {
             const select = document.getElementById('flatsSelect');
 
             flats.forEach(flat => {
-                const option = document.createElement('option');
+                const option = document.createElement('option');    
                 option.value = flat.flatId;
 
                 const fullName = `г.${flat.city} ул.${flat.district} д.${flat.apartmentNumber}`.trim();
@@ -297,13 +328,19 @@
             dateEndInput.disabled = true;
         }
 
-        //Модальное окно брони
-        function showDeleteForm(reservationId) {
-            document.getElementById('deleteForm-' + reservationId).style.display = 'flex';
+        //Модальное окно редактирования брони
+        function showChangeForm(element, reservationId) {
+            const renterName = element.getAttribute('data-renter-name');
+
+            const form = document.getElementById('changeForm-' + reservationId);
+            if (form) {
+                form.style.display = 'flex';
+                fillRenterSelectForReservation(form, renterName);
+            }
         }
 
-        function hideDeleteForm(reservationId) {
-            document.getElementById('deleteForm-' + reservationId).style.display = 'none';
+        function hideChangeForm(reservationId) {
+            document.getElementById('changeForm-' + reservationId).style.display = 'none';
         }
     </script>
 </body>

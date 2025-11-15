@@ -76,10 +76,10 @@
     grid-column: span 2;
     grid-row-start: 1;
     gap: 15px;
-    position: sticky;
+/*    position: sticky;*/
     top: 0px;
     width: 100%;
-    z-index: 50;
+    z-index: 20;
 }
 
 .grid-column1 {
@@ -128,7 +128,7 @@
     width: 50%;
     position: relative;
     overflow: hidden;
-    z-index: 1000;
+    z-index: 100;
 }
 
 #addReservationBtn:hover {
@@ -154,6 +154,7 @@
     max-width: 500px;
     position: relative;
     box-shadow: 0 0 10px 20px rgba(0,0,0,0.1);
+    z-index: 1001;
 }
 
 .close {
@@ -178,6 +179,7 @@
 
 .form-group {
     margin-bottom: 20px;
+    gap: 0;
 }
 
     .form-group label {
@@ -203,6 +205,19 @@
             border-color: #60a5fa;
         }
 
+.change-form-group {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.change-form-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
 .form-buttons {
     display: flex;
     gap: 12px;
@@ -226,7 +241,7 @@
     background: rgba(0,0,0,0.1);
 }
 
-.cancel-btn {
+.modal-cancel-btn {
     background: #475569;
     color: var(--text_color);
     border: none;
@@ -262,30 +277,38 @@
     box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
 }
 
-.delete-form {
+.change-form {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: #374151;
-    opacity: 0.9;
+    background: rgba(55, 65, 81, 0.9);
     color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 10;
+    z-index: 20;
 }
 
 .btn-delete, .btn-cancel {
     background: none;
     border: none;
-    font-size: 15px;
+    font-size: 30px;
     cursor: pointer;
-    margin: 15px;
+    margin-top: 10px;
     color: white;
+}
 
+.btn-delete:hover {
+    cursor: pointer;
+    transform: translateY();
+}
+
+.btn-delete:active {
+    transform: scale(1.05);
+    font-size: 32px;
 }
 
 textarea {
