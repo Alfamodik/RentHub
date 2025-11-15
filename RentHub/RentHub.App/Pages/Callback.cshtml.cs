@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -12,7 +13,7 @@ namespace RentHub.App.Pages
 
         private HttpClient _client = new()
         {
-            BaseAddress = new Uri("http://94.183.186.221:5000/")
+            BaseAddress = new Uri("http://localhost:5168/")
         };
 
         public async Task<IActionResult> OnGet()
@@ -24,6 +25,7 @@ namespace RentHub.App.Pages
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             HttpResponseMessage response = await _client.GetAsync($"Callback?code={Code}");
+            Debug.Write(await response.Content.ReadAsStringAsync());
             return Redirect("Reservations");
         }
     }

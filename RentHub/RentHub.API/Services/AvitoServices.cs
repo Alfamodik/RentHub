@@ -24,7 +24,7 @@ namespace RentHub.API.Services
 
         public static async Task<List<Reservation>?> GetReservations(User user, string linkToAdvertisement)
         {
-            if (user == null || user.AvitoAccessToken == null)
+            if (user == null || user.AvitoRefreshToken == null)
                 return null;
 
             if (DateOnly.FromDateTime(DateTime.UtcNow) >= user.TokenExpiresAt)
@@ -112,7 +112,7 @@ namespace RentHub.API.Services
             {
                 { "client_id", "hqQSMZCzT_szv7cre5vG" },
                 { "client_secret", "e8oWwQ9S7nsbmuBsr_MuALR8nqcRxtHtyDBrt-YN" },
-                { "grant_type", "authorization_code" },
+                { "grant_type", "refresh_token" },
                 { "refresh_token", $"{user.AvitoRefreshToken}" },
             };
 
