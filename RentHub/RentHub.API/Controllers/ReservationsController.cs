@@ -55,6 +55,18 @@ namespace RentHub.API.Controllers
         [HttpPost("reservation")]
         public ActionResult AddReservation(ReservationDTO reservationdto)
         {
+            if (!reservationdto.AdvertisementId.HasValue)
+                return BadRequest("ID объявления обязателен");
+
+            if (!reservationdto.RenterId.HasValue)
+                return BadRequest("ID арендателя обязателен");
+
+            if (!reservationdto.DateOfStartReservation.HasValue)
+                return BadRequest("Дата начала бронирования обязательна");
+
+            if (!reservationdto.DateOfEndReservation.HasValue)
+                return BadRequest("Дата окончания бронирования обязательна");
+
             using RentHubContext context = new();
             bool hasOverlap = context.Reservations
                 .Where(r => r.AdvertisementId == reservationdto.AdvertisementId)
@@ -68,18 +80,18 @@ namespace RentHub.API.Controllers
 
             Reservation reservation = new Reservation
             {
-                AdvertisementId = reservationdto.AdvertisementId,
-                RenterId = reservationdto.RenterId,
-                DateOfStartReservation = reservationdto.DateOfStartReservation,
-                DateOfEndReservation = reservationdto.DateOfEndReservation,
-                Summ = reservationdto.Summ,
-                Income = reservationdto.Income
+                AdvertisementId = reservationdto.AdvertisementId.Value,
+                RenterId = reservationdto.RenterId.Value,
+                DateOfStartReservation = reservationdto.DateOfStartReservation.Value,
+                DateOfEndReservation = reservationdto.DateOfEndReservation.Value,
+                Summ = reservationdto.Summ ?? 0,
+                Income = reservationdto.Income ?? 0
             };
             context.Reservations.Add(reservation).Context.SaveChanges();
             return Ok("Бронирование успешно добавлено");
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPut("reservation-data/{id}")]
         public ActionResult ChangeReservationData(int id, ReservationDTO reservationDTO)
         {
@@ -89,12 +101,23 @@ namespace RentHub.API.Controllers
             {
                 return NotFound($"Бронирование с ID {id} не найдено");
             }
-            reservation.AdvertisementId = reservationDTO.AdvertisementId;
-            reservation.RenterId = reservationDTO.RenterId;
-            reservation.DateOfEndReservation = reservationDTO.DateOfEndReservation;
-            reservation.DateOfStartReservation = reservationDTO.DateOfStartReservation;
-            reservation.Summ = reservationDTO.Summ;
-            reservation.Income = reservationDTO.Income;
+            if (reservationDTO.AdvertisementId.HasValue && reservationDTO.AdvertisementId != 0)
+                reservation.AdvertisementId = reservationDTO.AdvertisementId.Value;
+
+            if (reservationDTO.RenterId.HasValue && reservationDTO.RenterId != 0)
+                reservation.RenterId = reservationDTO.RenterId.Value;
+
+            if (reservationDTO.DateOfEndReservation.HasValue && reservationDTO.DateOfEndReservation > DateOnly.MinValue)
+                reservation.DateOfEndReservation = reservationDTO.DateOfEndReservation.Value;
+
+            if (reservationDTO.DateOfStartReservation.HasValue && reservationDTO.DateOfStartReservation.Value > DateOnly.MinValue)
+                reservation.DateOfStartReservation = reservationDTO.DateOfStartReservation.Value;
+
+            if (reservationDTO.Summ.HasValue && reservationDTO.Summ != 0)
+                reservation.Summ = reservationDTO.Summ.Value;
+
+            if (reservationDTO.Income.HasValue && reservationDTO.Income != 0)
+                reservation.Income = reservationDTO.Income.Value;
             context.SaveChanges();
 
             return Ok("Данные бронирования успешно изменены");
