@@ -361,7 +361,7 @@ namespace RentHub.App.Pages
 
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
               
-                var response = await new HttpClient().PutAsync($"http://localhost:5188/Reservations/reservation-data/{reservationId}", content);
+                var response = await _client.PutAsync($"Reservations/reservation-data/{reservationId}", content);
 
                 if (response.IsSuccessStatusCode)
                 {
