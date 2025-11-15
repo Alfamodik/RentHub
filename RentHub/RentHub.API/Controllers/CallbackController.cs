@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentHub.API.ResponceModels.Avito;
 using RentHub.Core.Model;
+using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -16,14 +17,18 @@ namespace RentHub.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] string code)
         {
+            Debug.Write(code);
+
             if (string.IsNullOrEmpty(code))
                 return BadRequest("Код отсутствует.");
 
             string? claimedUserid = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
+            Debug.Write(claimedUserid);
 
             if (!int.TryParse(claimedUserid, out int userId))
                 return Unauthorized();
 
+            Debug.Write(userId);
             RentHubContext context = new();
             User? user = context.Users.FirstOrDefault(user => user.UserId == userId);
 
@@ -44,8 +49,12 @@ namespace RentHub.API.Controllers
                 { "redirect_uri", "http://94.183.186.221:5168/Callback" }
             };
 
+            Debug.Write(data);
+
             HttpResponseMessage response = await _httpClient.PostAsync("token", new FormUrlEncodedContent(data));
             string json = await response.Content.ReadAsStringAsync();
+
+            Debug.Write(json);
 
             JsonSerializerOptions jsonSerializerOptions = new()
             {
@@ -56,6 +65,9 @@ namespace RentHub.API.Controllers
 
             if (accessTokenResponse == null)
                 return BadRequest("Ошибка десериализации ответа от Avito");
+
+            Debug.Write(accessTokenResponse.AccessToken);
+            Debug.Write(accessTokenResponse.RefreshToken);
 
             if (accessTokenResponse.AccessToken != null && accessTokenResponse.RefreshToken != null)
             {
