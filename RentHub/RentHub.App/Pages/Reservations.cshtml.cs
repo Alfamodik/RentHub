@@ -327,6 +327,8 @@ namespace RentHub.App.Pages
                 if (string.IsNullOrEmpty(token))
                     return RedirectToPage("/Welcome");
 
+                Console.WriteLine(newReservation.DateOfStartReservation + "\n" + newReservation.DateOfEndReservation);
+
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = await _client.DeleteAsync($"Reservations/reservation/{reservationIdToDelete}");
 
@@ -337,6 +339,37 @@ namespace RentHub.App.Pages
                 else
                 {
                     TempData["ReservationMessage"] = "Ошибка при удалении бронирования";
+                    return RedirectToPage();
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ReservationMessage"] = "Ошибка: " + ex.Message;
+                return RedirectToPage();
+            }
+        }
+        public async Task<ActionResult> OnPostChangeReservationAsync(int reservationId)
+        {
+            try
+            {
+                string? token = Request.Cookies["jwt"];
+
+                if (string.IsNullOrEmpty(token))
+                    return RedirectToPage("/Welcome");
+                var jsonData = JsonSerializer.Serialize(newReservation);
+                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+              
+                var response = await _client.PutAsync($"Reservations/reservation-data/{reservationId}", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToPage();
+                }
+                else
+                {
+                    TempData["ReservationMessage"] = "Ошибка при изменении бронирования";
                     return Page();
                 }
             }
