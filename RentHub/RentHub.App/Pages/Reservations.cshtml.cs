@@ -45,11 +45,6 @@ namespace RentHub.App.Pages
             if (string.IsNullOrEmpty(token))
                 return RedirectToPage("/Welcome");
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            HttpResponseMessage updateResponse = await _client.GetAsync($"Reservations/update");
-            string responseContent = await updateResponse.Content.ReadAsStringAsync();
-
             CalendarStart = DateOnly.FromDateTime(DateTime.Today.AddDays(-DateTime.Today.Day + 1));
             DateOnly firstDayOfNextMonth = CalendarStart.AddMonths(2);
             DateOnly lastDayOfCurrentMonth = firstDayOfNextMonth.AddDays(-1);
@@ -186,10 +181,15 @@ namespace RentHub.App.Pages
 
                     if (hasAvitoAsseccResponse?.HasAccess == false)
                         return Redirect("https://www.avito.ru/oauth?response_type=code&client_id=hqQSMZCzT_szv7cre5vG&scope=short_term_rent:read,user:read");
+
+                    _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                    HttpResponseMessage updateResponse = await _client.GetAsync($"Reservations/update");
+                    string responseContent = await updateResponse.Content.ReadAsStringAsync();
                 }
             }
 
-            return Page();
+            return Redirect("Reservations");
         }
 
         private ReservationViewModel? CreateReservationDisplay(Reservation reservation, Advertisement advertisement)
