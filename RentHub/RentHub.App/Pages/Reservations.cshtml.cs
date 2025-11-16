@@ -45,6 +45,11 @@ namespace RentHub.App.Pages
             if (string.IsNullOrEmpty(token))
                 return RedirectToPage("/Welcome");
 
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            HttpResponseMessage updateResponse = await _client.GetAsync($"Reservations/update");
+            string responseContent = await updateResponse.Content.ReadAsStringAsync();
+
             CalendarStart = DateOnly.FromDateTime(DateTime.Today.AddDays(-DateTime.Today.Day + 1));
             DateOnly firstDayOfNextMonth = CalendarStart.AddMonths(2);
             DateOnly lastDayOfCurrentMonth = firstDayOfNextMonth.AddDays(-1);
@@ -99,11 +104,6 @@ namespace RentHub.App.Pages
                 };
             }).ToList();
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            /*HttpResponseMessage updateResponse = await _client.GetAsync($"Reservations/update");
-            string responseContent = await updateResponse.Content.ReadAsStringAsync();*/
-            _ = _client.GetAsync($"Reservations/update");
             return Page();
         }
 
