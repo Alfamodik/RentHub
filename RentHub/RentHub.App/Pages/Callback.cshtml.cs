@@ -24,8 +24,7 @@ namespace RentHub.App.Pages
                 return RedirectToPage("/Welcome");
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            HttpResponseMessage response = await _client.GetAsync($"Callback?code={Code}");
-            Debug.Write(await response.Content.ReadAsStringAsync());
+            _ = await _client.GetAsync($"Callback?code={Code}");
             return Redirect("Reservations");
         }
     }

@@ -170,6 +170,9 @@ namespace RentHub.API.Controllers
 
                 foreach (Advertisement advertisiment in flat.Advertisements)
                 {
+                    if (advertisiment.LinkToAdvertisement == null)
+                        continue;
+
                     switch (advertisiment.Platform.PlatformName)
                     {
                         case "Avito":
