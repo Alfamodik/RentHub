@@ -12,7 +12,7 @@ public partial class User
 
     public string? AvitoRefreshToken { get; set; }
 
-    public DateOnly? TokenExpiresAt { get; set; }
+    public DateTime? TokenExpiresAt { get; set; }
 
     public virtual ICollection<Flat> Flats { get; set; } = new List<Flat>();
 }

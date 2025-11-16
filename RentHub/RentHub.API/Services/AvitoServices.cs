@@ -27,10 +27,10 @@ namespace RentHub.API.Services
             if (user == null || user.AvitoRefreshToken == null)
                 return null;
 
-            if (DateOnly.FromDateTime(DateTime.UtcNow) >= user.TokenExpiresAt)
-                UpdateToken(user);
+            if (DateTime.UtcNow >= user.TokenExpiresAt)
+                await UpdateToken(user);
 
-            if (DateOnly.FromDateTime(DateTime.UtcNow) >= user.TokenExpiresAt)
+            if (DateTime.UtcNow >= user.TokenExpiresAt)
                 return null;
 
             string path = new Uri(linkToAdvertisement).AbsolutePath;
@@ -106,7 +106,7 @@ namespace RentHub.API.Services
             return reservations;
         }
 
-        private static async void UpdateToken(User user)
+        private static async Task UpdateToken(User user)
         {
             Dictionary<string, string> data = new()
             {
@@ -130,7 +130,7 @@ namespace RentHub.API.Services
 
             user.AvitoAccessToken = avitoAccessTokenResponse.AccessToken;
             user.AvitoRefreshToken = avitoAccessTokenResponse.RefreshToken;
-            user.TokenExpiresAt = DateOnly.FromDateTime(DateTime.Now);
+            user.TokenExpiresAt = DateTime.Now.AddDays(1);
         }
     }
 }
