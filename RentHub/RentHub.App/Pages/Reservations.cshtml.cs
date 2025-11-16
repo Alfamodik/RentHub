@@ -101,8 +101,9 @@ namespace RentHub.App.Pages
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage updateResponse = await _client.GetAsync($"Reservations/update");
-            string responseContent = await updateResponse.Content.ReadAsStringAsync();
+            /*HttpResponseMessage updateResponse = await _client.GetAsync($"Reservations/update");
+            string responseContent = await updateResponse.Content.ReadAsStringAsync();*/
+            _ = _client.GetAsync($"Reservations/update");
             return Page();
         }
 
@@ -164,32 +165,18 @@ namespace RentHub.App.Pages
             }
         }
 
-
         public async Task<IActionResult> OnPostRefreshReservations()
         {
+            await OnGet();
+
             string? token = Request.Cookies["jwt"];
-
-            if (string.IsNullOrEmpty(token))
-                return RedirectToPage("/Welcome");
-
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            HttpResponseMessage response = await _client.GetAsync($"Flats/user-flats");
-
-            if (response.IsSuccessStatusCode)
-            {
-                string platformsJson = await response.Content.ReadAsStringAsync();
-                _flats = JsonSerializer.Deserialize<List<Flat>>(platformsJson, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-            }
 
             if (_flats?.Any(flat => flat.Advertisements.Any(advertisement => advertisement.Platform.PlatformName == "Avito")) == true)
             {
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 HttpResponseMessage accessResponse = await _client.GetAsync($"Authentication/has-avito-access");
 
-                if (response.IsSuccessStatusCode)
+                if (accessResponse.IsSuccessStatusCode)
                 {
                     string platformsJson = await accessResponse.Content.ReadAsStringAsync();
                     HasAvitoAsseccResponse? hasAvitoAsseccResponse = JsonSerializer.Deserialize<HasAvitoAsseccResponse>(platformsJson, new JsonSerializerOptions

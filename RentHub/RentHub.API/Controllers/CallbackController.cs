@@ -62,7 +62,7 @@ namespace RentHub.API.Controllers
             {
                 user.AvitoAccessToken = accessTokenResponse.AccessToken;
                 user.AvitoRefreshToken = accessTokenResponse.RefreshToken;
-                user.TokenExpiresAt = DateOnly.FromDateTime(DateTime.Now);
+                user.TokenExpiresAt = DateTime.Now.AddDays(1);
                 context.SaveChanges();
                 return Ok(accessTokenResponse);
             }
