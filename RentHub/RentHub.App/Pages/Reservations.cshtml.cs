@@ -215,7 +215,7 @@ namespace RentHub.App.Pages
             else if (advertisement.Platform.PlatformName == "Avito")
                 colorHexCode = "#345533";
             else
-                colorHexCode = "#334155";
+                colorHexCode = "#333";
 
             return new ReservationViewModel
             {

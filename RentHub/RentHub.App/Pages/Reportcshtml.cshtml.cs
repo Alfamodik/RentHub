@@ -7,7 +7,7 @@ namespace RentHub.App.Pages
 {
     public class ReportcshtmlModel : PageModel
     {
-        private HttpClient _http = new HttpClient(); // статический клиент, без фабрики
+        private HttpClient _http = new HttpClient(); 
 
         public List<Flat> Flats { get; set; } = new();
         public List<ChartData> BookingsByMonth { get; set; } = new();
@@ -46,16 +46,15 @@ namespace RentHub.App.Pages
         private void ProcessReservationData(List<Reservation> reservations)
         {
             var bookingsByMonth = new Dictionary<string, int>();
+
             foreach (var r in reservations)
             {
-                
                 var key = $"{r.DateOfStartReservation:yyyy-MM}";
                 bookingsByMonth[key] = bookingsByMonth.GetValueOrDefault(key, 0) + 1;
             }
 
             BookingsByMonth = bookingsByMonth.Select(kvp => new ChartData { Label = kvp.Key, Value = kvp.Value }).ToList();
 
-            // Вычисление заполняемости
             OccupancyData = BookingsByMonth.Select(item => new ChartData
             {
                 Label = item.Label,
@@ -64,9 +63,9 @@ namespace RentHub.App.Pages
         }
     }
 
-public class ChartData
-{
-    public string Label { get; set; } = "";
-    public int Value { get; set; }
-}
+    public class ChartData
+    {
+        public string Label { get; set; } = "";
+        public int Value { get; set; }
+    }
 }

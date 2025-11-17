@@ -45,10 +45,9 @@
         <div class="top-bar">
             <form asp-page-handler="Logout" id="logoutForm">
                 <a href="#" onclick="confirmLogout()">
-                    <img src="~/img/userIcon.svg" alt="Фотка иконки юзера" />
+                    <img src="~/img/logout.png" alt="Фотка иконки юзера" />
                 </a>
             </form>
-            <a href="#"><img src="~/img/bell.svg" alt="Фотка иконки уведомлений" /></a>
             <form method="post">
                 <button type="submit" class="update_btn" asp-page-handler="RefreshReservations">Обновить данные</button>
             </form>
@@ -129,10 +128,10 @@
                                                         align-content: center;
                                                         justify-content: center;
                                                         flex-direction: column;
-                                                        overflow: scroll;">
+                                                        overflow: auto;">
 
-                                                    <p style="color: var(--text-color); padding-left: 5px">@reservation.RenterName</p>
-                                                    <p style="color: var(--text-color); padding-left: 5px">@reservation.PhoneNumber</p>
+                                                    <p style="color: #cbd5e1; padding-left: 5px">@reservation.RenterName</p>
+                                                    <p style="color: #cbd5e1; padding-left: 5px">@reservation.PhoneNumber</p>
                                                     <div id="changeForm-@reservation.Id" class="change-form" style="display: none;">
                                                         <p style="font-size: 17px">Редактирование брони</p>
                                                         <form class="change-form-group" asp-page-handler="ChangeReservation">
