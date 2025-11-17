@@ -157,6 +157,7 @@ namespace RentHub.API.Controllers
             flat.City = flatDto.City;
             flat.District = flatDto.District;
             flat.HouseNumber = flatDto.HouseNumber;
+            flat.ApartmentNumber = flatDto.ApartmentNumber;
             flat.RoomCount = flatDto.RoomCount;
             flat.Size = flatDto.Size;
             flat.FloorNumber = flatDto.FloorNumber;

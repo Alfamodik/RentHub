@@ -61,11 +61,6 @@
             <button type="submit" name="CustomersBtn">Жильцы</button>
         </form>
 
-        <form class="menu-item" method="get" action="/AdvertismentsList">
-            <img src="~/img/addvertisement.png" alt="404" />
-            <button type="submit" name="AdsBtn">Объявления</button>
-        </form>
-
         <form class="menu-item" method="get" action="/Reportcshtml">
             <img src="~/img/side-bar/chart-no-axes-column 1.svg" alt="404" />
             <button type="submit" name="recordsBtn">Отчетность</button>
@@ -76,18 +71,9 @@
         <div class="top-bar">
             <form asp-page-handler="Logout" id="logoutForm">
                 <a href="#" onclick="confirmLogout()">
-                    <img src="~/img/userIcon.svg" alt="Фотка иконки юзера" />
+                    <img src="~/img/logout.png" alt="Фотка иконки юзера" />
                 </a>
             </form>
-            <a href="#"><img src="~/img/bell.svg" alt="Фотка иконки уведомлений" /></a>
-        </div>
-
-        <div class="search-container">
-            <div class="search-bar-container">
-                <a href="/MainFlats" class="back-link" style="color: var(--text_color); text-decoration: none; font-size: 16px;">
-                    ← Назад к списку квартир
-                </a>
-            </div>
         </div>
 
         @if (Model.Flat != null)
@@ -96,7 +82,7 @@
                 <form method="post" enctype="multipart/form-data" class="flat-form">
                     <input type="hidden" asp-for="Flat.FlatId" />
 
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 25px;">
+                    <div style="display: grid; grid-template-columns: 1000px; gap: 25px; margin-bottom: 25px;">
                         <div class="form-group">
                             <label>Страна:</label>
                             <input type="text" asp-for="Flat.Country" value="@Model.Flat.Country" style="width:100%" />
@@ -143,7 +129,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="width: 1000px;">
                         <label>Описание:</label>
                         <textarea asp-for="Flat.Description" style="width:100%; min-height:150px;">@Model.Flat.Description</textarea>
                     </div>
@@ -159,7 +145,7 @@
 
                     <div class="submit-row">
                         <button type="submit" class="submit-btn">Сохранить изменения</button>
-                        <a href="/AdvertismentsList?flatId=@Model.Flat.FlatId" class="ads-btn">Управление объявлениями</a>
+                        <a href="/AdvertismentsList?flatId=@Model.Flat.FlatId" class="submit-btn" style="text-decoration: none;">Управление объявлениями</a>
                     </div>
                 </form>
             </div>
