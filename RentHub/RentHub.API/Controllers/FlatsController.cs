@@ -173,12 +173,22 @@ namespace RentHub.API.Controllers
         public ActionResult DeleteFlat(int id)
         {
             using RentHubContext context = new();
-            Flat? flat = context.Flats.FirstOrDefault(fl => fl.FlatId == id);
+            Flat? flat = context.Flats
+                .Include(flat => flat.Advertisements)
+                .ThenInclude(adv => adv.Reservations)
+                .FirstOrDefault(fl => fl.FlatId == id);
 
             if (flat == null)
             {
                 return NotFound($"Квартира с ID {id} не найдена");
             }
+
+            foreach (var item in flat.Advertisements)
+            {
+                context.Reservations.RemoveRange(item.Reservations);
+            }
+
+            context.Advertisements.RemoveRange(flat.Advertisements);
             context.Flats.Remove(flat);
             context.SaveChanges();
             return Ok("Квартира успешно удалена");
